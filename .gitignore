@@ -41,3 +41,6 @@ Thumbs.db
 *.tmp
 *.bak
 *.log
+*.flac
+*.mp3
+tsconfig*.tsbuildinfo
