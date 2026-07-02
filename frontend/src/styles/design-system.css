@@ -1,0 +1,194 @@
+/* ============================================================
+   设计系统：印刷乐谱美学
+   象牙色纸张 · Cormorant Garamond 衬线标题 · Inter 无衬线 UI
+   黄铜金点缀 · 发丝边框 · 克制留白
+   ============================================================ */
+
+:root {
+  /* 色板：象牙纸 + 黄铜 */
+  --paper: #fbf6ec;
+  --paper-deep: #f3ead8;
+  --paper-card: #fffdf7;
+  --ink: #2a241d;
+  --ink-soft: #6f6354;
+  --gold: #a8843f;
+  --gold-soft: #c8a45c;
+  --gold-tint: #efe3c8;
+  --rule: #e4d8c0;
+  --ok: #5a7a4e;
+  --err: #a23b2c;
+
+  /* 字体 */
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* 形状 */
+  --radius: 3px;
+  --radius-lg: 6px;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.03), 0 14px 32px -20px rgba(60, 48, 30, 0.4);
+  --staff-stroke: #3a342a;
+}
+
+/* ---- 基础重置 ---- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* ---- 标题 ---- */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+h1 { font-size: 2.4rem; line-height: 1.2; }
+h2 { font-size: 1.6rem; line-height: 1.3; }
+h3 { font-size: 1.2rem; line-height: 1.4; }
+
+/* ---- 标签 ---- */
+.label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+/* ---- 卡片 ---- */
+.card {
+  background: var(--paper-card);
+  border: 1px solid var(--rule);
+  border-top: 2px solid var(--gold);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+/* ---- 按钮 ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---- abcjs 播放控件主题覆写 ---- */
+.abcjs-inline-audio {
+  background: var(--paper-deep);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 8px 14px;
+}
+
+.abcjs-midi-start,
+.abcjs-midi-reset,
+.abcjs-midi-loop {
+  background: var(--gold);
+  color: var(--paper);
+  border: none;
+  border-radius: var(--radius);
+  min-width: 42px;
+  cursor: pointer;
+}
+
+.abcjs-midi-start:hover,
+.abcjs-midi-reset:hover {
+  background: var(--gold-soft);
+}
+
+.abcjs-midi-progress-background {
+  background: var(--gold-tint);
+}
+
+.abcjs-midi-progress,
+.abcjs-midi-progress-bar {
+  background: var(--gold);
+}
+
+.abcjs-css-warning {
+  display: none;
+}
+
+/* abcjs SVG 谱线颜色 */
+.abcjs-svg {
+  color: var(--staff-stroke);
+}
+
+/* ---- 进度条 ---- */
+.progress-track {
+  width: 100%;
+  height: 4px;
+  background: var(--gold-tint);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+/* ---- 工具类 ---- */
+.text-soft { color: var(--ink-soft); }
+.text-error { color: var(--err); }
+.text-ok { color: var(--ok); }
+.text-center { text-align: center; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }

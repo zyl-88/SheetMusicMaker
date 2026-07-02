@@ -1,0 +1,10 @@
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+demucs>=4.0.0
+basic-pitch>=0.2.0
+madmom>=0.16.1
+librosa>=0.10.0
+music21>=9.1.0
+numpy>=1.24.0
+soundfile>=0.12.0

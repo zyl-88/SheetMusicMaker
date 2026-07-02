@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+*.spec
+
+# PyInstaller
+build/
+
+# 前端
+frontend/node_modules/
+frontend/dist/
+
+# 音色库（太大，不纳入版本控制）
+soundfont/
+
+# Demucs 模型缓存
+torch_hub/
+
+# 运行时存储
+storage/
+.uploads/
+
+# 测试音频
+test_audio/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# 临时文件
+*.tmp
+*.bak
+*.log
