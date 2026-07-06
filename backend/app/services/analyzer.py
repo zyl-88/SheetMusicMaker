@@ -93,23 +93,13 @@ class AudioAnalyzer:
             else:
                 bpm = 120.0
 
-        # BPM 翻倍修正：librosa 常将 72 BPM 误检为 144 BPM
-        # 如果 BPM > 120 且节拍间隔中位数的两倍仍在合理范围，则减半
-        if bpm > 120 and len(beats) > 4:
-            intervals = np.diff(beats)
-            median_interval = np.median(intervals)
-            halved_bpm = 60.0 / (median_interval * 2) if median_interval > 0 else bpm
-            # 如果减半后 BPM 在 60-120 范围内，且节拍间隔分布支持减半
-            if 60 <= halved_bpm <= 120:
-                # 检查间隔是否接近半拍（说明实际是半拍被检为全拍）
-                half_beat_interval = median_interval * 2
-                # 统计有多少间隔接近 half_beat_interval
-                close_to_double = np.sum(
-                    np.abs(intervals - half_beat_interval) < half_beat_interval * 0.2
-                )
-                if close_to_double > len(intervals) * 0.3:
-                    bpm = halved_bpm
-                    logger.info(f"BPM 翻倍修正: {bpm * 2:.1f} → {bpm:.1f}")
+        # BPM 翻倍修正：检测器常将 ~80 BPM 误检为 ~160 BPM
+        # 简化规则：BPM > 140 且减半后在 60-120 范围，直接减半
+        if bpm > 140:
+            halved = bpm / 2
+            if 60 <= halved <= 120:
+                bpm = halved
+                logger.info(f"BPM 翻倍修正: {bpm * 2:.1f} → {bpm:.1f}")
 
         return beats.tolist(), round(bpm, 1)
 
@@ -142,19 +132,12 @@ class AudioAnalyzer:
             else:
                 bpm = 120.0
 
-        # BPM 翻倍修正：librosa 常将 72 BPM 误检为 144 BPM
-        if bpm > 120 and len(beat_times) > 4:
-            intervals = np.diff(beat_times)
-            median_interval = np.median(intervals)
-            halved_bpm = 60.0 / (median_interval * 2) if median_interval > 0 else bpm
-            if 60 <= halved_bpm <= 120:
-                half_beat_interval = median_interval * 2
-                close_to_double = np.sum(
-                    np.abs(intervals - half_beat_interval) < half_beat_interval * 0.2
-                )
-                if close_to_double > len(intervals) * 0.3:
-                    bpm = halved_bpm
-                    logger.info(f"BPM 翻倍修正: {bpm * 2:.1f} → {bpm:.1f}")
+        # BPM 翻倍修正：检测器常将 ~80 BPM 误检为 ~160 BPM
+        if bpm > 140:
+            halved = bpm / 2
+            if 60 <= halved <= 120:
+                bpm = halved
+                logger.info(f"BPM 翻倍修正: {bpm * 2:.1f} → {bpm:.1f}")
 
         return beat_times.tolist(), round(bpm, 1)
 

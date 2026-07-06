@@ -43,9 +43,14 @@ DEMUCS_JOBS = 4
 DEMUCS_SHIFTS = 1
 
 # basic-pitch 配置
-BASIC_PITCH_ONSET_THRESHOLD = 0.35   # 降低阈值，检测更多音符
-BASIC_PITCH_FRAME_THRESHOLD = 0.2    # 降低阈值，减少音符断裂
-BASIC_PITCH_MIN_NOTE_LENGTH = 58.0   # 毫秒，允许更短音符
+BASIC_PITCH_ONSET_THRESHOLD = 0.5    # 起拍阈值：提高以减少泛音误检
+BASIC_PITCH_FRAME_THRESHOLD = 0.3    # 帧阈值：提高以减少噪声音符
+BASIC_PITCH_MIN_NOTE_LENGTH = 100.0  # 毫秒，最短音符时长
+
+# 音符后处理配置
+MIN_NOTE_AMPLITUDE = 0.1             # 最小振幅，低于此值的音符视为噪声
+MIN_MIDI_PITCH = 36                  # 最低 MIDI 音高 (C2 ≈ 65Hz)，低于此为次低频噪声
+MERGE_GAP_THRESHOLD = 0.08           # 秒，同音高音符间隔小于此值则合并
 
 # 人声分离能量比阈值：低于此值说明非人声音乐，回退用原始音频
 DEMUCS_VOCALS_ENERGY_RATIO_THRESHOLD = 0.20
