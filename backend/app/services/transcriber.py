@@ -202,3 +202,32 @@ class NoteTranscriber:
         )
 
         return merged
+
+    def transcribe_melody(
+        self,
+        audio_path: str | Path,
+        instrument_config: dict[str, Any],
+    ) -> list[tuple]:
+        """使用 Melodia 风格引擎从多声部音乐中提取主旋律。
+
+        基于 PYIN 音高追踪 + 旋律轮廓选择，专为器乐独奏/合奏设计，
+        每帧只追踪一个最强音高，天然滤除和声/伴奏。
+
+        Args:
+            audio_path: WAV/MP3 文件路径
+            instrument_config: 乐器配置
+
+        Returns:
+            note_events: 已含后处理
+        """
+        from app.services.melody import MelodyExtractor
+
+        extractor = MelodyExtractor()
+        note_events = extractor.extract(str(audio_path), instrument_config)
+
+        logger.info(f"Melodia 引擎原始输出: {len(note_events)} 个音符")
+
+        # 后处理：去掉 PYIN 本身不会产生低频噪声，但仍需合并和 NMS
+        note_events = self._post_process_notes(note_events)
+
+        return note_events

@@ -146,6 +146,7 @@ def run_pipeline(
         # 智能源选择：检测 vocals 能量比，过低则回退到原始音频
         # （钢琴/器乐独奏会被 Demucs 归入 "other" 而非 "vocals"）
         transcribe_source = vocals_path
+        use_instrumental_mode = False
         try:
             import numpy as np
             import soundfile as sf
@@ -164,6 +165,7 @@ def run_pipeline(
                     f"判定为非人声音乐，使用原始音频转录"
                 )
                 transcribe_source = str(task_audio)
+                use_instrumental_mode = True
             else:
                 logger.info(f"[{task_id}] vocals 能量比正常，使用分离后 vocals 轨")
         except Exception as e:
@@ -173,7 +175,23 @@ def run_pipeline(
         # === 阶段 3: 转录 ===
         _update_progress(task_id, STAGE_TRANSCRIBING, 36)
         transcriber = _get_transcriber()
-        note_events = transcriber.transcribe(transcribe_source, instrument_config)
+
+        # 智能引擎选择：
+        # - 器乐（vocals 能量比低）→ Melodia 引擎（专为多声部旋律提取）
+        # - universal 模式 → Melodia 引擎
+        # - 有人声 → basic-pitch 引擎
+        if use_instrumental_mode or instrument == "universal":
+            logger.info(
+                f"[{task_id}] 使用 Melodia 旋律提取引擎 "
+                f"(器乐={use_instrumental_mode}, 模式={instrument})"
+            )
+            note_events = transcriber.transcribe_melody(
+                transcribe_source, instrument_config
+            )
+        else:
+            note_events = transcriber.transcribe(
+                transcribe_source, instrument_config
+            )
         _update_progress(task_id, STAGE_TRANSCRIBING, 55)
         logger.info(f"[{task_id}] 转录完成: {len(note_events)} 个音符")
 

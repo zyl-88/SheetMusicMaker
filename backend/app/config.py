@@ -52,6 +52,9 @@ MIN_NOTE_AMPLITUDE = 0.1             # 最小振幅，低于此值的音符视�
 MIN_MIDI_PITCH = 36                  # 最低 MIDI 音高 (C2 ≈ 65Hz)，低于此为次低频噪声
 MERGE_GAP_THRESHOLD = 0.08           # 秒，同音高音符间隔小于此值则合并
 
+# Melodia 旋律提取配置
+MELODY_MIN_FREQ = 220.0              # Hz (A3)，低于此频率视为伴奏/低音，只追踪以上旋律
+
 # 人声分离能量比阈值：低于此值说明非人声音乐，回退用原始音频
 DEMUCS_VOCALS_ENERGY_RATIO_THRESHOLD = 0.20
 
