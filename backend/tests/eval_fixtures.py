@@ -455,10 +455,15 @@ def greedy_match(
     pred_notes: list[dict[str, Any]],
     matching: dict[str, Any],
 ) -> tuple[list[tuple[int, int]], set[int], set[int]]:
-    """一对一贪心匹配（onset 最近优先）。"""
+    """一对一贪心匹配（onset 最近优先）。
+
+    matching.duration_check=False 时只按 onset+pitch 匹配，忽略时值
+    （用于真值时值低于 basic-pitch minimum_note_length 的短音样本，见 F4）。
+    """
     onset_tol = float(matching.get("onset_tolerance_s", 0.05))
     dur_ratio = float(matching.get("duration_tolerance_ratio", 0.25))
     pitch_tol = int(matching.get("pitch_tolerance_semitones", 0))
+    check_duration = bool(matching.get("duration_check", True))
     pairs: list[tuple[float, int, int]] = []
     for gi, gt in enumerate(gt_notes):
         for pi, pred in enumerate(pred_notes):
@@ -467,9 +472,12 @@ def greedy_match(
                 continue
             if abs(gt["midi"] - pred["midi"]) > pitch_tol:
                 continue
-            dur_dev = abs(pred["dur_s"] - gt["dur_s"]) / max(gt["dur_s"], 1e-6)
-            if dur_dev > dur_ratio:
-                continue
+            if check_duration:
+                dur_dev = abs(pred["dur_s"] - gt["dur_s"]) / max(gt["dur_s"], 1e-6)
+                if dur_dev > dur_ratio:
+                    continue
+            else:
+                dur_dev = 0.0
             pairs.append((dt + 0.2 * dur_dev, gi, pi))
     pairs.sort()
     used_gt: set[int] = set()

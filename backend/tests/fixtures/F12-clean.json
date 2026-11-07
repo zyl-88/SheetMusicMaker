@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "id": "F12-clean",
+  "group": null,
+  "kind": "solo_staccato_octave_jumps_clean",
+  "instrument": "violin",
+  "audio": "test_audio/fixtures/F12-clean.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 120.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 2,
+    "role": "melody_line",
+    "tags": [
+      "staccato",
+      "octave_jumps",
+      "g3_boundary",
+      "core",
+      "split_of_F12"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 0.5,
+        "onset_s": 0.0,
+        "dur_s": 0.25,
+        "midi": 55,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.0,
+        "dur": 0.5,
+        "onset_s": 0.5,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 0.5,
+        "onset_s": 1.0,
+        "dur_s": 0.25,
+        "midi": 84,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.0,
+        "dur": 0.5,
+        "onset_s": 1.5,
+        "dur_s": 0.25,
+        "midi": 79,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 0.5,
+        "onset_s": 2.0,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 5.0,
+        "dur": 0.5,
+        "onset_s": 2.5,
+        "dur_s": 0.25,
+        "midi": 55,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 6.0,
+        "dur": 0.5,
+        "onset_s": 3.0,
+        "dur_s": 0.25,
+        "midi": 60,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ],
+    "duration_check": false
+  },
+  "acceptance": {
+    "recall_min": 0.7,
+    "precision_min": 0.7,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.5,
+    "note_count_deviation_max": 0.3,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.02,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": false,
+    "known_limitations": [],
+    "note": "F12-clean 重点：无颤音、0 半音容差下的 G3↔C6 八度跳进与 staccato"
+  },
+  "segments": [],
+  "special": {
+    "split_of": "F12",
+    "rationale": "F12 原样本的 violin 音色带 ±1.4 半音颤音，0 半音容差下无法区分“素材诱导的音高偏差”与“产品漏检”。本样本去掉颤音、保持 0 半音容差，专门检验八度跳进选线；颤音鲁棒性另见 F12-vibrato。原 F12 保留作历史对照。",
+    "duration_policy": "关闭时值检查：basic-pitch 对 250ms 断奏音输出约 0.313s（+25.2%），恰好在 ±25% 边界外 1ms，会把“音高+onset 全对”的 legacy 结果判成 0。本样本只评 onset+pitch（时值漂移另见 F4/F12 原样本）。",
+    "decided_at": "2026-11-07",
+    "decided_by": "验收方（独立验收）"
+  },
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "violin",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

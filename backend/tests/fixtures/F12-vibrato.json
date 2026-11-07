@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "id": "F12-vibrato",
+  "group": null,
+  "kind": "solo_staccato_octave_jumps_vibrato",
+  "instrument": "violin",
+  "audio": "test_audio/fixtures/F12-vibrato.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 120.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 2,
+    "role": "melody_line",
+    "tags": [
+      "staccato",
+      "octave_jumps",
+      "g3_boundary",
+      "vibrato_robustness",
+      "split_of_F12"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 0.5,
+        "onset_s": 0.0,
+        "dur_s": 0.25,
+        "midi": 55,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.0,
+        "dur": 0.5,
+        "onset_s": 0.5,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 0.5,
+        "onset_s": 1.0,
+        "dur_s": 0.25,
+        "midi": 84,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.0,
+        "dur": 0.5,
+        "onset_s": 1.5,
+        "dur_s": 0.25,
+        "midi": 79,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 0.5,
+        "onset_s": 2.0,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 5.0,
+        "dur": 0.5,
+        "onset_s": 2.5,
+        "dur_s": 0.25,
+        "midi": 55,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 6.0,
+        "dur": 0.5,
+        "onset_s": 3.0,
+        "dur_s": 0.25,
+        "midi": 60,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 1,
+    "match_roles": [
+      "melody"
+    ],
+    "duration_check": false
+  },
+  "acceptance": {
+    "recall_min": 0.7,
+    "precision_min": 0.7,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.5,
+    "note_count_deviation_max": 0.3,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.02,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": false,
+    "known_limitations": [
+      "颤音导致 ±1 半音音高抖动，容差已显式放宽到 ±1"
+    ],
+    "note": "F12-vibrato 重点：颤音鲁棒性（±1 半音容差），不考核精确音高"
+  },
+  "segments": [],
+  "special": {
+    "split_of": "F12",
+    "rationale": "保留 ±1.4 半音颤音，音高容差显式放宽到 ±1 半音（写进 matching），用来单独衡量颤音鲁棒性；音高精确度不再用本样本考核。",
+    "duration_policy": "关闭时值检查：与 F12-clean 相同，250ms 断奏被 basic-pitch 报成 ~0.313s，±25% 容差会掩盖音高/漏检的真实差异。",
+    "decided_at": "2026-11-07",
+    "decided_by": "验收方（独立验收）"
+  },
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "violin",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

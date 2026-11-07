@@ -94,6 +94,8 @@ class Spec:
     group: str | None = None
     audio_ext: str = ".wav"
     reverb_wet: float = 0.0
+    vibrato: bool = True
+    matching: dict[str, Any] = field(default_factory=dict)
 
 
 def n(start: float, dur: float, midi: int, role: str = "melody", gain: float = 0.0) -> Note:
@@ -219,10 +221,22 @@ F4 = Spec(
             "diagnostic": True,
             "expected": {"melody": [1, 1, 1], "basic_pitch": [0, 0, 4]},
             "note": "未执行校准：理论推算，首次运行后按实测更新",
-        }
+        },
+        "short_note_eval": {
+            "decision": "只评 onset+pitch，不评时值",
+            "reason": (
+                "真值时值 60/90ms 低于 basic-pitch 的 minimum_note_length=100ms，"
+                "在 duration ±25% 口径下结构性不可能命中；保留原 60/90/120ms 音频设计"
+                "（用于观察同音反复合并），只把评分口径改为 onset+pitch。"
+            ),
+            "decided_at": "2026-11-07",
+            "decided_by": "验收方（独立验收）",
+        },
     },
+    matching={"duration_check": False},
     acceptance=A(recall_min=0.6, precision_min=0.5, note_count_deviation_max=0.5,
-                 note="F4 重点：MERGE_GAP_THRESHOLD=0.08s 对短音符的影响"),
+                 note="F4 重点：MERGE_GAP_THRESHOLD=0.08s 对短音符的影响；"
+                      "评分只看 onset+pitch（见 special.short_note_eval）"),
 )
 
 F5 = Spec(
@@ -279,6 +293,42 @@ F7 = Spec(
         chord(4, 4, [53, 57, 60], "harmony", 4.0),
     ),
     acceptance=A(recall_min=0.6, precision_min=0.75, bass_leakage_max=0.3, octave_error_rate_max=0.15),
+)
+
+F7_LONG = Spec(
+    id="F7-long",
+    kind="vocal_with_louder_band_long",
+    instrument="universal",
+    bpm=100.0,
+    time_signature="4/4",
+    key="A minor",
+    role="melody_line",
+    tags=["vocal", "basic_pitch", "band_masking", "long_form", "split_of_F7"],
+    measures=10,
+    engine="basic_pitch",
+    timbre="vocal",
+    timbre_by_role={"harmony": "pad"},
+    notes=merge(
+        [n(rep * 8 + i, 1, p)
+         for rep in range(5) for i, p in enumerate([64, 67, 69, 72, 72, 69, 67, 64])],
+        *[chord(rep * 8 + half * 4, 4,
+                [57, 60, 64] if half == 0 else [53, 57, 60], "harmony", 4.0)
+          for rep in range(5) for half in range(2)],
+    ),
+    special={
+        "split_of": "F7",
+        "rationale": (
+            "F7 只有 5.3s，librosa 节拍检测退化为 Beats=1、BPM 117.5（真值 100），"
+            "量化网格错位会把 0.6s 的旋律音切成 1/16 碎片。本样本把同一动机重复 5 遍到 ~24s，"
+            "用于在节拍可检测的前提下单独判断“人声路径的音高与数量是否可用”；"
+            "原 F7 保留作短片长历史对照。"
+        ),
+        "decided_at": "2026-11-07",
+        "decided_by": "验收方（独立验收）",
+    },
+    acceptance=A(recall_min=0.6, precision_min=0.75, bass_leakage_max=0.3,
+                 octave_error_rate_max=0.15,
+                 note="F7-long 重点：24s 人声+更响伴奏带，检验节拍可检测时的旋律音高与数量"),
 )
 
 F8 = Spec(
@@ -378,6 +428,73 @@ F12 = Spec(
                  note="F12 重点：G3(196Hz) 与 C6 之间的八度跳进、staccato 断奏"),
 )
 
+F12_CLEAN = Spec(
+    id="F12-clean",
+    kind="solo_staccato_octave_jumps_clean",
+    instrument="violin",
+    bpm=120.0,
+    time_signature="4/4",
+    key="C major",
+    role="melody_line",
+    tags=["staccato", "octave_jumps", "g3_boundary", "core", "split_of_F12"],
+    measures=2,
+    timbre="violin",
+    vibrato=False,
+    notes=F12.notes,
+    matching={"duration_check": False},
+    special={
+        "split_of": "F12",
+        "rationale": (
+            "F12 原样本的 violin 音色带 ±1.4 半音颤音，0 半音容差下无法区分"
+            "“素材诱导的音高偏差”与“产品漏检”。本样本去掉颤音、保持 0 半音容差，"
+            "专门检验八度跳进选线；颤音鲁棒性另见 F12-vibrato。原 F12 保留作历史对照。"
+        ),
+        "duration_policy": (
+            "关闭时值检查：basic-pitch 对 250ms 断奏音输出约 0.313s（+25.2%），"
+            "恰好在 ±25% 边界外 1ms，会把“音高+onset 全对”的 legacy 结果判成 0。"
+            "本样本只评 onset+pitch（时值漂移另见 F4/F12 原样本）。"
+        ),
+        "decided_at": "2026-11-07",
+        "decided_by": "验收方（独立验收）",
+    },
+    acceptance=A(recall_min=0.7, precision_min=0.7, octave_jumps_per_8bars_max=2.5,
+                 octave_error_rate_max=0.2,
+                 note="F12-clean 重点：无颤音、0 半音容差下的 G3↔C6 八度跳进与 staccato"),
+)
+
+F12_VIBRATO = Spec(
+    id="F12-vibrato",
+    kind="solo_staccato_octave_jumps_vibrato",
+    instrument="violin",
+    bpm=120.0,
+    time_signature="4/4",
+    key="C major",
+    role="melody_line",
+    tags=["staccato", "octave_jumps", "g3_boundary", "vibrato_robustness", "split_of_F12"],
+    measures=2,
+    timbre="violin",
+    vibrato=True,
+    notes=F12.notes,
+    matching={"pitch_tolerance_semitones": 1, "duration_check": False},
+    special={
+        "split_of": "F12",
+        "rationale": (
+            "保留 ±1.4 半音颤音，音高容差显式放宽到 ±1 半音（写进 matching），"
+            "用来单独衡量颤音鲁棒性；音高精确度不再用本样本考核。"
+        ),
+        "duration_policy": (
+            "关闭时值检查：与 F12-clean 相同，250ms 断奏被 basic-pitch 报成 ~0.313s，"
+            "±25% 容差会掩盖音高/漏检的真实差异。"
+        ),
+        "decided_at": "2026-11-07",
+        "decided_by": "验收方（独立验收）",
+    },
+    acceptance=A(recall_min=0.7, precision_min=0.7, octave_jumps_per_8bars_max=2.5,
+                 octave_error_rate_max=0.2,
+                 known_limitations=["颤音导致 ±1 半音音高抖动，容差已显式放宽到 ±1"],
+                 note="F12-vibrato 重点：颤音鲁棒性（±1 半音容差），不考核精确音高"),
+)
+
 F13 = Spec(
     id="F13",
     kind="melody_short_dip",
@@ -438,6 +555,8 @@ F15 = Spec(
 
 FIXTURES: list[Spec] = [
     F1, F2, F3, F4, F5, F6, F7, F8, F9_C, F9_Am, F10, F11, F12, F13, F14, F15,
+    # 追加样本放在末尾，避免改变既有 fixture 的合成 RNG 序号（index）
+    F12_CLEAN, F12_VIBRATO, F7_LONG,
 ]
 
 
@@ -491,7 +610,7 @@ def build_gt(spec: Spec, audio_rel: str) -> dict[str, Any]:
         "audio": audio_rel,
         "engine": "basic_pitch" if spec.engine == "basic_pitch" else "melody",
         "expected": expected,
-        "matching": dict(DEFAULT_MATCHING),
+        "matching": {**DEFAULT_MATCHING, **spec.matching},
         "acceptance": spec.acceptance,
         "segments": segments,
         "special": spec.special,
@@ -550,7 +669,8 @@ TIMBRE_PARTIALS: dict[str, list[float]] = {
 }
 
 
-def synth_note(rng: Any, dur_s: float, midi: int, timbre: str, gain_db: float) -> Any:
+def synth_note(rng: Any, dur_s: float, midi: int, timbre: str, gain_db: float,
+               vibrato: bool = True) -> Any:
     """加法合成单个音符：谐波 + ADSR + 可选颤音 + 随机微失谐。"""
     import numpy as np
 
@@ -559,8 +679,8 @@ def synth_note(rng: Any, dur_s: float, midi: int, timbre: str, gain_db: float) -
     f0 = 440.0 * 2 ** ((midi - 69) / 12.0) * (1.0 + rng.normal(0.0, 0.0015))
     partials = TIMBRE_PARTIALS.get(timbre, TIMBRE_PARTIALS["piano"])
 
-    # 颤音：器乐/人声用轻微频率调制
-    if timbre in ("vocal", "violin"):
+    # 颤音：器乐/人声用轻微频率调制；vibrato=False 时生成干净音高样本
+    if vibrato and timbre in ("vocal", "violin"):
         t_mod = t + 0.0025 * np.sin(2 * np.pi * 5.5 * t + rng.uniform(0, 2 * np.pi))
     else:
         t_mod = t
@@ -622,7 +742,8 @@ def synthesize(spec: Spec, out_path: Path, index: int) -> None:
         onset_s = beat_to_seconds(note.start, spec.bpm, spec.tempo_map)
         end_s = beat_to_seconds(note.start + note.dur, spec.bpm, spec.tempo_map)
         timbre = spec.timbre_by_role.get(note.role, spec.timbre)
-        block = synth_note(rng, end_s - onset_s, note.midi, timbre, note.gain_db)
+        block = synth_note(rng, end_s - onset_s, note.midi, timbre, note.gain_db,
+                           vibrato=spec.vibrato)
         offset = int(onset_s * SAMPLE_RATE)
         buffer[offset: offset + len(block)] += block
 
@@ -711,7 +832,19 @@ def main(argv: list[str] | None = None) -> int:
         write_json(gt_dir / f"{spec.id}.json", gt)
         manifest_entries.append(manifest_entry(spec, audio_rel))
 
-    write_json(gt_dir / "manifest.json", build_manifest(manifest_entries))
+    # manifest 按 id 合并，避免 --only 只写回部分 fixture 时丢掉其它条目
+    manifest_path = gt_dir / "manifest.json"
+    merged: dict[str, dict[str, Any]] = {}
+    if manifest_path.exists():
+        try:
+            old = json.loads(manifest_path.read_text(encoding="utf-8"))
+            merged = {item["id"]: item for item in old.get("fixtures", [])}
+        except (json.JSONDecodeError, KeyError):
+            merged = {}
+    merged.update({item["id"]: item for item in manifest_entries})
+    ordered = [merged[spec.id] for spec in FIXTURES if spec.id in merged]
+    ordered += [item for fid, item in merged.items() if fid not in {s.id for s in FIXTURES}]
+    write_json(manifest_path, build_manifest(ordered))
 
     mode = "仅 GT JSON（音频未生成）" if args.gt_only else f"音频 {generated_audio} 个 + GT"
     print(f"完成：{mode}；GT {len(manifest_entries)} 个；目录 {gt_dir}")

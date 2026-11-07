@@ -16,14 +16,17 @@
     "F15": "a59cd3ae7f10f8236104a77a0e1164e9d68ccf2535b2b15b32340ab633b4892b",
     "F2": "d829884ea0def83ec64f9f1d9516dd4fb4ccbe34b53fed19dae5b2c3ffd4890f",
     "F3": "60971b37874aca6a62d3008f20a9eb006e984a657e2f617a5fe0c5ecedba0108",
-    "F4": "edf98031331cdc5de10c2d4e248c16980bb9bbc66d80aee3fb89f80129d378fb",
+    "F4": "20480e43b345ac57e28b36a361e642b229b824ad8e1f365a5754f9df2f31cf7a",
     "F5": "c075547e3fbac7cca97624ca4c16c4ec3a72e483742999b6a09cd1575156822a",
     "F6": "c0a1b487d467544c26668d117ab5f77eef1ab66250721ac6894b4010661144e9",
     "F7": "a9ef75eed13d3d13159f99a5a75758354c747aa37e91fe581e1fad7fde18d53f",
     "F8": "b95f21bf8a1929f61d08d2dd27a618ef74660d2b2ad16a1986082d251631d18e",
     "F9_Am": "a103f6c7871de75c8eadb6597f7a9a22c7f6842bb6d19316fa21645c2879ac24",
     "F9_C": "60a08a194571942166a481c5ed28a81e05ee4d8412a8d036e956ecd94513750c",
-    "manifest": "71c844adb025a04d1325d8a7f6f703557f80d3c80b1e20b97cdc00a2f3c0f071"
+    "manifest": "77b7d301cad9a32b8a90aa84a378b90869a1765ac5a4bbea085177b533342b9b",
+    "F12-clean": "9112726bf92d8e887b7b006bc614ae939de025cd210837e1beda2402cf2ac4db",
+    "F12-vibrato": "970ec570e78a5d01e8cbc8401e7d2eb5803a67603ec72c34dc07139252e4ba8b",
+    "F7-long": "310998ff526467e8db5a186585d37fdfde8f8aa22cb97837d957f413a5e2f149"
   },
   "summary": {
     "total": 16,
@@ -2613,5 +2616,32 @@
         }
       ]
     }
-  }
+  },
+  "gt_policy_changes": [
+    {
+      "date": "2026-11-07",
+      "fixtures": [
+        "F4"
+      ],
+      "change": "matching.duration_check=false：F4 只评 onset+pitch，不评时值",
+      "reason": "GT 时值 60/90/120ms 低于 basic-pitch minimum_note_length=100ms，duration±25% 口径结构性不可命中",
+      "source": "验收方独立验收（P1-final 复测）"
+    },
+    {
+      "date": "2026-11-07",
+      "fixtures": [
+        "F12-clean",
+        "F12-vibrato"
+      ],
+      "change": "新增两个样本拆分原 F12 的考核维度：clean 无颤音/0 半音容差；vibrato 有颤音/±1 半音容差",
+      "reason": "原 F12 的 violin 音色带 ±1.4 半音颤音，无法区分素材诱导偏差与产品漏检",
+      "source": "验收方独立验收（P1-final 复测）"
+    }
+  ],
+  "fixtures_added_after_baseline": [
+    "F12-clean",
+    "F12-vibrato",
+    "F7-long"
+  ],
+  "fixtures_added_note": "ab3dcf9 基线中不存在，无历史数值；首个实测见 docs/acceptance/retests/fixtures/ （F12-clean/F12-vibrato: d79bc3b_20261107-212859_GT-adjust-v2；F7-long: 9e0a4a9_20261107-212459_F7-split）"
 }

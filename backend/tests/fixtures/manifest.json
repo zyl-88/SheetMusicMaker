@@ -4,7 +4,7 @@
   "sample_rate": 22050,
   "audio_dir": "test_audio/fixtures",
   "gt_dir": "backend/tests/fixtures",
-  "total": 16,
+  "total": 19,
   "fixtures": [
     {
       "id": "F1",
@@ -289,6 +289,66 @@
       "tags": [
         "gap_fill",
         "0.1_0.3_0.6_beat"
+      ]
+    },
+    {
+      "id": "F12-clean",
+      "group": null,
+      "kind": "solo_staccato_octave_jumps_clean",
+      "instrument": "violin",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F12-clean.wav",
+      "gt": "backend/tests/fixtures/F12-clean.json",
+      "priority": "core",
+      "diagnostic": false,
+      "notes": 7,
+      "measures": 2,
+      "tags": [
+        "staccato",
+        "octave_jumps",
+        "g3_boundary",
+        "core",
+        "split_of_F12"
+      ]
+    },
+    {
+      "id": "F12-vibrato",
+      "group": null,
+      "kind": "solo_staccato_octave_jumps_vibrato",
+      "instrument": "violin",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F12-vibrato.wav",
+      "gt": "backend/tests/fixtures/F12-vibrato.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 7,
+      "measures": 2,
+      "tags": [
+        "staccato",
+        "octave_jumps",
+        "g3_boundary",
+        "vibrato_robustness",
+        "split_of_F12"
+      ]
+    },
+    {
+      "id": "F7-long",
+      "group": null,
+      "kind": "vocal_with_louder_band_long",
+      "instrument": "universal",
+      "engine": "basic_pitch",
+      "audio": "test_audio/fixtures/F7-long.wav",
+      "gt": "backend/tests/fixtures/F7-long.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 70,
+      "measures": 10,
+      "tags": [
+        "vocal",
+        "basic_pitch",
+        "band_masking",
+        "long_form",
+        "split_of_F7"
       ]
     }
   ]
