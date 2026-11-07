@@ -86,8 +86,9 @@ class NoteTranscriber:
         logger.info(f"basic-pitch 原始输出: {raw_count} 个音符")
 
         # 后处理：过滤噪声 + 选线 + 去重合并
+        dp_mode = current_strategy() == "dp_register"
         note_events = self._post_process_notes(
-            note_events, select_melody_line=(current_strategy() == "dp_register")
+            note_events, select_melody_line=dp_mode, merge_same_pitch=not dp_mode
         )
 
         if not note_events:
@@ -96,7 +97,10 @@ class NoteTranscriber:
         return note_events
 
     def _post_process_notes(
-        self, note_events: list[tuple], select_melody_line: bool = False
+        self,
+        note_events: list[tuple],
+        select_melody_line: bool = False,
+        merge_same_pitch: bool = True,
     ) -> list[tuple]:
         """对 basic-pitch 原始输出进行后处理。
 
@@ -106,11 +110,14 @@ class NoteTranscriber:
         3. 过滤振幅过弱的音符（< MIN_NOTE_AMPLITUDE）
         4. 按开始时间排序
         5. 选线（legacy_nms：振幅优先非最大抑制；dp_register：音区优先选线）
-        6. 合并同音高且间隔很小的连续音符
+        6. 可选合并同音高且间隔很小的连续音符
 
         Args:
             note_events: [(start_s, end_s, midi, amplitude, pitch_bend)]
             select_melody_line: True 时使用 dp_register 选线，否则保持 legacy NMS
+            merge_same_pitch: True 时执行间隔合并。basic-pitch 的每个音符都由
+                独立起音点生成，DP 路径应传 False，否则会吞掉真实同音反复
+                （F4）；PYIN/legacy 路径需要合并尾部续段（F13）。
 
         Returns:
             清洗后的 note_events
@@ -171,7 +178,9 @@ class NoteTranscriber:
         if not accepted:
             return []
 
-        # --- 步骤 6：合并同音高连续音符 ---
+        # --- 步骤 6：按需合并同音高连续音符 ---
+        if not merge_same_pitch:
+            return accepted
         return self._merge_same_pitch(accepted)
 
     def _suppress_overlaps(self, filtered: list[tuple]) -> list[tuple]:
@@ -242,7 +251,12 @@ class NoteTranscriber:
         return selected
 
     def _merge_same_pitch(self, accepted: list[tuple]) -> list[tuple]:
-        """合并同音高且间隔小于 MERGE_GAP_THRESHOLD 的连续音符。"""
+        """合并同音高且间隔小于 MERGE_GAP_THRESHOLD 的连续音符。
+
+        仅用于 legacy/非 DP 路径：PYIN 的音符切分会在同一音符尾部留下一段
+        12ms 重叠（一个 hop）的续段，需要按间隔合并；basic-pitch 的每个音符
+        都由独立起音点生成，应用同一规则会把真实的同音反复吞掉（F4）。
+        """
         merged = []
         for event in accepted:
             if not merged:

@@ -50,7 +50,7 @@ BASIC_PITCH_MIN_NOTE_LENGTH = 100.0  # 毫秒，最短音符时长
 # 音符后处理配置
 MIN_NOTE_AMPLITUDE = 0.1             # 最小振幅，低于此值的音符视为噪声
 MIN_MIDI_PITCH = 36                  # 最低 MIDI 音高 (C2 ≈ 65Hz)，低于此为次低频噪声
-MERGE_GAP_THRESHOLD = 0.08           # 秒，同音高音符间隔小于此值则合并
+MERGE_GAP_THRESHOLD = 0.08           # 秒，同音高音符间隔小于此值则合并（legacy/PYIN 路径）
 
 # Melodia 旋律提取配置（音域下限直接采用乐器 min_freq，不再统一抬高到 220Hz）
 MELODY_LINE_STRATEGY = "dp_register"  # 主旋律线选择策略：legacy_nms / dp_register（可用同名环境变量覆盖）
