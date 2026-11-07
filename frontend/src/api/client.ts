@@ -79,6 +79,8 @@ export function pollTask(
 ): Promise<TaskStatus> {
   return new Promise((resolve, reject) => {
     let stopped = false
+    let networkRetries = 0
+    const MAX_NETWORK_RETRIES = 3
 
     const onAbort = () => {
       stopped = true
@@ -90,6 +92,7 @@ export function pollTask(
       if (stopped) return
       try {
         const s = await getTaskStatus(taskId)
+        networkRetries = 0 // 请求成功则重置重试计数
         onUpdate(s)
         if (s.status === 'completed') {
           stopped = true
@@ -102,6 +105,12 @@ export function pollTask(
           return
         }
       } catch (e) {
+        // 仅对网络层错误（TypeError）做有限重试，避免瞬时抖动误判任务失败
+        if (e instanceof TypeError && networkRetries < MAX_NETWORK_RETRIES) {
+          networkRetries += 1
+          setTimeout(tick, POLL_INTERVAL)
+          return
+        }
         stopped = true
         reject(e)
         return

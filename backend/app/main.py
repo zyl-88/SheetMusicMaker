@@ -53,11 +53,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS 配置
+# CORS 配置（本地局域网工具，全开放且无需凭证）
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

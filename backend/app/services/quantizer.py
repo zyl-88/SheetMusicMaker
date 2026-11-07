@@ -30,74 +30,106 @@ class NoteQuantizer:
         Returns:
             music21 stream.Stream
         """
-        from music21 import key, meter, note, tempo as m21tempo
+        from music21 import note
 
         if not note_events:
             logger.warning("无音符事件可量化，返回空 Stream")
             return self._create_empty_stream(analysis)
 
-        bpm = analysis["bpm"]
+        bpm = float(analysis.get("bpm") or 120.0)
+        if bpm <= 0:
+            bpm = 120.0
         beat_dur = 60.0 / bpm  # 每拍秒数
         div = QUANTIZE_DIVISION  # 量化精度：一拍 div 等分
+
+        # 用检测到的节拍序列做「时间 → 拍位置」映射。
+        # 只用 t/beat_dur 会忽略节拍相位和速度漂移，导致整份乐谱节奏整体错位。
+        beats = [float(b) for b in (analysis.get("beats") or [])]
+        use_beat_grid = False
+        if len(beats) >= 4:
+            intervals = sorted(b - a for a, b in zip(beats, beats[1:]) if b > a)
+            if intervals:
+                median_interval = intervals[len(intervals) // 2]
+                if 0.2 <= median_interval <= 2.0:
+                    beat_dur = median_interval
+                    use_beat_grid = True
+
+        def time_to_beat(t: float) -> float:
+            """把秒映射为连续的拍位置（beats 数组线性插值）。"""
+            if not use_beat_grid:
+                return t / beat_dur
+            if t <= beats[0]:
+                return (t - beats[0]) / beat_dur
+            if t >= beats[-1]:
+                return (len(beats) - 1) + (t - beats[-1]) / beat_dur
+            lo, hi = 0, len(beats) - 1
+            while lo < hi - 1:
+                mid = (lo + hi) // 2
+                if beats[mid] <= t:
+                    lo = mid
+                else:
+                    hi = mid
+            span = beats[hi] - beats[lo]
+            frac = (t - beats[lo]) / span if span > 0 else 0.0
+            return lo + frac
 
         # 创建 Stream 并设置元数据
         s = self._create_empty_stream(analysis)
 
-        # 按开始时间排序
-        sorted_events = sorted(note_events, key=lambda e: e[0])
-
         midi_low = instrument_config["midi_low"]
         midi_high = instrument_config["midi_high"]
+
+        # 时间映射 + 量化到 1/16 网格
+        events: list[tuple[float, float, int, float]] = []
+        for start_s, end_s, midi_pitch, amp, *_ in sorted(note_events, key=lambda e: e[0]):
+            if end_s <= start_s:
+                continue
+
+            start_raw = time_to_beat(start_s)
+            end_raw = time_to_beat(end_s)
+            start_q = round(start_raw * div) / div
+            duration_q = round((end_raw - start_raw) * div) / div
+            if duration_q <= 0:
+                duration_q = 1.0 / div  # 最短 1/16
+
+            pitch_int = int(round(midi_pitch))
+            pitch_int = max(midi_low, min(midi_high, pitch_int))
+            events.append((start_q, duration_q, pitch_int, float(amp)))
+
+        if not events:
+            return self._create_empty_stream(analysis)
+
+        # 节拍网格起点可能晚于首个音符，整体平移使最小时值为 0
+        min_start = min(e[0] for e in events)
+        if min_start < 0:
+            events = [(st - min_start, d, p, a) for st, d, p, a in events]
+            events.sort(key=lambda e: e[0])
+
+        # 消除重叠：单声部谱面中后一个音符不得早于前一个的结束
+        normalized: list[tuple[float, float, int, float]] = []
+        cursor = 0.0
+        for start_q, duration_q, pitch_int, amp in events:
+            if start_q < cursor - 1e-6:
+                start_q = cursor
+            normalized.append((start_q, duration_q, pitch_int, amp))
+            cursor = start_q + duration_q
 
         current_offset = 0.0  # 当前位置（四分音符单位）
         # 小间隙阈值（四分音符单位）：小于此值的间隙通过延长前一个音符填充
         gap_fill_threshold = 0.5  # 1/2 拍 = 1/8 音符
-
         prev_note = None  # 记录前一个音符，用于延长
 
-        for start_s, end_s, midi_pitch, amp, *rest in sorted_events:
-            # 跳过无效音符
-            if end_s <= start_s:
-                continue
-
-            # 秒 → 四分音符单位
-            start_q = start_s / beat_dur
-            end_q = end_s / beat_dur
-            duration_q = end_q - start_q
-
-            # 量化到 1/16 网格
-            start_q = round(start_q * div) / div
-            duration_q = round(duration_q * div) / div
-
-            if duration_q <= 0:
-                duration_q = 1.0 / div  # 最短 1/16
-
+        for start_q, duration_q, pitch_int, amp in normalized:
             # 处理间隙
             if start_q > current_offset + 0.01:  # 有间隙
-                gap = start_q - current_offset
-                gap = round(gap * div) / div
-
+                gap = round((start_q - current_offset) * div) / div
                 if gap <= gap_fill_threshold and prev_note is not None:
                     # 小间隙：延长前一个音符（连音效果）
                     prev_note.quarterLength += gap
-                    # current_offset 不变，因为前一个音符延长了
                 elif gap > 0:
                     # 大间隙：插入休止符
-                    rest_dur = gap
-                    r = note.Rest(quarterLength=rest_dur)
-                    s.insert(current_offset, r)
+                    s.insert(current_offset, note.Rest(quarterLength=gap))
                     current_offset = start_q
-                # gap == 0 时不处理
-            elif start_q < current_offset - 0.01:
-                # 音符开始时间早于当前位置（重叠）：跳到该音符
-                current_offset = start_q
-
-            # 音域钳制
-            pitch_int = int(round(midi_pitch))
-            if pitch_int < midi_low:
-                pitch_int = midi_low
-            elif pitch_int > midi_high:
-                pitch_int = midi_high
 
             # 创建音符
             n = note.Note(midi=pitch_int, quarterLength=duration_q)
@@ -110,8 +142,8 @@ class NoteQuantizer:
             current_offset = max(current_offset, start_q + duration_q)
 
         logger.info(
-            f"量化完成: {len(sorted_events)} 个音符, "
-            f"总时长 {current_offset:.1f} 四分音符"
+            f"量化完成: {len(normalized)} 个音符, "
+            f"总时长 {current_offset:.1f} 四分音符 (BPM={bpm:.1f})"
         )
         return s
 

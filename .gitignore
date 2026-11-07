@@ -7,6 +7,10 @@ dist/
 build/
 *.spec
 
+# 虚拟环境
+.venv/
+venv/
+
 # PyInstaller
 build/
 

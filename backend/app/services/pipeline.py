@@ -242,6 +242,13 @@ def run_pipeline(
         abc_path.write_text(export_result["abc"], encoding="utf-8")
         result["_file_paths"]["abc"] = str(abc_path)
 
+        # 任务可能已被客户端 DELETE（运行中删除），此时放弃写入结果并清理
+        current_task = task_store.get(task_id)
+        if current_task is None:
+            logger.info(f"[{task_id}] 任务已被删除，放弃写入结果")
+            cleanup_task_files(task_id)
+            return {}
+
         task_store.complete(task_id, result)
         logger.info(f"[{task_id}] 流水线完成")
 
@@ -250,6 +257,13 @@ def run_pipeline(
     except Exception as e:
         logger.error(f"[{task_id}] 流水线失败: {e}", exc_info=True)
         task_store.fail(task_id, str(e))
+        # 清理失败任务的文件（上传文件 + 任务目录），避免垃圾残留
+        try:
+            if audio_path and Path(audio_path).exists():
+                Path(audio_path).unlink()
+        except Exception:
+            pass
+        cleanup_task_files(task_id)
         raise
 
 

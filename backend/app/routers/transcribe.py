@@ -7,10 +7,11 @@ from pathlib import Path
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
-from app.config import MAX_CONCURRENT_TASKS, UPLOADS_DIR
+from app.config import MAX_CONCURRENT_TASKS, MAX_FILE_SIZE_BYTES, UPLOADS_DIR
 from app.services.instruments import INSTRUMENTS
 from app.services.pipeline import cleanup_task_files, run_pipeline
 from app.tasks.store import task_store
+from app.utils.audio import validate_extension
 
 logger = logging.getLogger("sheet_music_maker.router")
 
@@ -34,18 +35,39 @@ async def submit_transcription(
         raise HTTPException(status_code=400, detail=f"不支持的乐器: {instrument}")
 
     # 安全文件名：仅保留文件名部分（防止路径穿越）
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="文件名缺失")
     safe_name = Path(file.filename).name
-    upload_path = UPLOADS_DIR / safe_name
+    if not safe_name:
+        raise HTTPException(status_code=400, detail="文件名无效")
+
+    # 扩展名白名单校验（快速失败，避免无效文件落盘）
+    try:
+        validate_extension(safe_name)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # 先创建任务，用 task_id 前缀隔离上传文件（避免同名文件互相覆盖）
+    task_id = task_store.create(safe_name, instrument)
+    upload_path = UPLOADS_DIR / f"{task_id}_{safe_name}"
     upload_path.parent.mkdir(parents=True, exist_ok=True)
 
+    # 流式写入，避免将整个文件一次性读入内存
     with open(upload_path, "wb") as f:
-        content = await file.read()
-        f.write(content)
+        while chunk := await file.read(1024 * 1024):
+            f.write(chunk)
 
     file_size = os.path.getsize(upload_path)
 
-    # 创建任务（存储安全文件名用于后续清理）
-    task_id = task_store.create(safe_name, instrument)
+    # 服务端大小校验（前端已限制，此处为防御）
+    if file_size > MAX_FILE_SIZE_BYTES:
+        upload_path.unlink(missing_ok=True)
+        task_store.delete(task_id)
+        raise HTTPException(
+            status_code=413,
+            detail=f"文件过大: {file_size / 1024 / 1024:.1f}MB，"
+            f"最大支持 {MAX_FILE_SIZE_BYTES / 1024 / 1024:.0f}MB",
+        )
 
     logger.info(f"提交转录任务: {task_id}, 文件={safe_name}, 乐器={instrument}")
 
@@ -165,9 +187,9 @@ async def delete_task(task_id: str):
     # 清理文件
     cleanup_task_files(task_id)
 
-    # 清理上传的原始文件（如果文件名匹配）
+    # 清理上传的原始文件（task_id 前缀命名）
     if task.get("audio_filename"):
-        upload_path = UPLOADS_DIR / task["audio_filename"]
+        upload_path = UPLOADS_DIR / f"{task_id}_{task['audio_filename']}"
         try:
             if upload_path.exists():
                 upload_path.unlink()

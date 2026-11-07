@@ -198,14 +198,19 @@ class MelodyExtractor:
         }
 
     def _filter_contours(self, contours: list[dict]) -> list[dict]:
-        """过滤低质量轮廓。"""
+        """过滤低质量轮廓。
+
+        注意：轮廓是按「有声连续性」分组的，一段旋律本身就会跨多个音高
+        （八度跳进、级进走句），因此不能用音高标准差当过严的过滤条件，
+        否则整句旋律会被丢掉（表现为乐谱大段缺失、只剩零星音符和长休止）。
+        """
         filtered = []
         for c in contours:
             # 移除过短轮廓（< 80ms）
             if c["duration_s"] < 0.08:
                 continue
-            # 移除音高变化过大的轮廓（> 3 个半音的 std，放宽以适应颤音）
-            if c["pitch_std"] > 3.0:
+            # 仅剔除音高漂移明显异常的噪声轮廓（超过一个八度）
+            if c["pitch_std"] > 12.0:
                 continue
             # 平均 salience 阈值极低（钢琴 prob 普遍 0.01~0.13）
             if c["mean_salience"] < 0.005:

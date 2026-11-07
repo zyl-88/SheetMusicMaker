@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { InstrumentInfo } from '../types'
 import { FALLBACK_INSTRUMENTS } from '../types'
 
@@ -9,11 +10,14 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{ 'update:modelValue': [id: string] }>()
 
-const list = props.instruments.length > 0 ? props.instruments : FALLBACK_INSTRUMENTS
+// props.instruments 为异步加载，需用 computed 保证响应式
+const list = computed<InstrumentInfo[]>(() =>
+  props.instruments.length > 0 ? props.instruments : FALLBACK_INSTRUMENTS,
+)
 
 // 将通用乐谱分离出来单独展示
-const universalItem = list.find((i) => i.id === 'universal')
-const instrumentList = list.filter((i) => i.id !== 'universal')
+const universalItem = computed(() => list.value.find((i) => i.id === 'universal'))
+const instrumentList = computed(() => list.value.filter((i) => i.id !== 'universal'))
 
 function select(id: string) {
   if (props.disabled) return

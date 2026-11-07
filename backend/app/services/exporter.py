@@ -8,12 +8,13 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from app.services.analyzer import NOTE_NAMES
-
 logger = logging.getLogger("sheet_music_maker.exporter")
 
-# 自然音级（无升降号）
-NATURAL_PCS = {0, 2, 4, 5, 7, 9, 11}
+# 自然音级 → 字母
+NATURAL_LETTER = {0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B"}
+NATURAL_PCS = set(NATURAL_LETTER)
+# 字母 → 自然音级
+LETTER_BASE = {"C": 0, "D": 2, "E": 4, "F": 5, "G": 7, "A": 9, "B": 11}
 # 升号顺序（五度圈）：F, C, G, D, A, E, B → 音高级 6, 1, 8, 3, 10, 5, 0
 SHARP_SEQUENCE = [6, 1, 8, 3, 10, 5, 0]
 # 降号顺序：B, E, A, D, G, C, F → 音高级 10, 3, 8, 1, 6, 0, 5
@@ -24,11 +25,10 @@ MAJOR_KEY_SIGNATURES = {
     "C": 0, "G": 1, "D": 2, "A": 3, "E": 4, "B": 5, "F#": 6, "C#": 7,
     "F": -1, "Bb": -2, "Eb": -3, "Ab": -4, "Db": -5, "Gb": -6, "Cb": -7,
 }
-# 小调主音 → 对应大调主音（相对大调）
+# 小调主音 → 对应大调主音（相对大调），键为分析器规范化后的调名
 MINOR_RELATIVE_MAJOR = {
-    "A": "C", "E": "G", "B": "D", "F#": "A", "C#": "E", "G#": "B", "D#": "F#",
-    "D": "F", "G": "Bb", "C": "Eb", "F": "Ab", "Bb": "Db", "Eb": "Gb",
-    "A#": "C#", "D#": "F#", "G#": "B",
+    "C": "Eb", "C#": "E", "D": "F", "Eb": "Gb", "E": "G", "F": "Ab",
+    "F#": "A", "G": "Bb", "G#": "B", "A": "C", "Bb": "Db", "B": "D",
 }
 
 # 音高级 → 升号写法的音名
@@ -79,88 +79,101 @@ class ScoreExporter:
         }
 
     def _export_abc(self, m21_stream: Any, analysis: dict, title: str) -> str:
-        """专用 ABC 构建器：从 music21 Stream 生成 abcjs 兼容 ABC 字符串。"""
-        key_info = analysis.get("key", {"tonic": "C", "mode": "major"})
+        """专用 ABC 构建器：从 music21 Stream 生成 abcjs 兼容 ABC 字符串。
+
+        关键点：
+        - 音符跨越小节线时必须拆成两个音符并用连音线 ``-`` 连接，否则小节时值会错乱；
+        - 小节位置用取模累加，不能用 ``新位置 - 一小节长度``（长音符/长休止会累积漂移）。
+        """
         bpm = analysis.get("bpm", 120.0)
         time_sig = analysis.get("time_signature", "4/4")
         key_abc = analysis.get("key_abc", "C")
 
         # 头部
-        lines = [
+        header = [
             "X:1",
             f"T:{title}",
             f"M:{time_sig}",
             "L:1/8",  # 默认音符时值：八分音符
-            f"Q:1/4={int(bpm)}",
+            f"Q:1/4={int(round(bpm))}",
             f"K:{key_abc}",
         ]
 
-        # 获取调号的升降音高级集合
-        key_sharps, key_flats = self._get_key_accidentals(key_info["tonic"], key_info["mode"])
-        use_flats = bool(key_flats)
+        # 调号升降音高级集合（与头部 K: 完全一致）
+        key_sharps, key_flats = self._get_key_accidentals(key_abc)
+        use_flats = bool(key_flats) and not key_sharps
 
-        # 遍历 Stream 中的音符/休止符
         from music21 import note as m21note
 
-        # 获取按 offset 排序的音符和休止符
-        notes_and_rests = m21_stream.flat.notesAndRests
-
-        # 拍号信息用于小节线
         beats_per_measure = self._parse_beats_per_measure(time_sig)
         bar_length = float(beats_per_measure)  # 四分音符单位
+        EPS = 1e-4
 
-        # 构建 ABC 音符串
-        music_parts: list[str] = []
+        parts: list[str] = []
         current_bar_pos = 0.0  # 当前小节内位置（四分音符单位）
+        bars_in_line = 0
 
-        for element in notes_and_rests:
-            ql = element.quarterLength
+        for element in m21_stream.flat.notesAndRests:
+            try:
+                ql = float(element.quarterLength)
+            except (TypeError, ValueError):
+                continue
             if ql <= 0:
                 continue
 
             if isinstance(element, m21note.Rest):
-                abc_note = "z"
+                symbol, is_rest = "z", True
             elif isinstance(element, m21note.Note):
-                midi_num = element.pitch.midi
-                abc_note = self._midi_to_abc_note(midi_num, key_sharps, key_flats, use_flats)
+                symbol = self._midi_to_abc_note(
+                    element.pitch.midi, key_sharps, key_flats, use_flats
+                )
+                is_rest = False
             else:
                 continue
 
-            abc_dur = self._quarter_length_to_abc_duration(ql)
-            token = abc_note + abc_dur
-
-            # 小节线处理
-            new_pos = current_bar_pos + ql
-            if new_pos >= bar_length - 0.01:
-                # 到达小节末尾
-                music_parts.append(token + " | ")
-                current_bar_pos = new_pos - bar_length
-                if current_bar_pos < 0:
+            remaining = ql
+            while remaining > EPS:
+                space = bar_length - current_bar_pos
+                if remaining >= space - EPS:
+                    # 填满当前小节；若音符还有剩余，用连音线连到下一小节
+                    remaining -= space
+                    token = symbol + self._quarter_length_to_abc_duration(space)
+                    tie = (not is_rest) and remaining > EPS
+                    parts.append(token + ("-" if tie else ""))
+                    parts.append("|")
                     current_bar_pos = 0.0
-            else:
-                music_parts.append(token + " ")
-                current_bar_pos = new_pos
+                    bars_in_line += 1
+                    if bars_in_line % 4 == 0:
+                        parts.append("\n")
+                else:
+                    token = symbol + self._quarter_length_to_abc_duration(remaining)
+                    parts.append(token)
+                    current_bar_pos += remaining
+                    remaining = 0.0
 
-        # 合并音符串
-        music_str = "".join(music_parts).strip()
-        if not music_str.endswith("|"):
-            music_str += " |]"
+        # 拼装乐谱正文（每行不超过约 80 字符）
+        body = ""
+        line_len = 0
+        for part in parts:
+            if part == "\n":
+                body += "\n"
+                line_len = 0
+                continue
+            if line_len + len(part) + 1 > 80:
+                body += "\n"
+                line_len = 0
+            body += part + " "
+            line_len += len(part) + 1
+        body = body.strip()
 
-        # 每 4 小节换行（ABC 约定）
-        music_str = music_str.replace("| | ", "|\n")
-        # 确保每行不超过约 80 字符
-        result_lines = []
-        current_line = ""
-        for part in music_str.split(" "):
-            if len(current_line) + len(part) + 1 > 80:
-                result_lines.append(current_line.strip())
-                current_line = part + " "
-            else:
-                current_line += part + " "
-        if current_line.strip():
-            result_lines.append(current_line.strip())
+        if not body:
+            body = "z |]"
+        elif body.endswith("|"):
+            body = body[:-1].rstrip() + " |]"
+        elif not body.endswith("|]"):
+            body += " |]"
 
-        return "\n".join(lines + result_lines)
+        return "\n".join(header + body.splitlines())
 
     def _midi_to_abc_note(
         self,
@@ -173,27 +186,15 @@ class ScoreExporter:
         pitch_class = midi_num % 12
         octave = midi_num // 12 - 1  # MIDI 60 = C4
 
-        # 确定音名和临时记号
+        # 选择音名拼写：自然音级优先；变化音按调号倾向选择升/降拼写
         if pitch_class in NATURAL_PCS:
-            # 自然音级，无需临时记号
-            letter = SHARP_LETTER[pitch_class]
-            accidental = ""
-        elif pitch_class in key_sharps:
-            # 该音高级在调号中已升，无需临时记号
-            letter = SHARP_LETTER[pitch_class]
-            accidental = ""
-        elif pitch_class in key_flats:
-            # 该音高级在调号中已降，无需临时记号
+            letter = NATURAL_LETTER[pitch_class]
+        elif use_flats:
             letter = FLAT_LETTER[pitch_class]
-            accidental = ""
         else:
-            # 需要临时记号
-            if use_flats:
-                letter = FLAT_LETTER[pitch_class]
-                accidental = "_"
-            else:
-                letter = SHARP_LETTER[pitch_class]
-                accidental = "^"
+            letter = SHARP_LETTER[pitch_class]
+
+        accidental = self._accidental_for(pitch_class, letter, key_sharps, key_flats)
 
         # 八度标记
         # 八度 4 (MIDI 60-71): 大写无标记 → C, D, E, F, G, A, B
@@ -210,6 +211,34 @@ class ScoreExporter:
             abc_note = letter.lower() + "'" * (octave - 5)
 
         return accidental + abc_note
+
+    @staticmethod
+    def _accidental_for(
+        pitch_class: int, letter: str, key_sharps: set, key_flats: set
+    ) -> str:
+        """计算某音名在给定调号下所需的临时记号（含还原号 ``=``）。
+
+        ABC 的调号会作用到对应字母上，因此：
+        - 调号已经把该字母升高/降低到目标音级 → 不需要记号；
+        - 目标音级正是该字母的自然音，但调号改变了它 → 需要还原号 ``=``；
+        - 否则按半音差给 ``^`` / ``_``（必要时双升/双降）。
+        """
+        base = LETTER_BASE[letter]
+        if (base + 1) % 12 in key_sharps:
+            key_alter = 1
+        elif (base - 1) % 12 in key_flats:
+            key_alter = -1
+        else:
+            key_alter = 0
+
+        effective = (base + key_alter) % 12
+        if effective == pitch_class:
+            return ""
+        if base == pitch_class:
+            return "="
+
+        delta = (pitch_class - effective + 6) % 12 - 6
+        return {1: "^", -1: "_", 2: "^^", -2: "__"}.get(delta, "=")
 
     def _quarter_length_to_abc_duration(self, ql: float) -> str:
         """将 quarterLength 转为 ABC 时值符号（L:1/8 时默认为八分音符=0.5）。"""
@@ -234,24 +263,21 @@ class ScoreExporter:
             num = round(multiplier * 2)
             return f"{num}/2"
 
-    def _get_key_accidentals(self, tonic: str, mode: str) -> tuple[set, set]:
-        """获取调号的升号/降号音高级集合。
+    def _get_key_accidentals(self, key_abc: str) -> tuple[set, set]:
+        """根据 ABC 调名获取调号升/降号音高级集合。
+
+        Args:
+            key_abc: ABC 调名，如 "C" / "Bb" / "F#m" / "Am"
 
         Returns:
             (sharps_set, flats_set)
         """
-        # 小调转相对大调
-        if mode == "minor":
-            tonic = MINOR_RELATIVE_MAJOR.get(tonic, "C")
+        mode = "minor" if key_abc.endswith("m") else "major"
+        tonic = key_abc[:-1] if mode == "minor" else key_abc
 
-        # 处理 "Bb" 等降号主音（分析器返回的是升号写法，这里做兼容）
-        # 分析器 NOTE_NAMES 使用 "C#", "D#" 等升号写法
-        # 但 MAJOR_KEY_SIGNATURES 也包含 "Bb", "Eb" 等降号写法
-        # 如果 tonic 不在 MAJOR_KEY_SIGNATURES 中，尝试转换
-        if tonic not in MAJOR_KEY_SIGNATURES:
-            # 尝试将升号转为降号等价
-            sharp_to_flat = {"A#": "Bb", "D#": "Eb", "G#": "Ab", "C#": "Db", "F#": "Gb"}
-            tonic = sharp_to_flat.get(tonic, "C")
+        if mode == "minor":
+            # 小调按相对大调的调号处理
+            tonic = MINOR_RELATIVE_MAJOR.get(tonic, "C")
 
         sig = MAJOR_KEY_SIGNATURES.get(tonic, 0)
 

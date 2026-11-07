@@ -22,9 +22,8 @@ const visualObj = shallowRef<any>(null)
 
 const canSubmit = computed(() => !!selectedFile.value && !!selectedInstrument.value)
 
-const isUploadPhase = computed(
-  () => transcription.phase.value === 'idle' || transcription.phase.value === 'failed',
-)
+const isUploadPhase = computed(() => transcription.phase.value === 'idle')
+const isFailed = computed(() => transcription.phase.value === 'failed')
 const isProcessing = computed(
   () => transcription.phase.value === 'uploading' || transcription.phase.value === 'polling',
 )
@@ -146,7 +145,19 @@ function onRendered(v: any) {
             :status="transcription.status.value"
             :error="transcription.error.value"
           />
-          <div class="retry-area" v-if="transcription.phase.value === 'failed'">
+        </div>
+      </section>
+
+      <!-- 失败态 -->
+      <section v-else-if="isFailed" class="processing-section">
+        <div class="card">
+          <div class="processing-header">
+            <h2>处理失败</h2>
+            <div class="processing-meta text-error" v-if="transcription.error.value">
+              {{ transcription.error.value }}
+            </div>
+          </div>
+          <div class="retry-area">
             <button class="btn btn-secondary" @click="restart">重新开始</button>
           </div>
         </div>

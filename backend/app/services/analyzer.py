@@ -22,6 +22,11 @@ KRUMHANSL_MINOR = np.array(
 
 NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
+# ABC 调名规范化：优先选择升降号更少、且 abcjs 支持的写法
+# （分析器内部用升号写法，但 "A#"/"D#"/"G#" 等调名在 ABC 中无效或等价于 10/8/9 个升降号）
+ABC_MAJOR_NAMES = ["C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"]
+ABC_MINOR_NAMES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B"]
+
 
 class AudioAnalyzer:
     """音频分析器：节拍/速度/调性。"""
@@ -66,10 +71,13 @@ class AudioAnalyzer:
         try:
             from madmom.features.beats import DBNBeatTrackingProcessor, RNNBeatProcessor
             from madmom.features.tempo import TempoEstimationProcessor
-        except ImportError:
+        except Exception:
+            # numpy 2.x 下 madmom 可能在 import 阶段抛出 ImportError/ValueError/RuntimeError 等，
+            # 统一降级到 librosa.beat.beat_track
             logger.warning(
                 "madmom 不可用（未安装或 numpy 2.x 不兼容），"
-                "降级到 librosa.beat.beat_track"
+                "降级到 librosa.beat.beat_track",
+                exc_info=True,
             )
             return self._detect_beats_librosa(path)
 
@@ -84,22 +92,24 @@ class AudioAnalyzer:
         tempi = tempo_proc(act)
         bpm = float(tempi[0][0]) if len(tempi) > 0 else 120.0
 
-        # 如果 BPM 不合理，用节拍间隔估算
-        if bpm < 40 or bpm > 250:
-            if len(beats) > 1:
-                intervals = np.diff(beats)
-                median_interval = np.median(intervals)
-                bpm = 60.0 / median_interval if median_interval > 0 else 120.0
-            else:
-                bpm = 120.0
+        # 速度与节拍间隔一致性校正：tempo 估计常出现倍/半倍误差
+        if len(beats) > 1:
+            intervals = np.diff(beats)
+            median_interval = float(np.median(intervals))
+            if median_interval > 0:
+                bpm_beats = 60.0 / median_interval
+                if 40.0 <= bpm_beats <= 250.0:
+                    ratio = bpm / bpm_beats if bpm_beats > 0 else 1.0
+                    # 仅当 tempo 与节拍的倍率约等于 2（或 1/2）时才以节拍间隔为准
+                    if ratio > 1.6 or ratio < 0.625:
+                        logger.info(
+                            f"BPM 与节拍间隔不一致: tempo={bpm:.1f}, "
+                            f"节拍间隔估计={bpm_beats:.1f}，采用后者"
+                        )
+                        bpm = bpm_beats
 
-        # BPM 翻倍修正：检测器常将 ~80 BPM 误检为 ~160 BPM
-        # 简化规则：BPM > 140 且减半后在 60-120 范围，直接减半
-        if bpm > 140:
-            halved = bpm / 2
-            if 60 <= halved <= 120:
-                bpm = halved
-                logger.info(f"BPM 翻倍修正: {bpm * 2:.1f} → {bpm:.1f}")
+        if bpm < 40 or bpm > 250:
+            bpm = 120.0
 
         return beats.tolist(), round(bpm, 1)
 
@@ -123,21 +133,23 @@ class AudioAnalyzer:
         # tempo 可能是标量或数组，统一取第一个值
         bpm = float(np.atleast_1d(tempo)[0])
 
-        # 如果 BPM 不合理，用节拍间隔估算
-        if bpm < 40 or bpm > 250:
-            if len(beat_times) > 1:
-                intervals = np.diff(beat_times)
-                median_interval = np.median(intervals)
-                bpm = 60.0 / median_interval if median_interval > 0 else 120.0
-            else:
-                bpm = 120.0
+        # 速度与节拍间隔一致性校正（同 madmom 路径）
+        if len(beat_times) > 1:
+            intervals = np.diff(beat_times)
+            median_interval = float(np.median(intervals))
+            if median_interval > 0:
+                bpm_beats = 60.0 / median_interval
+                if 40.0 <= bpm_beats <= 250.0:
+                    ratio = bpm / bpm_beats if bpm_beats > 0 else 1.0
+                    if ratio > 1.6 or ratio < 0.625:
+                        logger.info(
+                            f"BPM 与节拍间隔不一致: tempo={bpm:.1f}, "
+                            f"节拍间隔估计={bpm_beats:.1f}，采用后者"
+                        )
+                        bpm = bpm_beats
 
-        # BPM 翻倍修正：检测器常将 ~80 BPM 误检为 ~160 BPM
-        if bpm > 140:
-            halved = bpm / 2
-            if 60 <= halved <= 120:
-                bpm = halved
-                logger.info(f"BPM 翻倍修正: {bpm * 2:.1f} → {bpm:.1f}")
+        if bpm < 40 or bpm > 250:
+            bpm = 120.0
 
         return beat_times.tolist(), round(bpm, 1)
 
@@ -181,16 +193,23 @@ class AudioAnalyzer:
         return "4/4"
 
     def _key_to_abc(self, key_info: dict[str, str]) -> str:
-        """将调性转为 ABC 调性标记。
+        """将调性转为合法的 ABC 调名。
+
+        分析器内部用升号写法（C#, D#, G#...），但 ABC/abcjs 对 "A#"/"D#"/"G#" 等
+        调名支持不良（等价于 10/8/9 个升降号），因此统一规范化为等音调名。
 
         Examples:
             C major → "C"
             G major → "G"
             A minor → "Am"
             F# major → "F#"
+            A# major → "Bb"
+            D# minor → "Ebm"
         """
         tonic = key_info["tonic"]
         mode = key_info["mode"]
+        pc = NOTE_NAMES.index(tonic) if tonic in NOTE_NAMES else 0
+
         if mode == "minor":
-            return f"{tonic}m"
-        return tonic
+            return f"{ABC_MINOR_NAMES[pc]}m"
+        return ABC_MAJOR_NAMES[pc]
