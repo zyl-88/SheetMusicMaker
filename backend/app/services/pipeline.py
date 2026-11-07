@@ -104,10 +104,26 @@ def run_pipeline(
     """
     logger.info(f"[{task_id}] 开始流水线: {audio_filename}, 乐器={instrument}")
 
+    dump = None
     try:
         # 获取乐器配置
         instrument_config = get_instrument(instrument)
         instrument_name = instrument_config["name"]
+
+        # DEBUG_DUMP=1 时创建旁路观测器（默认关闭时返回 None）
+        from app.services.debug_dump import create_recorder
+
+        dump = create_recorder(task_id)
+        if dump is not None:
+            dump.decide(
+                {
+                    "stage": "task",
+                    "task_id": task_id,
+                    "instrument": instrument,
+                    "audio_filename": audio_filename,
+                    "audio_path": str(audio_path),
+                }
+            )
 
         # 任务目录
         task_temp = TEMP_DIR / task_id
@@ -166,10 +182,17 @@ def run_pipeline(
                 )
                 transcribe_source = str(task_audio)
                 use_instrumental_mode = True
+                if dump is not None:
+                    dump.warn(
+                        f"vocals 能量比 {ratio:.2%} 低于阈值 "
+                        f"{DEMUCS_VOCALS_ENERGY_RATIO_THRESHOLD:.0%}，回退原始音频转录"
+                    )
             else:
                 logger.info(f"[{task_id}] vocals 能量比正常，使用分离后 vocals 轨")
         except Exception as e:
             logger.warning(f"[{task_id}] 能量比检测失败: {e}，使用 vocals 轨")
+            if dump is not None:
+                dump.warn(f"能量比检测失败: {e}，使用 vocals 轨")
         logger.info(f"[{task_id}] 人声分离完成")
 
         # === 阶段 3: 转录 ===
@@ -186,11 +209,11 @@ def run_pipeline(
                 f"(器乐={use_instrumental_mode}, 模式={instrument})"
             )
             note_events = transcriber.transcribe_melody(
-                transcribe_source, instrument_config
+                transcribe_source, instrument_config, dump=dump
             )
         else:
             note_events = transcriber.transcribe(
-                transcribe_source, instrument_config
+                transcribe_source, instrument_config, dump=dump
             )
         _update_progress(task_id, STAGE_TRANSCRIBING, 55)
         logger.info(f"[{task_id}] 转录完成: {len(note_events)} 个音符")
@@ -201,11 +224,13 @@ def run_pipeline(
         analysis = analyzer.analyze(transcribe_source)
         _update_progress(task_id, STAGE_ANALYZING, 70)
         logger.info(f"[{task_id}] 分析完成: BPM={analysis['bpm']}, Key={analysis['key']}")
+        if dump is not None:
+            dump.write("analysis", analysis)
 
         # === 阶段 5: 量化 ===
         _update_progress(task_id, STAGE_QUANTIZING, 71)
         quantizer = _get_quantizer()
-        m21_stream = quantizer.quantize(note_events, analysis, instrument_config)
+        m21_stream = quantizer.quantize(note_events, analysis, instrument_config, dump=dump)
         _update_progress(task_id, STAGE_QUANTIZING, 85)
         logger.info(f"[{task_id}] 量化完成")
 
@@ -218,6 +243,23 @@ def run_pipeline(
 
         # 清理临时文件
         _cleanup_temp(task_temp)
+
+        if dump is not None:
+            dump.finish(
+                {
+                    "task_id": task_id,
+                    "instrument": instrument,
+                    "instrument_name": instrument_name,
+                    "audio_filename": audio_filename,
+                    "duration_s": round(float(duration), 3),
+                    "use_instrumental_mode": use_instrumental_mode,
+                    "note_count": len(note_events),
+                    "bpm": analysis.get("bpm"),
+                    "key": analysis.get("key"),
+                    "time_signature": analysis.get("time_signature"),
+                    "abc_lines": len(export_result.get("abc", "").splitlines()),
+                }
+            )
 
         # 构建结果
         result = {
@@ -256,6 +298,9 @@ def run_pipeline(
 
     except Exception as e:
         logger.error(f"[{task_id}] 流水线失败: {e}", exc_info=True)
+        if dump is not None:
+            dump.warn(f"流水线失败: {e}")
+            dump.finish({"task_id": task_id, "failed": True})
         task_store.fail(task_id, str(e))
         # 清理失败任务的文件（上传文件 + 任务目录），避免垃圾残留
         try:

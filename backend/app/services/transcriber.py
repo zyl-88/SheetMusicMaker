@@ -20,6 +20,7 @@ from app.config import (
     MIN_MIDI_PITCH,
     MIN_NOTE_AMPLITUDE,
 )
+from app.services.debug_dump import DebugRecorder, notes_payload
 
 logger = logging.getLogger("sheet_music_maker.transcriber")
 
@@ -52,12 +53,14 @@ class NoteTranscriber:
         self,
         vocals_wav_path: str | Path,
         instrument_config: dict[str, Any],
+        dump: DebugRecorder | None = None,
     ) -> list[tuple]:
         """转录音频为音符事件。
 
         Args:
             vocals_wav_path: 人声 WAV 文件路径
             instrument_config: 乐器配置（含 min_freq/max_freq）
+            dump: DEBUG_DUMP=1 时的旁路观测器（None 时不做任何额外记录）
 
         Returns:
             note_events: List[(start_time_s, end_time_s, midi_pitch, amplitude, pitch_bend)]
@@ -87,8 +90,11 @@ class NoteTranscriber:
 
         # 后处理：过滤噪声 + 选线 + 去重合并
         dp_mode = current_strategy() == "dp_register"
+        if dump is not None:
+            dump.notes("raw_notes", note_events)
+            dump.decide({"stage": "engine", "engine": "basic_pitch", "strategy": current_strategy()})
         note_events = self._post_process_notes(
-            note_events, select_melody_line=dp_mode, merge_same_pitch=not dp_mode
+            note_events, select_melody_line=dp_mode, merge_same_pitch=not dp_mode, dump=dump
         )
 
         if not note_events:
@@ -101,6 +107,7 @@ class NoteTranscriber:
         note_events: list[tuple],
         select_melody_line: bool = False,
         merge_same_pitch: bool = True,
+        dump: DebugRecorder | None = None,
     ) -> list[tuple]:
         """对 basic-pitch 原始输出进行后处理。
 
@@ -136,15 +143,21 @@ class NoteTranscriber:
 
             # 过滤次低频噪声
             if midi_pitch < MIN_MIDI_PITCH:
+                if dump is not None:
+                    dump.decide({"stage": "filter", "reason": "below_min_midi", "event": notes_payload([event])[0]})
                 continue
 
             # 过滤过短音符
             duration = end_s - start_s
             if duration < min_duration_s:
+                if dump is not None:
+                    dump.decide({"stage": "filter", "reason": "too_short", "event": notes_payload([event])[0]})
                 continue
 
             # 过滤过弱音符
             if amp < MIN_NOTE_AMPLITUDE:
+                if dump is not None:
+                    dump.decide({"stage": "filter", "reason": "too_weak", "event": notes_payload([event])[0]})
                 continue
 
             filtered.append(
@@ -156,6 +169,8 @@ class NoteTranscriber:
             f"过滤: {original_count} → {filtered_count} 个音符 "
             f"(移除 {original_count - filtered_count} 个噪声/过短/过弱音符)"
         )
+        if dump is not None:
+            dump.notes("filtered_notes", filtered)
 
         if not filtered:
             return []
@@ -165,7 +180,7 @@ class NoteTranscriber:
 
         # --- 步骤 5：旋律线提取 ---
         if select_melody_line:
-            accepted = self._select_melody_line(filtered)
+            accepted = self._select_melody_line(filtered, dump=dump)
             logger.info(
                 f"旋律线选线(dp_register): {filtered_count} → {len(accepted)} 个音符"
             )
@@ -175,13 +190,21 @@ class NoteTranscriber:
         # 按开始时间重新排序
         accepted.sort(key=lambda e: (e[0], e[2]))
 
+        if dump is not None:
+            dump.notes("selected_notes", accepted)
+
         if not accepted:
             return []
 
         # --- 步骤 6：按需合并同音高连续音符 ---
         if not merge_same_pitch:
+            if dump is not None:
+                dump.notes("canonical_events", accepted)
             return accepted
-        return self._merge_same_pitch(accepted)
+        merged = self._merge_same_pitch(accepted, dump=dump)
+        if dump is not None:
+            dump.notes("canonical_events", merged)
+        return merged
 
     def _suppress_overlaps(self, filtered: list[tuple]) -> list[tuple]:
         """legacy NMS：按振幅从大到小遍历，与已接受音符重叠超过 50% 则丢弃。"""
@@ -214,7 +237,9 @@ class NoteTranscriber:
         )
         return accepted
 
-    def _select_melody_line(self, filtered: list[tuple]) -> list[tuple]:
+    def _select_melody_line(
+        self, filtered: list[tuple], dump: DebugRecorder | None = None
+    ) -> list[tuple]:
         """dp_register 选线：同一时刻优先高音区，保留每个起音点的旋律音。
 
         背景：有伴奏时 basic-pitch 会同时输出旋律与和弦/低音，旧 NMS 按振幅
@@ -232,6 +257,7 @@ class NoteTranscriber:
                 clusters[-1].append(event)
 
         selected = []
+        details = [] if dump is not None else None
         for cluster in clusters:
             max_amp = max(e[3] for e in cluster)
             amp_floor = max(SELECT_AMP_FLOOR, max_amp * AMP_KEEP_RATIO)
@@ -239,18 +265,47 @@ class NoteTranscriber:
                 (e for e in cluster if e[3] >= amp_floor), key=lambda e: (-e[2], -e[3])
             )
             if not candidates:
+                if dump is not None:
+                    dump.decide(
+                        {
+                            "stage": "selection",
+                            "reason": "below_amp_floor",
+                            "onset_s": round(float(cluster[0][0]), 4),
+                            "max_amp": round(float(max_amp), 4),
+                            "pitches": [int(e[2]) for e in cluster],
+                        }
+                    )
                 continue
 
             pick = candidates[0]
+            harmonic_fallback = False
             if len(candidates) > 1:
                 second = candidates[1]
                 if pick[2] - second[2] >= 12 and pick[3] < second[3] * HARMONIC_AMP_RATIO:
                     pick = second
+                    harmonic_fallback = True
             selected.append(pick)
+            if details is not None:
+                details.append(
+                    {
+                        "onset_s": round(float(cluster[0][0]), 4),
+                        "candidates": len(candidates),
+                        "max_amp": round(float(max_amp), 4),
+                        "picked": notes_payload([pick])[0],
+                        "harmonic_fallback": harmonic_fallback,
+                    }
+                )
 
+        if dump is not None:
+            dump.write(
+                "melody_selection",
+                {"clusters": len(clusters), "kept": len(selected), "details": details},
+            )
         return selected
 
-    def _merge_same_pitch(self, accepted: list[tuple]) -> list[tuple]:
+    def _merge_same_pitch(
+        self, accepted: list[tuple], dump: DebugRecorder | None = None
+    ) -> list[tuple]:
         """合并同音高且间隔小于 MERGE_GAP_THRESHOLD 的连续音符。
 
         仅用于 legacy/非 DP 路径：PYIN 的音符切分会在同一音符尾部留下一段
@@ -272,6 +327,15 @@ class NoteTranscriber:
                 curr_pitch == prev_pitch
                 and curr_start - prev_end < MERGE_GAP_THRESHOLD
             ):
+                if dump is not None:
+                    dump.decide(
+                        {
+                            "stage": "merge",
+                            "reason": "same_pitch_gap",
+                            "prev": notes_payload([tuple(prev)])[0],
+                            "curr": notes_payload([event])[0],
+                        }
+                    )
                 # 延长前一个音符的结束时间
                 prev[1] = max(prev_end, curr_end)
                 # 振幅取较大值
@@ -290,6 +354,7 @@ class NoteTranscriber:
         self,
         audio_path: str | Path,
         instrument_config: dict[str, Any],
+        dump: DebugRecorder | None = None,
     ) -> list[tuple]:
         """使用 Melodia 风格引擎从多声部音乐中提取主旋律。
 
@@ -303,6 +368,7 @@ class NoteTranscriber:
         Args:
             audio_path: WAV/MP3 文件路径
             instrument_config: 乐器配置
+            dump: DEBUG_DUMP=1 时的旁路观测器（None 时不做任何额外记录）
 
         Returns:
             note_events: 已含后处理
@@ -310,9 +376,11 @@ class NoteTranscriber:
         if current_strategy() == "dp_register":
             try:
                 logger.info("dp_register: 使用 basic-pitch 多音高候选替代 PYIN 单声道路径")
-                return self.transcribe(audio_path, instrument_config)
+                return self.transcribe(audio_path, instrument_config, dump=dump)
             except Exception as e:
                 logger.warning(f"basic-pitch 候选提取失败，回退 Melodia: {e}")
+                if dump is not None:
+                    dump.warn(f"basic-pitch 候选提取失败，回退 Melodia: {e}")
 
         from app.services.melody import MelodyExtractor
 
@@ -320,8 +388,11 @@ class NoteTranscriber:
         note_events = extractor.extract(str(audio_path), instrument_config)
 
         logger.info(f"Melodia 引擎原始输出: {len(note_events)} 个音符")
+        if dump is not None:
+            dump.notes("raw_notes", note_events)
+            dump.decide({"stage": "engine", "engine": "melody_pyin", "strategy": current_strategy()})
 
         # 后处理：去掉 PYIN 本身不会产生低频噪声，但仍需合并和 NMS
-        note_events = self._post_process_notes(note_events)
+        note_events = self._post_process_notes(note_events, dump=dump)
 
         return note_events

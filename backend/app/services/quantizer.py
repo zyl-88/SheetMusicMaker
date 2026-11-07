@@ -7,6 +7,7 @@ import logging
 from typing import Any
 
 from app.config import QUANTIZE_DIVISION
+from app.services.debug_dump import DebugRecorder
 
 logger = logging.getLogger("sheet_music_maker.quantizer")
 
@@ -19,6 +20,7 @@ class NoteQuantizer:
         note_events: list[tuple],
         analysis: dict[str, Any],
         instrument_config: dict[str, Any],
+        dump: DebugRecorder | None = None,
     ) -> Any:
         """量化音符事件为 music21 Stream。
 
@@ -26,6 +28,7 @@ class NoteQuantizer:
             note_events: [(start_s, end_s, midi, amplitude, pitch_bend)]
             analysis: {bpm, key, time_signature, ...}
             instrument_config: {midi_low, midi_high, ...}
+            dump: DEBUG_DUMP=1 时的旁路观测器（None 时不做任何额外记录）
 
         Returns:
             music21 stream.Stream
@@ -98,9 +101,20 @@ class NoteQuantizer:
             pitch_int = self._fit_pitch_to_range(raw_pitch, midi_low, midi_high)
             if pitch_int is None:
                 dropped += 1
+                if dump is not None:
+                    dump.decide({"stage": "range_fit", "action": "drop", "midi": raw_pitch})
                 continue
             if pitch_int != raw_pitch:
                 transposed += 1
+                if dump is not None:
+                    dump.decide(
+                        {
+                            "stage": "range_fit",
+                            "action": "transpose",
+                            "from": raw_pitch,
+                            "to": pitch_int,
+                        }
+                    )
             events.append((start_q, duration_q, pitch_int, float(amp)))
 
         if transposed or dropped:
@@ -130,6 +144,18 @@ class NoteQuantizer:
         # 小间隙阈值（四分音符单位）：小于此值的间隙通过延长前一个音符填充
         gap_fill_threshold = 0.5  # 1/2 拍 = 1/8 音符
         prev_note = None  # 记录前一个音符，用于延长
+
+        if dump is not None:
+            dump.write(
+                "quantized",
+                {
+                    "count": len(normalized),
+                    "events": [
+                        {"start_q": st, "dur_q": d, "midi": p, "amp": round(a, 4)}
+                        for st, d, p, a in normalized
+                    ],
+                },
+            )
 
         for start_q, duration_q, pitch_int, amp in normalized:
             # 处理间隙
