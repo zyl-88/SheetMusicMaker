@@ -1,4 +1,5 @@
 """集中配置常量。"""
+import os
 import sys
 from pathlib import Path
 
@@ -61,6 +62,34 @@ DEMUCS_VOCALS_ENERGY_RATIO_THRESHOLD = 0.20
 # 量化配置
 QUANTIZE_DIVISION = 4  # 量化到 1/16 音符 (一拍四等分)
 DEFAULT_TIME_SIG = "4/4"
+
+
+def tempo_value(bpm: float) -> float:
+    """三方（ABC / MusicXML / MIDI）共用的 tempo 取整规则。
+
+    统一保留 2 位小数：ABC 的 ``Q:``、MusicXML 的 ``<sound tempo>``、
+    MIDI 的 setTempo 事件必须写同一个数值，否则页面谱与下载谱会累积速度差
+    （实测 0.6% 的速度差在 138 秒上累积成 0.852 秒）。
+    """
+    return round(float(bpm), 2)
+
+
+def tempo_text(bpm: float) -> str:
+    """tempo 的可读文本（ABC / MusicXML 共用），去掉多余的尾随零。"""
+    text = "%.2f" % tempo_value(bpm)
+    return text.rstrip("0").rstrip(".")
+
+
+def tempo_map_enabled() -> bool:
+    """导出速度基准开关。
+
+    - ``per_bar``（默认）：按检测到的节拍序列写「每小节 tempo 图」，导出时
+      MIDI/MusicXML 的拍→秒换算与量化时的时间→拍映射一致。
+    - ``single``：回滚到旧的「单一速度」线性换算（``EXPORT_TEMPO_MAP=single``），
+      用于 A/B 对照与快速回退。
+    """
+    value = os.environ.get("EXPORT_TEMPO_MAP", "per_bar").strip().lower()
+    return value != "single"
 
 # 任务配置
 MAX_CONCURRENT_TASKS = 1  # CPU 限制，同时只跑一个

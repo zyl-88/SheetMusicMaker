@@ -6,7 +6,7 @@
 import logging
 from typing import Any
 
-from app.config import QUANTIZE_DIVISION
+from app.config import DEFAULT_TIME_SIG, QUANTIZE_DIVISION, tempo_map_enabled, tempo_value
 from app.services.debug_dump import DebugRecorder
 
 logger = logging.getLogger("sheet_music_maker.quantizer")
@@ -78,8 +78,9 @@ class NoteQuantizer:
             frac = (t - beats[lo]) / span if span > 0 else 0.0
             return lo + frac
 
-        # 创建 Stream 并设置元数据
-        s = self._create_empty_stream(analysis)
+        # 创建 Stream 并设置元数据（per_bar 模式下速度图在音符写入后插入）
+        use_tempo_map = tempo_map_enabled() and self._has_beat_grid(analysis)
+        s = self._create_empty_stream(analysis, include_tempo=not use_tempo_map)
 
         midi_low = instrument_config["midi_low"]
         midi_high = instrument_config["midi_high"]
@@ -211,6 +212,11 @@ class NoteQuantizer:
             f"量化完成: {len(normalized)} 个音符, "
             f"总时长 {current_offset:.1f} 四分音符 (BPM={bpm:.1f})"
         )
+
+        if use_tempo_map:
+            last_start_q = max(st for st, *_ in normalized)
+            self._insert_tempo_map(s, analysis, shift, last_start_q)
+
         return s
 
     @staticmethod
@@ -228,8 +234,12 @@ class NoteQuantizer:
                 return pitch + shift
         return None
 
-    def _create_empty_stream(self, analysis: dict[str, Any]) -> Any:
-        """创建带元数据的空 Stream。"""
+    def _create_empty_stream(self, analysis: dict[str, Any], include_tempo: bool = True) -> Any:
+        """创建带元数据的空 Stream。
+
+        include_tempo=False 时不写单一速度记号（由 ``_insert_tempo_map`` 写每小节
+        tempo 图）。
+        """
         from music21 import key, meter, tempo as m21tempo, stream
 
         s = stream.Stream()
@@ -251,7 +261,87 @@ class NoteQuantizer:
         s.append(meter.TimeSignature(ts_str))
 
         # 速度
-        bpm = analysis.get("bpm", 120.0)
-        s.append(m21tempo.MetronomeMark(number=int(bpm)))
+        if include_tempo:
+            bpm = analysis.get("bpm", 120.0)
+            # 回滚模式保持旧的整数截断（与 d79bc3b 逐条一致）；默认路径与
+            # MusicXML/MIDI/ABC 共用同一个取整规则。
+            number = int(bpm) if not tempo_map_enabled() else tempo_value(bpm)
+            s.append(m21tempo.MetronomeMark(number=number))
 
         return s
+
+    @staticmethod
+    def _has_beat_grid(analysis: dict[str, Any]) -> bool:
+        """检测到的节拍序列是否可用于 tempo 图（与 quantize 的判据一致）。"""
+        beats = [float(b) for b in (analysis.get("beats") or [])]
+        if len(beats) < 4:
+            return False
+        intervals = sorted(b - a for a, b in zip(beats, beats[1:]) if b > a)
+        if not intervals:
+            return False
+        return 0.2 <= intervals[len(intervals) // 2] <= 2.0
+
+    @staticmethod
+    def _measure_length_q(analysis: dict[str, Any]) -> float:
+        """小节长度（四分音符单位）：4/4→4，3/4→3，6/8→3。"""
+        ts = str(analysis.get("time_signature") or DEFAULT_TIME_SIG)
+        try:
+            num, den = ts.split("/")
+            length = float(num) * 4.0 / float(den)
+        except (ValueError, ZeroDivisionError):
+            return 4.0
+        return length if length > 0 else 4.0
+
+    def _insert_tempo_map(
+        self,
+        s: Any,
+        analysis: dict[str, Any],
+        shift: float,
+        last_start_q: float,
+    ) -> None:
+        """按检测到的节拍序列，为每个小节写入一条速度记号。
+
+        量化时的「秒 → 拍」用的是 beats 数组分段线性插值；导出时 music21 的
+        「拍 → 秒」只认速度记号。若只写一条平均速度，tempo 变化会被压平，
+        交付谱的起音位置会漂移（实测单曲 −534..+232ms）。这里让每小节的
+        时长等于 beats 数组给出的实际时长，导出后的拍→秒与量化输入一致。
+        """
+        from music21 import tempo as m21tempo
+
+        beats = [float(b) for b in (analysis.get("beats") or [])]
+        intervals = sorted(b - a for a, b in zip(beats, beats[1:]) if b > a)
+        beat_dur = intervals[len(intervals) // 2]
+        bar_len = self._measure_length_q(analysis)
+
+        def beat_to_time(b: float) -> float:
+            if b <= 0:
+                return beats[0] + b * beat_dur
+            if b >= len(beats) - 1:
+                return beats[-1] + (b - (len(beats) - 1)) * beat_dur
+            lo = int(b)
+            frac = b - lo
+            return beats[lo] + frac * (beats[lo + 1] - beats[lo])
+
+        last_bar = int(max(last_start_q, 0.0) // bar_len) + 1
+        inserted = 0
+        for k in range(last_bar):
+            t0 = beat_to_time(k * bar_len - shift)
+            if k == 0:
+                # MIDI 时间轴固定从 0 开始，而检测到的拍网格从 beats[0] 起算；
+                # 把这段前导偏移并入第 0 小节，保证后续各小节的绝对时间与
+                # 量化时的「秒→拍」映射一致（否则整条谱会提前 beats[0]）。
+                t0 = min(t0, 0.0)
+            t1 = beat_to_time((k + 1) * bar_len - shift)
+            duration = t1 - t0
+            if duration <= 0:
+                continue
+            bpm_bar = 60.0 * bar_len / duration
+            if not (1.0 <= bpm_bar <= 1000.0):
+                continue
+            s.insert(
+                k * bar_len,
+                m21tempo.MetronomeMark(number=tempo_value(bpm_bar), referent=1),
+            )
+            inserted += 1
+
+        logger.info(f"速度图: {inserted} 个小节 tempo（拍间隔中位 {beat_dur:.3f}s）")

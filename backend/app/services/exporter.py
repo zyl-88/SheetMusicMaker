@@ -8,7 +8,12 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from app.config import tempo_map_enabled, tempo_text, tempo_value
+
 logger = logging.getLogger("sheet_music_maker.exporter")
+
+# ABC 正文中插入速度变更行的内部标记（拼装时替换成独立的 Q: 行）
+TEMPO_TAG = "\x00Q"
 
 # 自然音级 → 字母
 NATURAL_LETTER = {0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B"}
@@ -85,7 +90,6 @@ class ScoreExporter:
         - 音符跨越小节线时必须拆成两个音符并用连音线 ``-`` 连接，否则小节时值会错乱；
         - 小节位置用取模累加，不能用 ``新位置 - 一小节长度``（长音符/长休止会累积漂移）。
         """
-        bpm = analysis.get("bpm", 120.0)
         time_sig = analysis.get("time_signature", "4/4")
         key_abc = analysis.get("key_abc", "C")
 
@@ -95,7 +99,7 @@ class ScoreExporter:
             f"T:{title}",
             f"M:{time_sig}",
             "L:1/8",  # 默认音符时值：八分音符
-            f"Q:1/4={int(round(bpm))}",
+            f"Q:1/4={self._abc_tempo(m21_stream, analysis)}",
             f"K:{key_abc}",
         ]
 
@@ -109,9 +113,19 @@ class ScoreExporter:
         bar_length = float(beats_per_measure)  # 四分音符单位
         EPS = 1e-4
 
+        # per_bar 模式下把每个小节的速度也写进 ABC 正文，保证 ABC / MusicXML /
+        # MIDI 三方逐小节一致（否则 ABC 全文只有一个 Q，下载后速度对不上）。
+        tempo_map = tempo_map_enabled()
+        n_bars = int(max(m21_stream.highestTime, 0.0) // bar_length) + 1
+        tempo_by_bar = (
+            self._tempo_by_bar(m21_stream, bar_length, n_bars) if tempo_map else {}
+        )
+        last_tempo = tempo_by_bar.get(0)
+
         parts: list[str] = []
         current_bar_pos = 0.0  # 当前小节内位置（四分音符单位）
         bars_in_line = 0
+        bar_index = 0
 
         for element in m21_stream.flat.notesAndRests:
             try:
@@ -143,8 +157,14 @@ class ScoreExporter:
                     parts.append("|")
                     current_bar_pos = 0.0
                     bars_in_line += 1
+                    bar_index += 1
                     if bars_in_line % 4 == 0:
                         parts.append("\n")
+                    if tempo_map:
+                        next_tempo = tempo_by_bar.get(bar_index)
+                        if next_tempo is not None and next_tempo != last_tempo:
+                            parts.append(TEMPO_TAG + tempo_text(next_tempo))
+                            last_tempo = next_tempo
                 else:
                     token = symbol + self._quarter_length_to_abc_duration(remaining)
                     parts.append(token)
@@ -155,8 +175,16 @@ class ScoreExporter:
         body = ""
         line_len = 0
         for part in parts:
+            if part.startswith(TEMPO_TAG):
+                # ABC 的速度变更必须是独立的一行；空行会截断乐曲，需避免连续换行
+                if not body.endswith("\n"):
+                    body += "\n"
+                body += "Q:1/4=" + part[len(TEMPO_TAG):] + "\n"
+                line_len = 0
+                continue
             if part == "\n":
-                body += "\n"
+                if not body.endswith("\n"):
+                    body += "\n"
                 line_len = 0
                 continue
             if line_len + len(part) + 1 > 80:
@@ -174,6 +202,49 @@ class ScoreExporter:
             body += " |]"
 
         return "\n".join(header + body.splitlines())
+
+    @staticmethod
+    def _abc_tempo(m21_stream: Any, analysis: dict) -> str:
+        """ABC 头部 ``Q:1/4=`` 的取值（第 0 小节的速度）。
+
+        per_bar 模式下正文还会在每个小节边界追加 ``Q:`` 行，三方逐小节一致；
+        回滚模式（``EXPORT_TEMPO_MAP=single``）保持旧的整数换算，输出不变。
+        """
+        fallback = str(int(round(float(analysis.get("bpm", 120.0)))))
+        if not tempo_map_enabled():
+            return fallback
+        marks = [
+            m for m in m21_stream.flatten().getElementsByClass("MetronomeMark")
+            if getattr(m, "number", None) is not None
+        ]
+        if not marks:
+            return fallback
+        first = min(marks, key=lambda m: float(m.offset))
+        return tempo_text(float(first.number))
+
+    @staticmethod
+    def _tempo_by_bar(
+        m21_stream: Any, bar_length: float, n_bars: int
+    ) -> dict[int, float]:
+        """「小节序号 → 该小节起点的速度」，用于 ABC 正文的速度变更行。
+
+        以小节起点采样，不假设速度记号恰好落在小节线上（复合拍号下两者可能
+        不同步），保证 Q 行总落在 ABC 实际的小节边界。
+        """
+        marks = sorted(
+            (float(m.offset), tempo_value(float(m.number)))
+            for m in m21_stream.flatten().getElementsByClass("MetronomeMark")
+            if getattr(m, "number", None) is not None
+        )
+        out: dict[int, float] = {}
+        j = -1
+        for k in range(n_bars):
+            target = k * bar_length + 1e-9
+            while j + 1 < len(marks) and marks[j + 1][0] <= target:
+                j += 1
+            if j >= 0:
+                out[k] = marks[j][1]
+        return out
 
     def _midi_to_abc_note(
         self,
