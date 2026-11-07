@@ -54,6 +54,7 @@ MERGE_GAP_THRESHOLD = 0.08           # 秒，同音高音符间隔小于此值�
 
 # Melodia 旋律提取配置
 MELODY_MIN_FREQ = 220.0              # Hz (A3)，低于此频率视为伴奏/低音，只追踪以上旋律
+MELODY_LINE_STRATEGY = "dp_register"  # 主旋律线选择策略：legacy_nms / dp_register（可用同名环境变量覆盖）
 
 # 人声分离能量比阈值：低于此值说明非人声音乐，回退用原始音频
 DEMUCS_VOCALS_ENERGY_RATIO_THRESHOLD = 0.20

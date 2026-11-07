@@ -7,6 +7,7 @@
 - 合并同音高连续音符（去重）
 """
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
@@ -14,12 +15,26 @@ from app.config import (
     BASIC_PITCH_FRAME_THRESHOLD,
     BASIC_PITCH_MIN_NOTE_LENGTH,
     BASIC_PITCH_ONSET_THRESHOLD,
+    MELODY_LINE_STRATEGY,
     MERGE_GAP_THRESHOLD,
     MIN_MIDI_PITCH,
     MIN_NOTE_AMPLITUDE,
 )
 
 logger = logging.getLogger("sheet_music_maker.transcriber")
+
+# 选线参数：同一时间窗内视为“同时发声”，振幅低于最强音一半的候选视为泛音
+ONSET_CLUSTER_S = 0.04
+AMP_KEEP_RATIO = 0.6
+HARMONIC_AMP_RATIO = 0.6
+# 孤立弱峰（无同起步竞争者）仍低于此振幅时视为噪声残留
+SELECT_AMP_FLOOR = 0.35
+
+
+def current_strategy() -> str:
+    """读取主旋律线选择策略（环境变量优先，便于 A/B 回滚）。"""
+    value = os.environ.get("MELODY_LINE_STRATEGY", MELODY_LINE_STRATEGY)
+    return value if value in ("legacy_nms", "dp_register") else MELODY_LINE_STRATEGY
 
 
 class NoteTranscriber:
@@ -70,8 +85,10 @@ class NoteTranscriber:
         raw_count = len(note_events)
         logger.info(f"basic-pitch 原始输出: {raw_count} 个音符")
 
-        # 后处理：过滤噪声 + 去重合并
-        note_events = self._post_process_notes(note_events)
+        # 后处理：过滤噪声 + 选线 + 去重合并
+        note_events = self._post_process_notes(
+            note_events, select_melody_line=(current_strategy() == "dp_register")
+        )
 
         if not note_events:
             logger.warning("后处理后未检测到任何音符")
@@ -79,7 +96,7 @@ class NoteTranscriber:
         return note_events
 
     def _post_process_notes(
-        self, note_events: list[tuple]
+        self, note_events: list[tuple], select_melody_line: bool = False
     ) -> list[tuple]:
         """对 basic-pitch 原始输出进行后处理。
 
@@ -88,10 +105,12 @@ class NoteTranscriber:
         2. 过滤时长过短的音符（< BASIC_PITCH_MIN_NOTE_LENGTH 毫秒）
         3. 过滤振幅过弱的音符（< MIN_NOTE_AMPLITUDE）
         4. 按开始时间排序
-        5. 合并同音高且间隔很小的连续音符
+        5. 选线（legacy_nms：振幅优先非最大抑制；dp_register：音区优先选线）
+        6. 合并同音高且间隔很小的连续音符
 
         Args:
             note_events: [(start_s, end_s, midi, amplitude, pitch_bend)]
+            select_melody_line: True 时使用 dp_register 选线，否则保持 legacy NMS
 
         Returns:
             清洗后的 note_events
@@ -137,8 +156,26 @@ class NoteTranscriber:
         # --- 步骤 4：排序（按振幅降序，用于旋律提取） ---
         filtered.sort(key=lambda e: -e[3])  # 振幅从大到小
 
-        # --- 步骤 5：旋律提取（非最大抑制）
-        # 按振幅从大到小遍历，若与已接受音符重叠超过 50%，则丢弃（视为泛音/和声）
+        # --- 步骤 5：旋律线提取 ---
+        if select_melody_line:
+            accepted = self._select_melody_line(filtered)
+            logger.info(
+                f"旋律线选线(dp_register): {filtered_count} → {len(accepted)} 个音符"
+            )
+        else:
+            accepted = self._suppress_overlaps(filtered)
+
+        # 按开始时间重新排序
+        accepted.sort(key=lambda e: (e[0], e[2]))
+
+        if not accepted:
+            return []
+
+        # --- 步骤 6：合并同音高连续音符 ---
+        return self._merge_same_pitch(accepted)
+
+    def _suppress_overlaps(self, filtered: list[tuple]) -> list[tuple]:
+        """legacy NMS：按振幅从大到小遍历，与已接受音符重叠超过 50% 则丢弃。"""
         accepted = []
         for event in filtered:
             start_s, end_s, midi_pitch, amp, pb = event
@@ -162,17 +199,50 @@ class NoteTranscriber:
             if not overlap_too_much:
                 accepted.append(event)
 
-        # 按开始时间重新排序
-        accepted.sort(key=lambda e: (e[0], e[2]))
         logger.info(
-            f"旋律提取: {filtered_count} → {len(accepted)} 个音符 "
-            f"(移除 {filtered_count - len(accepted)} 个重叠泛音/和声)"
+            f"旋律提取: {len(filtered)} → {len(accepted)} 个音符 "
+            f"(移除 {len(filtered) - len(accepted)} 个重叠泛音/和声)"
         )
+        return accepted
 
-        if not accepted:
-            return []
+    def _select_melody_line(self, filtered: list[tuple]) -> list[tuple]:
+        """dp_register 选线：同一时刻优先高音区，保留每个起音点的旋律音。
 
-        # --- 步骤 6：合并同音高连续音符 ---
+        背景：有伴奏时 basic-pitch 会同时输出旋律与和弦/低音，旧 NMS 按振幅
+        优先保留更响的伴奏。这里以 40ms 起音窗聚类，先按振幅剔除明显泛音，
+        再在剩余候选中取音高最高者；若最高音与次高音相差 ≥12 半音且振幅
+        明显更弱，则回退到次高音（抑制八度泛音）。
+        """
+        ordered = sorted(filtered, key=lambda e: (e[0], -e[2], -e[3]))
+
+        clusters: list[list[tuple]] = []
+        for event in ordered:
+            if not clusters or event[0] - clusters[-1][0][0] > ONSET_CLUSTER_S:
+                clusters.append([event])
+            else:
+                clusters[-1].append(event)
+
+        selected = []
+        for cluster in clusters:
+            max_amp = max(e[3] for e in cluster)
+            amp_floor = max(SELECT_AMP_FLOOR, max_amp * AMP_KEEP_RATIO)
+            candidates = sorted(
+                (e for e in cluster if e[3] >= amp_floor), key=lambda e: (-e[2], -e[3])
+            )
+            if not candidates:
+                continue
+
+            pick = candidates[0]
+            if len(candidates) > 1:
+                second = candidates[1]
+                if pick[2] - second[2] >= 12 and pick[3] < second[3] * HARMONIC_AMP_RATIO:
+                    pick = second
+            selected.append(pick)
+
+        return selected
+
+    def _merge_same_pitch(self, accepted: list[tuple]) -> list[tuple]:
+        """合并同音高且间隔小于 MERGE_GAP_THRESHOLD 的连续音符。"""
         merged = []
         for event in accepted:
             if not merged:
@@ -200,7 +270,6 @@ class NoteTranscriber:
             f"合并: {len(accepted)} → {len(merged)} 个音符 "
             f"(合并 {len(accepted) - len(merged)} 个同音高连续音符)"
         )
-
         return merged
 
     def transcribe_melody(
