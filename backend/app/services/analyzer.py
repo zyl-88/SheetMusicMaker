@@ -27,6 +27,12 @@ NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 ABC_MAJOR_NAMES = ["C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"]
 ABC_MINOR_NAMES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B"]
 
+# 触拍（tactus）区间：人实际"数拍子"的速度一般落在这里。
+# 检测器常把每个八分音符脉冲当成一拍上报，速度就翻倍；超出上限且减半后
+# 仍在区间内时，按 2 个脉冲 = 1 拍降速。
+TACTUS_MIN_BPM = 70.0
+TACTUS_MAX_BPM = 140.0
+
 
 class AudioAnalyzer:
     """音频分析器：节拍/速度/调性。"""
@@ -49,6 +55,11 @@ class AudioAnalyzer:
         """
         path = str(vocals_wav_path)
         beats, bpm = self._detect_beats_and_tempo(path)
+        beats, bpm, halved = self._halve_tactus(beats, bpm)
+        if halved:
+            logger.info(
+                f"节拍脉冲按 1/2 降速校正: BPM={bpm:.1f}, 拍数={len(beats)}"
+            )
         key_info = self._detect_key(path)
         time_sig = self._infer_time_signature(beats, bpm)
         warnings = self._bpm_warnings(beats, bpm)
@@ -104,6 +115,24 @@ class AudioAnalyzer:
         if float(np.std(intervals / median_interval)) > 0.25:
             warnings.append("节拍间隔波动较大，速度检测可能不稳定")
         return warnings
+
+    @staticmethod
+    def _halve_tactus(beats: list[float], bpm: float) -> tuple[list[float], float, bool]:
+        """把「八分音符脉冲」还原成真实触拍。
+
+        检测器（madmom/librosa 都如此）经常把每个八分音符脉冲当作一拍上报，
+        得到的速度是真实触拍的 2 倍。真实曲实测 161.5 BPM 对应 0.372s 的脉冲，
+        而人实际数的是 2 个脉冲一拍（约 80.8 BPM）。
+
+        只在「速度超过上限、减半后仍落在触拍区间」时降速，避免误伤正常速度；
+        网格同步隔点采样，保证量化时的「秒 → 拍」映射与新的拍长一致。
+        """
+        if bpm <= TACTUS_MAX_BPM or bpm / 2.0 < TACTUS_MIN_BPM:
+            return beats, bpm, False
+        halved = beats[::2]
+        if len(halved) < 4:
+            return beats, bpm, False
+        return halved, round(bpm / 2.0, 1), True
 
     def _detect_beats_and_tempo(self, path: str) -> tuple[list[float], float]:
         """检测节拍和速度。优先用 madmom，不可用时降级到 librosa。"""
