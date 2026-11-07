@@ -301,7 +301,60 @@ class NoteTranscriber:
                 "melody_selection",
                 {"clusters": len(clusters), "kept": len(selected), "details": details},
             )
-        return selected
+        return self._suppress_low_interjections(selected, dump=dump)
+
+    def _suppress_low_interjections(
+        self, selected: list[tuple], dump: DebugRecorder | None = None
+    ) -> list[tuple]:
+        """剔除插在旋律持续区间内的低音伴奏音（八度跳变的主要来源）。
+
+        单声部旋律里，一个音起音时前一个旋律音不应仍在持续；若前一个音
+        尚未结束、新音比它低 ≥12 半音、且低出近几音的中位音区 ≥12 半音，
+        则新音是伴奏/低音渗漏，丢弃它而不是让旋律线在高低音区之间来回跳。
+
+        整曲实测 82.9% 的八度跳变以 accompaniment/inner 音为低端点，且这些
+        低音起音时对应的旋律音仍在响（basic-pitch 参考里可看到 8.91-9.28s
+        的 C#5 覆盖 9.12s 的 F#2 起音），符合本规则。
+        """
+        kept: list[tuple] = []
+        recent: list[int] = []
+        for event in selected:
+            start_s, end_s, pitch_int, _amp, *_ = event
+            if len(kept) >= 2 and recent:
+                prev = kept[-1]
+                reg = sorted(recent)[len(recent) // 2]
+                # 前音「确实仍在持续」才判伴奏插入：basic-pitch 相邻音符会有
+                # 一两帧的尾部重叠（F13 的 C5→G3 只重叠 ~20ms），不能当成伴奏。
+                prev_dur = max(prev[1] - prev[0], 0.0)
+                prev_remaining = prev[1] - start_s
+                if (
+                    prev_remaining >= max(0.08, 0.2 * prev_dur)
+                    and prev[2] - pitch_int >= 12
+                    and pitch_int <= reg - 12
+                ):
+                    if dump is not None:
+                        dump.decide(
+                            {
+                                "stage": "selection",
+                                "reason": "low_interjection",
+                                "onset_s": round(float(start_s), 4),
+                                "midi": int(pitch_int),
+                                "prev_midi": int(prev[2]),
+                                "prev_end_s": round(float(prev[1]), 4),
+                                "register_midi": int(reg),
+                            }
+                        )
+                    continue
+            kept.append(event)
+            recent.append(int(pitch_int))
+            if len(recent) > 5:
+                recent.pop(0)
+        if len(kept) != len(selected):
+            logger.info(
+                f"旋律线单一化: {len(selected)} → {len(kept)} 个音符 "
+                f"(剔除 {len(selected) - len(kept)} 个旋律持续期内的低音伴奏)"
+            )
+        return kept
 
     def _merge_same_pitch(
         self, accepted: list[tuple], dump: DebugRecorder | None = None
