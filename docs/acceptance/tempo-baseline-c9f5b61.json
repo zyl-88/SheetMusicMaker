@@ -1,0 +1,790 @@
+{
+  "baseline_commit": "c9f5b61",
+  "head_when_archived": "a2c4272",
+  "export_code_unchanged_since_baseline": true,
+  "archived_at": "2026-11-07T23:38:25",
+  "source_run": "test_audio/eval_runs/tempo_ab/per_bar",
+  "reported": {
+    "bpm": 161.5,
+    "time_signature": "4/4",
+    "beats_per_measure": 4
+  },
+  "notation": {
+    "measures": 93,
+    "abc_header_bpm": 147.66,
+    "abc_inline_q_changes": 81,
+    "tempo_distinct": {
+      "abc": 11,
+      "musicxml": 11,
+      "midi": 11
+    },
+    "note_counts": {
+      "abc_logical": 431,
+      "musicxml_logical": 431,
+      "midi": 431,
+      "abc_raw_tokens": 480,
+      "musicxml_raw": 518
+    }
+  },
+  "three_way": {
+    "abc_vs_xml": "93/93",
+    "xml_vs_midi_sampled_at_start_plus_1ms": "93/93",
+    "mismatch_count_acceptance_script": 0,
+    "note": "验收脚本当前容差已修正；旧版 1µs 采样曾误判 8 处，+1ms 复核为 93/93"
+  },
+  "page_vs_midi": {
+    "measured_at_commit": "75c6485",
+    "paired_notes": 431,
+    "median_ms": 0.3,
+    "p90_ms": 0.4,
+    "max_ms": 0.5,
+    "over_120ms": 0,
+    "note": "abcjs 渲染副本回填 tempo 小数后，浏览器 noteTimings 与下载 MIDI 起点对比"
+  },
+  "tempo_rows": [
+    {
+      "measure": 1,
+      "abc_q": 147.66,
+      "xml_tempo": 147.66,
+      "midi_tempo": 147.66,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 2,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 3,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 4,
+      "abc_q": 169.44,
+      "xml_tempo": 169.44,
+      "midi_tempo": 169.44,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 5,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 6,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 7,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 8,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 9,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 10,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 11,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 12,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 13,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 14,
+      "abc_q": 169.44,
+      "xml_tempo": 169.44,
+      "midi_tempo": 169.44,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 15,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 16,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 17,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 18,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 19,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 20,
+      "abc_q": 152.0,
+      "xml_tempo": 152.0,
+      "midi_tempo": 152.0,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 21,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 22,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 23,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 24,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 25,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 26,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 27,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 28,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 29,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 30,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 31,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 32,
+      "abc_q": 141.59,
+      "xml_tempo": 141.59,
+      "midi_tempo": 141.59,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 33,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 34,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 35,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 36,
+      "abc_q": 152.0,
+      "xml_tempo": 152.0,
+      "midi_tempo": 152.0,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 37,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 38,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 39,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 40,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 41,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 42,
+      "abc_q": 152.0,
+      "xml_tempo": 152.0,
+      "midi_tempo": 152.0,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 43,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 44,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 45,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 46,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 47,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 48,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 49,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 50,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 51,
+      "abc_q": 154.27,
+      "xml_tempo": 154.27,
+      "midi_tempo": 154.27,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 52,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 53,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 54,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 55,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 56,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 57,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 58,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 59,
+      "abc_q": 175.19,
+      "xml_tempo": 175.19,
+      "midi_tempo": 175.19,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 60,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 61,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 62,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 63,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 64,
+      "abc_q": 169.44,
+      "xml_tempo": 169.44,
+      "midi_tempo": 169.44,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 65,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 66,
+      "abc_q": 169.44,
+      "xml_tempo": 169.44,
+      "midi_tempo": 169.44,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 67,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 68,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 69,
+      "abc_q": 154.27,
+      "xml_tempo": 154.27,
+      "midi_tempo": 154.27,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 70,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 71,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 72,
+      "abc_q": 154.27,
+      "xml_tempo": 154.27,
+      "midi_tempo": 154.27,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 73,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 74,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 75,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 76,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 77,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 78,
+      "abc_q": 159.01,
+      "xml_tempo": 159.01,
+      "midi_tempo": 159.01,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 79,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 80,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 81,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 82,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 83,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 84,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 85,
+      "abc_q": 152.0,
+      "xml_tempo": 152.0,
+      "midi_tempo": 152.0,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 86,
+      "abc_q": 156.61,
+      "xml_tempo": 156.61,
+      "midi_tempo": 156.61,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 87,
+      "abc_q": 169.44,
+      "xml_tempo": 169.44,
+      "midi_tempo": 169.44,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 88,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 89,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 90,
+      "abc_q": 166.71,
+      "xml_tempo": 166.71,
+      "midi_tempo": 166.71,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 91,
+      "abc_q": 164.06,
+      "xml_tempo": 164.06,
+      "midi_tempo": 164.06,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 92,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    },
+    {
+      "measure": 93,
+      "abc_q": 161.5,
+      "xml_tempo": 161.5,
+      "midi_tempo": 161.5,
+      "abc_vs_xml_ok": true,
+      "xml_vs_midi_ok": true
+    }
+  ]
+}
