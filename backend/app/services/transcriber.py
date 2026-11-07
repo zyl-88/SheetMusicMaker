@@ -291,6 +291,24 @@ class NoteTranscriber:
                         "onset_s": round(float(cluster[0][0]), 4),
                         "candidates": len(candidates),
                         "max_amp": round(float(max_amp), 4),
+                        "amp_floor": round(float(amp_floor), 4),
+                        "candidate_notes": [
+                            {
+                                "start_s": round(float(e[0]), 4),
+                                "midi": int(e[2]),
+                                "amp": round(float(e[3]), 4),
+                            }
+                            for e in candidates
+                        ],
+                        "floor_rejected_notes": [
+                            {
+                                "start_s": round(float(e[0]), 4),
+                                "midi": int(e[2]),
+                                "amp": round(float(e[3]), 4),
+                            }
+                            for e in cluster
+                            if e[3] < amp_floor
+                        ],
                         "picked": notes_payload([pick])[0],
                         "harmonic_fallback": harmonic_fallback,
                     }
