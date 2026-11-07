@@ -33,6 +33,10 @@ ABC_MINOR_NAMES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "
 TACTUS_MIN_BPM = 70.0
 TACTUS_MAX_BPM = 140.0
 
+# 自然音阶音级（相对主音的半音数），用于比较同一主音下大/小调各需多少临时记号
+MAJOR_SCALE_STEPS = frozenset({0, 2, 4, 5, 7, 9, 11})
+MINOR_SCALE_STEPS = frozenset({0, 2, 3, 5, 7, 8, 10})
+
 
 class AudioAnalyzer:
     """音频分析器：节拍/速度/调性。"""
@@ -67,6 +71,7 @@ class AudioAnalyzer:
                 f"节拍脉冲按 1/2 降速校正: BPM={bpm:.1f}, 拍数={len(beats)}"
             )
         key_info = self._detect_key(path)
+        key_info = self._prefer_notation_friendly_mode(key_info, note_events)
         time_sig = self._infer_time_signature(beats, raw_beats, halved, note_events)
         warnings = self._bpm_warnings(beats, bpm)
 
@@ -287,6 +292,54 @@ class AudioAnalyzer:
             return 0.0
         norm = centered / std
         return float(np.dot(norm[:-period], norm[period:]) / (norm.size - period))
+
+    @staticmethod
+    def _scale_accidental_weight(
+        tonic_pc: int, mode: str, note_events: list | None
+    ) -> float:
+        """这份谱在「该主音 + 该调式」下，需要临时记号的音符时值占比。"""
+        scale = MINOR_SCALE_STEPS if mode == "minor" else MAJOR_SCALE_STEPS
+        weights = np.zeros(12)
+        for event in note_events or []:
+            weights[int(event[2]) % 12] += max(float(event[1]) - float(event[0]), 0.01)
+        total = float(weights.sum())
+        if total <= 0:
+            return 1.0
+        outside = sum(
+            float(weights[pc]) for pc in range(12) if (pc - tonic_pc) % 12 not in scale
+        )
+        return outside / total
+
+    def _prefer_notation_friendly_mode(
+        self, key_info: dict[str, str], note_events: list | None
+    ) -> dict[str, str]:
+        """同一主音下大/小调都说得通时，选临时记号更少的那个。
+
+        色度模板在降级路径（librosa）下对 major/minor 区分不稳：真实曲的
+        音级分布按 Krumhansl 小调模板拟合更好，却被判成同主音大调，导出后
+        整份谱布满 ``=E``/``=D`` 之类的还原记号。这里用谱面音符自身的时值
+        统计做仲裁：只有另一调式的临时记号明显更少（<75%）才改写，避免
+        音高检出波动导致来回切换。
+        """
+        if not note_events or key_info.get("tonic") not in NOTE_NAMES:
+            return key_info
+        tonic_pc = NOTE_NAMES.index(key_info["tonic"])
+        major_w = self._scale_accidental_weight(tonic_pc, "major", note_events)
+        minor_w = self._scale_accidental_weight(tonic_pc, "minor", note_events)
+        if key_info.get("mode") == "minor":
+            if major_w < minor_w * 0.75:
+                logger.info(
+                    f"调式按谱面音符改写: {key_info['tonic']} minor -> major"
+                    f"（临时记号 {minor_w:.0%} -> {major_w:.0%}）"
+                )
+                return {"tonic": key_info["tonic"], "mode": "major"}
+        elif minor_w < major_w * 0.75:
+            logger.info(
+                f"调式按谱面音符改写: {key_info['tonic']} major -> minor"
+                f"（临时记号 {major_w:.0%} -> {minor_w:.0%}）"
+            )
+            return {"tonic": key_info["tonic"], "mode": "minor"}
+        return key_info
 
     def _infer_time_signature(
         self,
