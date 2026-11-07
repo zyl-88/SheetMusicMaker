@@ -359,9 +359,10 @@ class ScoreExporter:
         else:
             return set(), set()
 
-    def _parse_beats_per_measure(self, time_sig: str) -> int:
-        """解析拍号的小节数（如 4/4 → 4, 3/4 → 3）。"""
+    def _parse_beats_per_measure(self, time_sig: str) -> float:
+        """小节长度（四分音符单位）：4/4 → 4，3/4 → 3，6/8 → 3，2/4 → 2。"""
         try:
-            return int(time_sig.split("/")[0])
-        except (ValueError, IndexError):
-            return 4
+            num, den = time_sig.split("/")
+            return float(num) * 4.0 / float(den)
+        except (ValueError, IndexError, ZeroDivisionError):
+            return 4.0

@@ -221,7 +221,7 @@ def run_pipeline(
         # === 阶段 4: 分析 ===
         _update_progress(task_id, STAGE_ANALYZING, 56)
         analyzer = _get_analyzer()
-        analysis = analyzer.analyze(transcribe_source)
+        analysis = analyzer.analyze(transcribe_source, note_events)
         _update_progress(task_id, STAGE_ANALYZING, 70)
         logger.info(f"[{task_id}] 分析完成: BPM={analysis['bpm']}, Key={analysis['key']}")
         for message in analysis.get("warnings") or []:

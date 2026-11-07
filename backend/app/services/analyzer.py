@@ -37,11 +37,17 @@ TACTUS_MAX_BPM = 140.0
 class AudioAnalyzer:
     """音频分析器：节拍/速度/调性。"""
 
-    def analyze(self, vocals_wav_path: str | Path) -> dict[str, Any]:
+    def analyze(
+        self,
+        vocals_wav_path: str | Path,
+        note_events: list | None = None,
+    ) -> dict[str, Any]:
         """分析音频，返回节拍、速度、调性、拍号。
 
         Args:
             vocals_wav_path: 人声 WAV 文件路径
+            note_events: 已提取的音符事件 [(start_s, end_s, midi, amp, ...)]，
+                用于按谱面重音分组推断拍号；为 None 时拍号退回 4/4
 
         Returns:
             {
@@ -54,14 +60,14 @@ class AudioAnalyzer:
             }
         """
         path = str(vocals_wav_path)
-        beats, bpm = self._detect_beats_and_tempo(path)
-        beats, bpm, halved = self._halve_tactus(beats, bpm)
+        raw_beats, bpm = self._detect_beats_and_tempo(path)
+        beats, bpm, halved = self._halve_tactus(raw_beats, bpm)
         if halved:
             logger.info(
                 f"节拍脉冲按 1/2 降速校正: BPM={bpm:.1f}, 拍数={len(beats)}"
             )
         key_info = self._detect_key(path)
-        time_sig = self._infer_time_signature(beats, bpm)
+        time_sig = self._infer_time_signature(beats, raw_beats, halved, note_events)
         warnings = self._bpm_warnings(beats, bpm)
 
         result = {
@@ -254,11 +260,63 @@ class AudioAnalyzer:
         else:
             return {"tonic": NOTE_NAMES[best_key - 12], "mode": "minor"}
 
-    def _infer_time_signature(self, beats: list[float], bpm: float) -> str:
-        """推断拍号。默认 4/4。"""
-        # MVP 阶段默认 4/4
-        # 后续可根据节拍强度模式推断 3/4 等
-        return "4/4"
+    @staticmethod
+    def _beat_accents(beat_times: list[float], note_events: list | None) -> np.ndarray:
+        """把音符强度按拍窗口累加，得到每一拍的强弱序列。"""
+        if not note_events or len(beat_times) < 2:
+            return np.zeros(0)
+        onsets = np.array([float(e[0]) for e in note_events])
+        amps = np.array([float(e[3]) if len(e) > 3 else 1.0 for e in note_events])
+        fallback = (beat_times[-1] - beat_times[0]) / (len(beat_times) - 1)
+        acc = np.zeros(len(beat_times))
+        for i, t in enumerate(beat_times):
+            hi = beat_times[i + 1] if i + 1 < len(beat_times) else t + fallback
+            mask = (onsets >= t) & (onsets < hi)
+            if mask.any():
+                acc[i] = float(amps[mask].sum())
+        return acc
+
+    @staticmethod
+    def _periodicity(accents: np.ndarray, period: int) -> float:
+        """强弱序列在给定周期上的自相关（归一化，越大说明重音越按该周期重复）。"""
+        if accents.size <= period + 4:
+            return 0.0
+        centered = accents - accents.mean()
+        std = float(centered.std())
+        if std <= 0:
+            return 0.0
+        norm = centered / std
+        return float(np.dot(norm[:-period], norm[period:]) / (norm.size - period))
+
+    def _infer_time_signature(
+        self,
+        beats: list[float],
+        raw_beats: list[float],
+        halved: bool,
+        note_events: list | None,
+    ) -> str:
+        """按重音分组周期推断拍号，默认 4/4。
+
+        用谱面音符强度按拍累加得到强弱序列，再看 3 拍 / 4 拍周期的自相关：
+        - 4 拍更突出 → 4/4
+        - 3 拍更突出 → 3/4；若八分脉冲层面 3 脉冲一组的倾向明显强于 2 脉冲
+          一组（即"三三分组"），则记为 6/8
+        拍数太少（<12）或没有音符事件时无法判断重音分组，保守退回 4/4。
+        """
+        if len(beats) < 12 or not note_events:
+            return "4/4"
+        accents = self._beat_accents(beats, note_events)
+        score3 = self._periodicity(accents, 3)
+        score4 = self._periodicity(accents, 4)
+        if score3 <= 0.05 or score3 <= score4 * 1.5:
+            return "4/4"
+        if halved:
+            pulse = self._beat_accents(raw_beats, note_events)
+            pulse3 = self._periodicity(pulse, 3)
+            pulse2 = self._periodicity(pulse, 2)
+            if pulse3 > pulse2 * 1.3:
+                return "6/8"
+        return "3/4"
 
     def _key_to_abc(self, key_info: dict[str, str]) -> str:
         """将调性转为合法的 ABC 调名。
