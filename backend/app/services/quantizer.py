@@ -81,6 +81,8 @@ class NoteQuantizer:
 
         # 时间映射 + 量化到 1/16 网格
         events: list[tuple[float, float, int, float]] = []
+        transposed = 0
+        dropped = 0
         for start_s, end_s, midi_pitch, amp, *_ in sorted(note_events, key=lambda e: e[0]):
             if end_s <= start_s:
                 continue
@@ -92,9 +94,19 @@ class NoteQuantizer:
             if duration_q <= 0:
                 duration_q = 1.0 / div  # 最短 1/16
 
-            pitch_int = int(round(midi_pitch))
-            pitch_int = max(midi_low, min(midi_high, pitch_int))
+            raw_pitch = int(round(midi_pitch))
+            pitch_int = self._fit_pitch_to_range(raw_pitch, midi_low, midi_high)
+            if pitch_int is None:
+                dropped += 1
+                continue
+            if pitch_int != raw_pitch:
+                transposed += 1
             events.append((start_q, duration_q, pitch_int, float(amp)))
+
+        if transposed or dropped:
+            logger.info(
+                f"音域处理: 移调 {transposed} 个音符回音域，丢弃 {dropped} 个越界音符"
+            )
 
         if not events:
             return self._create_empty_stream(analysis)
@@ -146,6 +158,21 @@ class NoteQuantizer:
             f"总时长 {current_offset:.1f} 四分音符 (BPM={bpm:.1f})"
         )
         return s
+
+    @staticmethod
+    def _fit_pitch_to_range(pitch: int, midi_low: int, midi_high: int) -> int | None:
+        """把越界音高按八度移调回音域；无法用一个八度修正的返回 None（丢弃）。
+
+        旧实现直接钳制到边界，会让所有越界音变成同一个边界音（伪造旋律，
+        例如 flute 轨道上一串 C4）。改为优先移调一个八度（纠正八度误检），
+        移调后仍越界的音符交给调用方丢弃。
+        """
+        if midi_low <= pitch <= midi_high:
+            return pitch
+        for shift in (12, -12):
+            if midi_low <= pitch + shift <= midi_high:
+                return pitch + shift
+        return None
 
     def _create_empty_stream(self, analysis: dict[str, Any]) -> Any:
         """创建带元数据的空 Stream。"""
