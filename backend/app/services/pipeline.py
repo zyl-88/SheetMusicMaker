@@ -230,7 +230,9 @@ def run_pipeline(
         # === 阶段 5: 量化 ===
         _update_progress(task_id, STAGE_QUANTIZING, 71)
         quantizer = _get_quantizer()
-        m21_stream = quantizer.quantize(note_events, analysis, instrument_config, dump=dump)
+        m21_stream = quantizer.quantize(
+            note_events, analysis, instrument_config, audio_duration_s=float(duration), dump=dump
+        )
         _update_progress(task_id, STAGE_QUANTIZING, 85)
         logger.info(f"[{task_id}] 量化完成")
 

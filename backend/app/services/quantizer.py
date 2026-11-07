@@ -20,6 +20,7 @@ class NoteQuantizer:
         note_events: list[tuple],
         analysis: dict[str, Any],
         instrument_config: dict[str, Any],
+        audio_duration_s: float | None = None,
         dump: DebugRecorder | None = None,
     ) -> Any:
         """量化音符事件为 music21 Stream。
@@ -28,6 +29,7 @@ class NoteQuantizer:
             note_events: [(start_s, end_s, midi, amplitude, pitch_bend)]
             analysis: {bpm, key, time_signature, ...}
             instrument_config: {midi_low, midi_high, ...}
+            audio_duration_s: 原音频时长（秒），用于钳制音符起点不越过音频末尾
             dump: DEBUG_DUMP=1 时的旁路观测器（None 时不做任何额外记录）
 
         Returns:
@@ -86,6 +88,10 @@ class NoteQuantizer:
         events: list[tuple[float, float, int, float]] = []
         transposed = 0
         dropped = 0
+        # 音频结束位置对应的拍位（向下取整到网格），用于保证音符起点不越界
+        max_start_q = None
+        if audio_duration_s and audio_duration_s > 0:
+            max_start_q = float(int(time_to_beat(float(audio_duration_s)) * div)) / div
         for start_s, end_s, midi_pitch, amp, *_ in sorted(note_events, key=lambda e: e[0]):
             if end_s <= start_s:
                 continue
@@ -125,20 +131,42 @@ class NoteQuantizer:
         if not events:
             return self._create_empty_stream(analysis)
 
-        # 节拍网格起点可能晚于首个音符，整体平移使最小时值为 0
+        # 节拍网格起点可能晚于首个音符：整体平移一次使最小时值为 0（只平移
+        # 这一次，保留前导音的相对间隔；后续重叠不再后推任何音符）。
         min_start = min(e[0] for e in events)
-        if min_start < 0:
-            events = [(st - min_start, d, p, a) for st, d, p, a in events]
+        shift = -min_start if min_start < 0 else 0.0
+        if shift:
+            events = [(st + shift, d, p, a) for st, d, p, a in events]
             events.sort(key=lambda e: e[0])
 
-        # 消除重叠：单声部谱面中后一个音符不得早于前一个的结束
+        # 平移后若仍有起点越过音频末尾，钳回音频末尾（保证越界音符为 0）
+        if max_start_q is not None:
+            limit = max_start_q + shift
+            events = [(min(st, limit), d, p, a) for st, d, p, a in events]
+
+        # 消除重叠：保留每个音符的起点（onset），重叠时截短前一个音；
+        # 同一量化格内的重复起点只保留振幅更大的一条。绝不后推任何音符起点，
+        # 否则重叠会沿时间轴累积（原实现实测累计 +31.8s，后段音符全部越界）。
+        min_duration = 1.0 / div
         normalized: list[tuple[float, float, int, float]] = []
-        cursor = 0.0
         for start_q, duration_q, pitch_int, amp in events:
-            if start_q < cursor - 1e-6:
-                start_q = cursor
+            if normalized:
+                prev_start, prev_dur, prev_pitch, prev_amp = normalized[-1]
+                prev_end = prev_start + prev_dur
+                if start_q < prev_end - 1e-6:
+                    if start_q - prev_start < min_duration - 1e-9:
+                        # 落在同一量化格内：视为同一起点，保留振幅更大的那条
+                        if amp > prev_amp:
+                            normalized[-1] = (
+                                prev_start,
+                                max(prev_dur, duration_q),
+                                pitch_int,
+                                amp,
+                            )
+                        continue
+                    # 截短前一个音到当前音起点，当前音起点保持不变
+                    normalized[-1] = (prev_start, start_q - prev_start, prev_pitch, prev_amp)
             normalized.append((start_q, duration_q, pitch_int, amp))
-            cursor = start_q + duration_q
 
         current_offset = 0.0  # 当前位置（四分音符单位）
         # 小间隙阈值（四分音符单位）：小于此值的间隙通过延长前一个音符填充
