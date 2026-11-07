@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "id": "F1",
+  "group": null,
+  "kind": "scale",
+  "instrument": "universal",
+  "audio": "test_audio/fixtures/F1.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 100.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 2,
+    "role": "melody_line",
+    "tags": [
+      "scale",
+      "sustained",
+      "baseline"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 1.0,
+        "onset_s": 0.0,
+        "dur_s": 0.6,
+        "midi": 60,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.0,
+        "dur": 1.0,
+        "onset_s": 0.6,
+        "dur_s": 0.6,
+        "midi": 62,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 1.0,
+        "onset_s": 1.2,
+        "dur_s": 0.6,
+        "midi": 64,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.0,
+        "dur": 1.0,
+        "onset_s": 1.8,
+        "dur_s": 0.6,
+        "midi": 65,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 1.0,
+        "onset_s": 2.4,
+        "dur_s": 0.6,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 5.0,
+        "dur": 1.0,
+        "onset_s": 3.0,
+        "dur_s": 0.6,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 6.0,
+        "dur": 1.0,
+        "onset_s": 3.6,
+        "dur_s": 0.6,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 7.0,
+        "dur": 1.0,
+        "onset_s": 4.2,
+        "dur_s": 0.6,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ]
+  },
+  "acceptance": {
+    "recall_min": 0.85,
+    "precision_min": 0.85,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.0,
+    "note_count_deviation_max": 0.3,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.02,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": false,
+    "known_limitations": []
+  },
+  "segments": [],
+  "special": {},
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "piano",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

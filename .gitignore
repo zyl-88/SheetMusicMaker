@@ -31,6 +31,9 @@ storage/
 # 测试音频
 test_audio/
 
+# 验收复测的整曲产物（MIDI/ABC/analysis，体积会持续增长；只保留顶层报告与基线快照）
+docs/acceptance/retests/
+
 # IDE
 .idea/
 .vscode/

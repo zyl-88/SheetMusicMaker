@@ -1,0 +1,211 @@
+{
+  "schema_version": "1.0",
+  "id": "F4",
+  "group": null,
+  "kind": "repeated_pitch_short_notes",
+  "instrument": "universal",
+  "audio": "test_audio/fixtures/F4.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 120.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 2,
+    "role": "melody_line",
+    "tags": [
+      "merge_gap",
+      "60ms",
+      "90ms",
+      "120ms",
+      "core"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 0.12,
+        "onset_s": 0.0,
+        "dur_s": 0.06,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 0.16,
+        "dur": 0.12,
+        "onset_s": 0.08,
+        "dur_s": 0.06,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 0.32,
+        "dur": 0.12,
+        "onset_s": 0.16,
+        "dur_s": 0.06,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 0.48,
+        "dur": 0.12,
+        "onset_s": 0.24,
+        "dur_s": 0.06,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 0.18,
+        "onset_s": 1.0,
+        "dur_s": 0.09,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.24,
+        "dur": 0.18,
+        "onset_s": 1.12,
+        "dur_s": 0.09,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.48,
+        "dur": 0.18,
+        "onset_s": 1.24,
+        "dur_s": 0.09,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.72,
+        "dur": 0.18,
+        "onset_s": 1.36,
+        "dur_s": 0.09,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 0.24,
+        "onset_s": 2.0,
+        "dur_s": 0.12,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.3,
+        "dur": 0.24,
+        "onset_s": 2.15,
+        "dur_s": 0.12,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.6,
+        "dur": 0.24,
+        "onset_s": 2.3,
+        "dur_s": 0.12,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.9,
+        "dur": 0.24,
+        "onset_s": 2.45,
+        "dur_s": 0.12,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ]
+  },
+  "acceptance": {
+    "recall_min": 0.6,
+    "precision_min": 0.5,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.0,
+    "note_count_deviation_max": 0.5,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.02,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": false,
+    "known_limitations": [],
+    "note": "F4 重点：MERGE_GAP_THRESHOLD=0.08s 对短音符的影响"
+  },
+  "segments": [
+    {
+      "label": "60ms",
+      "beats": [
+        0.0,
+        2.0
+      ],
+      "start_s": 0.0,
+      "end_s": 1.0
+    },
+    {
+      "label": "90ms",
+      "beats": [
+        2.0,
+        4.0
+      ],
+      "start_s": 1.0,
+      "end_s": 2.0
+    },
+    {
+      "label": "120ms",
+      "beats": [
+        4.0,
+        6.0
+      ],
+      "start_s": 2.0,
+      "end_s": 3.0
+    }
+  ],
+  "special": {
+    "segment_note_counts": {
+      "diagnostic": true,
+      "expected": {
+        "melody": [
+          2,
+          1,
+          0
+        ],
+        "basic_pitch": [
+          0,
+          0,
+          4
+        ]
+      },
+      "note": "已校准 2026-11-07（legacy_nms / pYIN 实测）：分段计数 [2,1,0]；实测 onset 0.244 / 0.998 / 1.997s，第 2、3 段首音比段界早 1.5ms/3ms 被归入上一段；首段并未把 0→0.48s 的四个短音合并成长音，只检出 0.244–0.360s 一个短音。basic_pitch 分支未测（F4 engine=melody）"
+    }
+  },
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "piano",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

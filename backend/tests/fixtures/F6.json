@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "id": "F6",
+  "group": null,
+  "kind": "low_register_melody",
+  "instrument": "universal",
+  "audio": "test_audio/fixtures/F6.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 80.0,
+    "time_signature": "4/4",
+    "key": "A minor",
+    "measures": 2,
+    "role": "melody_line",
+    "tags": [
+      "low_register",
+      "melody_floor_220hz",
+      "diagnostic"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 1.0,
+        "onset_s": 0.0,
+        "dur_s": 0.75,
+        "midi": 45,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.0,
+        "dur": 1.0,
+        "onset_s": 0.75,
+        "dur_s": 0.75,
+        "midi": 47,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 1.0,
+        "onset_s": 1.5,
+        "dur_s": 0.75,
+        "midi": 48,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.0,
+        "dur": 1.0,
+        "onset_s": 2.25,
+        "dur_s": 0.75,
+        "midi": 47,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 1.0,
+        "onset_s": 3.0,
+        "dur_s": 0.75,
+        "midi": 45,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 5.0,
+        "dur": 1.0,
+        "onset_s": 3.75,
+        "dur_s": 0.75,
+        "midi": 48,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ]
+  },
+  "acceptance": {
+    "recall_min": 0.0,
+    "precision_min": 0.7,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.0,
+    "note_count_deviation_max": 0.3,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.02,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": true,
+    "known_limitations": [
+      "MELODY_MIN_FREQ=220Hz 会把 A2–C3 整条旋律判为伴奏"
+    ]
+  },
+  "segments": [],
+  "special": {},
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "piano",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

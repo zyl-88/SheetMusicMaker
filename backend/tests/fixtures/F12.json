@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0",
+  "id": "F12",
+  "group": null,
+  "kind": "solo_staccato_octave_jumps",
+  "instrument": "violin",
+  "audio": "test_audio/fixtures/F12.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 120.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 2,
+    "role": "melody_line",
+    "tags": [
+      "staccato",
+      "octave_jumps",
+      "g3_boundary",
+      "core"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 0.5,
+        "onset_s": 0.0,
+        "dur_s": 0.25,
+        "midi": 55,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.0,
+        "dur": 0.5,
+        "onset_s": 0.5,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 0.5,
+        "onset_s": 1.0,
+        "dur_s": 0.25,
+        "midi": 84,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.0,
+        "dur": 0.5,
+        "onset_s": 1.5,
+        "dur_s": 0.25,
+        "midi": 79,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 0.5,
+        "onset_s": 2.0,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 5.0,
+        "dur": 0.5,
+        "onset_s": 2.5,
+        "dur_s": 0.25,
+        "midi": 55,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 6.0,
+        "dur": 0.5,
+        "onset_s": 3.0,
+        "dur_s": 0.25,
+        "midi": 60,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ]
+  },
+  "acceptance": {
+    "recall_min": 0.7,
+    "precision_min": 0.7,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.5,
+    "note_count_deviation_max": 0.3,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.02,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": false,
+    "known_limitations": [],
+    "note": "F12 重点：G3(196Hz) 与 C6 之间的八度跳进、staccato 断奏"
+  },
+  "segments": [],
+  "special": {},
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "violin",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

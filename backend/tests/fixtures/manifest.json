@@ -1,0 +1,295 @@
+{
+  "schema_version": "1.0",
+  "seed": 20260106,
+  "sample_rate": 22050,
+  "audio_dir": "test_audio/fixtures",
+  "gt_dir": "backend/tests/fixtures",
+  "total": 16,
+  "fixtures": [
+    {
+      "id": "F1",
+      "group": null,
+      "kind": "scale",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F1.wav",
+      "gt": "backend/tests/fixtures/F1.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 8,
+      "measures": 2,
+      "tags": [
+        "scale",
+        "sustained",
+        "baseline"
+      ]
+    },
+    {
+      "id": "F2",
+      "group": null,
+      "kind": "time_signature_3_4",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F2.wav",
+      "gt": "backend/tests/fixtures/F2.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 12,
+      "measures": 4,
+      "tags": [
+        "waltz",
+        "time_signature",
+        "bass_bounce"
+      ]
+    },
+    {
+      "id": "F3",
+      "group": null,
+      "kind": "time_signature_6_8",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F3.wav",
+      "gt": "backend/tests/fixtures/F3.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 12,
+      "measures": 2,
+      "tags": [
+        "compound_meter",
+        "eighth_notes"
+      ]
+    },
+    {
+      "id": "F4",
+      "group": null,
+      "kind": "repeated_pitch_short_notes",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F4.wav",
+      "gt": "backend/tests/fixtures/F4.json",
+      "priority": "core",
+      "diagnostic": false,
+      "notes": 12,
+      "measures": 2,
+      "tags": [
+        "merge_gap",
+        "60ms",
+        "90ms",
+        "120ms",
+        "core"
+      ]
+    },
+    {
+      "id": "F5",
+      "group": null,
+      "kind": "melody_with_chords",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F5.wav",
+      "gt": "backend/tests/fixtures/F5.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 16,
+      "measures": 2,
+      "tags": [
+        "chords",
+        "nms",
+        "harmony_leakage"
+      ]
+    },
+    {
+      "id": "F6",
+      "group": null,
+      "kind": "low_register_melody",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F6.wav",
+      "gt": "backend/tests/fixtures/F6.json",
+      "priority": "normal",
+      "diagnostic": true,
+      "notes": 6,
+      "measures": 2,
+      "tags": [
+        "low_register",
+        "melody_floor_220hz",
+        "diagnostic"
+      ]
+    },
+    {
+      "id": "F7",
+      "group": null,
+      "kind": "vocal_with_louder_band",
+      "instrument": "universal",
+      "engine": "basic_pitch",
+      "audio": "test_audio/fixtures/F7.wav",
+      "gt": "backend/tests/fixtures/F7.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 14,
+      "measures": 2,
+      "tags": [
+        "vocal",
+        "basic_pitch",
+        "band_masking"
+      ]
+    },
+    {
+      "id": "F8",
+      "group": null,
+      "kind": "tempo_map",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F8.wav",
+      "gt": "backend/tests/fixtures/F8.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 8,
+      "measures": 2,
+      "tags": [
+        "accelerando",
+        "tempo_drift"
+      ]
+    },
+    {
+      "id": "F9_C",
+      "group": "F9",
+      "kind": "key_variant_major",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F9_C.wav",
+      "gt": "backend/tests/fixtures/F9_C.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 8,
+      "measures": 2,
+      "tags": [
+        "key_detection",
+        "major"
+      ]
+    },
+    {
+      "id": "F9_Am",
+      "group": "F9",
+      "kind": "key_variant_minor",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F9_Am.wav",
+      "gt": "backend/tests/fixtures/F9_Am.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 8,
+      "measures": 2,
+      "tags": [
+        "key_detection",
+        "minor"
+      ]
+    },
+    {
+      "id": "F10",
+      "group": null,
+      "kind": "format_m4a",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F10.wav",
+      "gt": "backend/tests/fixtures/F10.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 8,
+      "measures": 2,
+      "tags": [
+        "m4a",
+        "container",
+        "deferred"
+      ]
+    },
+    {
+      "id": "F11",
+      "group": null,
+      "kind": "piano_left_hand_louder",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F11.wav",
+      "gt": "backend/tests/fixtures/F11.json",
+      "priority": "core",
+      "diagnostic": false,
+      "notes": 12,
+      "measures": 2,
+      "tags": [
+        "left_hand_6db_louder",
+        "register",
+        "core"
+      ]
+    },
+    {
+      "id": "F12",
+      "group": null,
+      "kind": "solo_staccato_octave_jumps",
+      "instrument": "violin",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F12.wav",
+      "gt": "backend/tests/fixtures/F12.json",
+      "priority": "core",
+      "diagnostic": false,
+      "notes": 7,
+      "measures": 2,
+      "tags": [
+        "staccato",
+        "octave_jumps",
+        "g3_boundary",
+        "core"
+      ]
+    },
+    {
+      "id": "F13",
+      "group": null,
+      "kind": "melody_short_dip",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F13.wav",
+      "gt": "backend/tests/fixtures/F13.json",
+      "priority": "core",
+      "diagnostic": false,
+      "notes": 9,
+      "measures": 2,
+      "tags": [
+        "register_dip",
+        "g3_below_220hz",
+        "core"
+      ]
+    },
+    {
+      "id": "F14",
+      "group": null,
+      "kind": "reverb_heavy",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F14.wav",
+      "gt": "backend/tests/fixtures/F14.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 8,
+      "measures": 2,
+      "tags": [
+        "reverb",
+        "room_40pct"
+      ]
+    },
+    {
+      "id": "F15",
+      "group": null,
+      "kind": "inter_note_gaps",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F15.wav",
+      "gt": "backend/tests/fixtures/F15.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 4,
+      "measures": 1,
+      "tags": [
+        "gap_fill",
+        "0.1_0.3_0.6_beat"
+      ]
+    }
+  ]
+}

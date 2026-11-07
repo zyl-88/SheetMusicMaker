@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0",
+  "id": "F13",
+  "group": null,
+  "kind": "melody_short_dip",
+  "instrument": "universal",
+  "audio": "test_audio/fixtures/F13.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 100.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 2,
+    "role": "melody_line",
+    "tags": [
+      "register_dip",
+      "g3_below_220hz",
+      "core"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 1.0,
+        "onset_s": 0.0,
+        "dur_s": 0.6,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.0,
+        "dur": 1.0,
+        "onset_s": 0.6,
+        "dur_s": 0.6,
+        "midi": 74,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 0.5,
+        "onset_s": 1.2,
+        "dur_s": 0.3,
+        "midi": 55,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.5,
+        "dur": 0.5,
+        "onset_s": 1.5,
+        "dur_s": 0.3,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.0,
+        "dur": 1.0,
+        "onset_s": 1.8,
+        "dur_s": 0.6,
+        "midi": 76,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 1.0,
+        "onset_s": 2.4,
+        "dur_s": 0.6,
+        "midi": 77,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 5.0,
+        "dur": 1.0,
+        "onset_s": 3.0,
+        "dur_s": 0.6,
+        "midi": 79,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 6.0,
+        "dur": 1.0,
+        "onset_s": 3.6,
+        "dur_s": 0.6,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 7.0,
+        "dur": 1.0,
+        "onset_s": 4.2,
+        "dur_s": 0.6,
+        "midi": 74,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ]
+  },
+  "acceptance": {
+    "recall_min": 0.75,
+    "precision_min": 0.7,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.0,
+    "note_count_deviation_max": 0.3,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.02,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": false,
+    "known_limitations": [],
+    "segment_recall_min": {
+      "dip": 0.6
+    },
+    "segment_recall_strategy": {
+      "dip": "dp_register"
+    },
+    "note": "F13 重点：旋律短暂下探 C5→G3→C5，legacy 220Hz 下限会丢音；dp_register 应保留"
+  },
+  "segments": [
+    {
+      "label": "dip",
+      "beats": [
+        2.0,
+        3.0
+      ],
+      "start_s": 1.2,
+      "end_s": 1.8
+    }
+  ],
+  "special": {},
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "piano",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

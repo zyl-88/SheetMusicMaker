@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0",
+  "id": "F15",
+  "group": null,
+  "kind": "inter_note_gaps",
+  "instrument": "universal",
+  "audio": "test_audio/fixtures/F15.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 120.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 1,
+    "role": "melody_line",
+    "tags": [
+      "gap_fill",
+      "0.1_0.3_0.6_beat"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 0.5,
+        "onset_s": 0.0,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 0.6,
+        "dur": 0.5,
+        "onset_s": 0.3,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.4,
+        "dur": 0.5,
+        "onset_s": 0.7,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.5,
+        "dur": 0.5,
+        "onset_s": 1.25,
+        "dur_s": 0.25,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ]
+  },
+  "acceptance": {
+    "recall_min": 0.6,
+    "precision_min": 0.6,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.0,
+    "note_count_deviation_max": 0.5,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.02,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": false,
+    "known_limitations": []
+  },
+  "segments": [],
+  "special": {
+    "expected_merge": {
+      "diagnostic": true,
+      "expected_count": 3,
+      "note": "已校准 2026-11-07（legacy_nms / pYIN 实测 = 3）：0.1 拍(50ms@120bpm)间隙被合并，0.3/0.6 拍间隙未合并；实测 onset 0.000 / 0.697 / 1.254s"
+    }
+  },
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "piano",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

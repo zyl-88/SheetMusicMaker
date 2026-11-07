@@ -1,0 +1,2617 @@
+{
+  "baseline_commit": "ab3dcf97c64c69d41a1e777231dec7405eaeae74",
+  "baseline_commit_short": "ab3dcf9",
+  "label": "fixture 基线 @ ab3dcf9",
+  "created_at": "2026-11-07T20:11:13",
+  "source_eval": "docs/acceptance/fixture-eval-2026-11-07.json",
+  "strategy_switch_implemented": false,
+  "onset_tolerance_ms": null,
+  "gt_sha256": {
+    "F1": "ddfe5281aff127d0450eb222d674da5a6e91ecf217b299a7ed23ce26713beaed",
+    "F10": "2c99c5cf7f7fd7713e829d1d4d99be21ae3d6e8c5d5f9a9ddd742faeeb737145",
+    "F11": "5f5dfd79aabf5331f852ac56a458bf44d46d8201ca2eac5c9fd1c9d324fd8bf8",
+    "F12": "0711d4942499d2a1b0a2efc137c10a8eb6a8377e1485f1d5e6eaeb87ac36a9bb",
+    "F13": "422b1c8348556552b05467491704f23c128441a5c028c10c815f4538b1b5c6ae",
+    "F14": "5f33737cc853965619b182ae6ce6cd9276da1a56bede53b7eac8519006bf5e08",
+    "F15": "a59cd3ae7f10f8236104a77a0e1164e9d68ccf2535b2b15b32340ab633b4892b",
+    "F2": "d829884ea0def83ec64f9f1d9516dd4fb4ccbe34b53fed19dae5b2c3ffd4890f",
+    "F3": "60971b37874aca6a62d3008f20a9eb006e984a657e2f617a5fe0c5ecedba0108",
+    "F4": "edf98031331cdc5de10c2d4e248c16980bb9bbc66d80aee3fb89f80129d378fb",
+    "F5": "c075547e3fbac7cca97624ca4c16c4ec3a72e483742999b6a09cd1575156822a",
+    "F6": "c0a1b487d467544c26668d117ab5f77eef1ab66250721ac6894b4010661144e9",
+    "F7": "a9ef75eed13d3d13159f99a5a75758354c747aa37e91fe581e1fad7fde18d53f",
+    "F8": "b95f21bf8a1929f61d08d2dd27a618ef74660d2b2ad16a1986082d251631d18e",
+    "F9_Am": "a103f6c7871de75c8eadb6597f7a9a22c7f6842bb6d19316fa21645c2879ac24",
+    "F9_C": "60a08a194571942166a481c5ed28a81e05ee4d8412a8d036e956ecd94513750c",
+    "manifest": "71c844adb025a04d1325d8a7f6f703557f80d3c80b1e20b97cdc00a2f3c0f071"
+  },
+  "summary": {
+    "total": 16,
+    "counts": {
+      "PASS": 5,
+      "FAIL": 10,
+      "DIAGNOSTIC_PASS": 1
+    },
+    "passed": 6,
+    "failed": 10,
+    "no_prediction": 0
+  },
+  "comparison": [
+    {
+      "id": "F1",
+      "legacy_status": "PASS",
+      "dp_status": "PASS",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F10",
+      "legacy_status": "PASS",
+      "dp_status": "PASS",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F11",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F12",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F13",
+      "legacy_status": "PASS",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F14",
+      "legacy_status": "PASS",
+      "dp_status": "PASS",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F15",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F2",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F3",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F4",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F5",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F6",
+      "legacy_status": "DIAGNOSTIC_PASS",
+      "dp_status": "DIAGNOSTIC_PASS",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F7",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F8",
+      "legacy_status": "PASS",
+      "dp_status": "PASS",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F9_Am",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    },
+    {
+      "id": "F9_C",
+      "legacy_status": "FAIL",
+      "dp_status": "FAIL",
+      "delta_precision": 0.0,
+      "delta_recall": 0.0,
+      "delta_bass_leakage_rate": 0.0,
+      "delta_octave_error_rate": 0.0,
+      "delta_octave_jumps_per_8bars": 0.0,
+      "delta_note_count_deviation": 0.0,
+      "delta_boundary_pitch_ratio": 0.0
+    }
+  ],
+  "fixtures": {
+    "F1": {
+      "status": "PASS",
+      "metrics": {
+        "pred_count": 8,
+        "gt_count": 8,
+        "matched": 8,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 99.4,
+        "pred_key": [
+          "C",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 100.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 1.0,
+          "limit": 0.85,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 1.0,
+          "limit": 0.85,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 1.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.005999999999999943,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F10": {
+      "status": "PASS",
+      "metrics": {
+        "pred_count": 8,
+        "gt_count": 8,
+        "matched": 8,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 99.4,
+        "pred_key": [
+          "C",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 100.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 1.0,
+          "limit": 0.8,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 1.0,
+          "limit": 0.8,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 1.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.005999999999999943,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F11": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 7,
+        "gt_count": 8,
+        "matched": 2,
+        "precision": 0.2857142857142857,
+        "recall": 0.25,
+        "f1": 0.26666666666666666,
+        "bass_leakage_rate": 0.5714285714285714,
+        "octave_error_rate": 0.6666666666666666,
+        "octave_jumps": 2,
+        "octave_jumps_per_8bars": 8.0,
+        "note_count_deviation": -0.125,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 49.7,
+        "pred_key": [
+          "C",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 100.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.25,
+          "limit": 0.8,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.2857142857142857,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.26666666666666666,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.5714285714285714,
+          "limit": 0.15,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.6666666666666666,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 8.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.125,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.503,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F12": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 14,
+        "gt_count": 7,
+        "matched": 1,
+        "precision": 0.07142857142857142,
+        "recall": 0.14285714285714285,
+        "f1": 0.09523809523809523,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 1.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 2,
+        "pred_bpm": 123.0,
+        "pred_key": [
+          "F#",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 120.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.14285714285714285,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.07142857142857142,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.09523809523809523,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.5,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 1.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.025,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "F#",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F13": {
+      "status": "PASS",
+      "metrics": {
+        "pred_count": 9,
+        "gt_count": 9,
+        "matched": 8,
+        "precision": 0.8888888888888888,
+        "recall": 0.8888888888888888,
+        "f1": 0.8888888888888888,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 1,
+        "pred_bpm": 99.4,
+        "pred_key": [
+          "C",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 100.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.8888888888888888,
+          "limit": 0.75,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.8888888888888888,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.8888888888888888,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.005999999999999943,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "segment_recall[dip]",
+          "value": 0.5,
+          "limit": 0.6,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": true,
+          "note": "仅对 dp_register 生效；当前 strategy=legacy_nms"
+        }
+      ]
+    },
+    "F14": {
+      "status": "PASS",
+      "metrics": {
+        "pred_count": 8,
+        "gt_count": 8,
+        "matched": 7,
+        "precision": 0.875,
+        "recall": 0.875,
+        "f1": 0.875,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 99.4,
+        "pred_key": [
+          "C",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 100.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.875,
+          "limit": 0.75,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.875,
+          "limit": 0.65,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.875,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.005999999999999943,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F15": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 3,
+        "gt_count": 4,
+        "matched": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": -0.25,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 107.7,
+        "pred_key": [
+          "C",
+          "minor"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 120.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.0,
+          "limit": 0.6,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.0,
+          "limit": 0.6,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.25,
+          "limit": 0.5,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.10249999999999998,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "minor"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "merge_expected_count",
+          "value": 3,
+          "limit": 3,
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": "已校准 2026-11-07（legacy_nms / pYIN 实测 = 3）：0.1 拍(50ms@120bpm)间隙被合并，0.3/0.6 拍间隙未合并；实测 onset 0.000 / 0.697 / 1.254s"
+        }
+      ]
+    },
+    "F2": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 7,
+        "gt_count": 8,
+        "matched": 5,
+        "precision": 0.7142857142857143,
+        "recall": 0.625,
+        "f1": 0.6666666666666666,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": -0.125,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 123.0,
+        "pred_key": [
+          "C",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 120.0,
+        "expected_key": "C major",
+        "expected_time_signature": "3/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.625,
+          "limit": 0.75,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.7142857142857143,
+          "limit": 0.8,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.6666666666666666,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.125,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.025,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F3": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 12,
+        "gt_count": 12,
+        "matched": 10,
+        "precision": 0.8333333333333334,
+        "recall": 0.8333333333333334,
+        "f1": 0.8333333333333334,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 117.5,
+        "pred_key": [
+          "F",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 120.0,
+        "expected_key": "G major",
+        "expected_time_signature": "6/8",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.8333333333333334,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.8333333333333334,
+          "limit": 0.75,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.8333333333333334,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.020833333333333332,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "F",
+            "major"
+          ],
+          "limit": [
+            "G",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F4": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 3,
+        "gt_count": 12,
+        "matched": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": -0.75,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 198.8,
+        "pred_key": [
+          "C",
+          "minor"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 120.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.0,
+          "limit": 0.6,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.0,
+          "limit": 0.5,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.75,
+          "limit": 0.5,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.6566666666666667,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "minor"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "segment_note_count[60ms]",
+          "value": 2,
+          "limit": 2,
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": "已校准 2026-11-07（legacy_nms / pYIN 实测）：分段计数 [2,1,0]；实测 onset 0.244 / 0.998 / 1.997s，第 2、3 段首音比段界早 1.5ms/3ms 被归入上一段；首段并未把 0→0.48s 的四个短音合并成长音，只检出 0.244–0.360s 一个短音。basic_pitch 分支未测（F4 engine=melody）"
+        },
+        {
+          "name": "segment_note_count[90ms]",
+          "value": 1,
+          "limit": 1,
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": "已校准 2026-11-07（legacy_nms / pYIN 实测）：分段计数 [2,1,0]；实测 onset 0.244 / 0.998 / 1.997s，第 2、3 段首音比段界早 1.5ms/3ms 被归入上一段；首段并未把 0→0.48s 的四个短音合并成长音，只检出 0.244–0.360s 一个短音。basic_pitch 分支未测（F4 engine=melody）"
+        },
+        {
+          "name": "segment_note_count[120ms]",
+          "value": 0,
+          "limit": 0,
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": "已校准 2026-11-07（legacy_nms / pYIN 实测）：分段计数 [2,1,0]；实测 onset 0.244 / 0.998 / 1.997s，第 2、3 段首音比段界早 1.5ms/3ms 被归入上一段；首段并未把 0→0.48s 的四个短音合并成长音，只检出 0.244–0.360s 一个短音。basic_pitch 分支未测（F4 engine=melody）"
+        }
+      ]
+    },
+    "F5": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 4,
+        "gt_count": 4,
+        "matched": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "bass_leakage_rate": 1.0,
+        "octave_error_rate": 1.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 47.9,
+        "pred_key": [
+          "G#",
+          "minor"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 96.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 1.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 1.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.5010416666666667,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "G#",
+            "minor"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F6": {
+      "status": "DIAGNOSTIC_PASS",
+      "metrics": {
+        "pred_count": 1,
+        "gt_count": 6,
+        "matched": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 1.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": -0.8333333333333334,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 6,
+        "pred_bpm": 120.0,
+        "pred_key": [
+          "D#",
+          "minor"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 80.0,
+        "expected_key": "A minor",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.0,
+          "limit": 0.0,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 1.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.8333333333333334,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.5,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "D#",
+            "minor"
+          ],
+          "limit": [
+            "A",
+            "minor"
+          ],
+          "mode": "eq",
+          "passed": false,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": true,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F7": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 5,
+        "gt_count": 8,
+        "matched": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "bass_leakage_rate": 0.8,
+        "octave_error_rate": 0.3333333333333333,
+        "octave_jumps": 1,
+        "octave_jumps_per_8bars": 4.0,
+        "note_count_deviation": -0.375,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 1,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 117.5,
+        "pred_key": [
+          "D#",
+          "minor"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 100.0,
+        "expected_key": "A minor",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.0,
+          "limit": 0.6,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.0,
+          "limit": 0.75,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.8,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.3333333333333333,
+          "limit": 0.15,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 4.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.375,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.175,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "D#",
+            "minor"
+          ],
+          "limit": [
+            "A",
+            "minor"
+          ],
+          "mode": "eq",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F8": {
+      "status": "PASS",
+      "metrics": {
+        "pred_count": 8,
+        "gt_count": 8,
+        "matched": 8,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 112.3,
+        "pred_key": [
+          "C",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 90.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 1.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 1.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 1.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.24777777777777774,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F9_Am": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 8,
+        "gt_count": 8,
+        "matched": 7,
+        "precision": 0.875,
+        "recall": 0.875,
+        "f1": 0.875,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 117.5,
+        "pred_key": [
+          "D#",
+          "minor"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 100.0,
+        "expected_key": "A minor",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 0.875,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 0.875,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 0.875,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.175,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "D#",
+            "minor"
+          ],
+          "limit": [
+            "A",
+            "minor"
+          ],
+          "mode": "eq",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    },
+    "F9_C": {
+      "status": "FAIL",
+      "metrics": {
+        "pred_count": 8,
+        "gt_count": 8,
+        "matched": 8,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "bass_leakage_rate": 0.0,
+        "octave_error_rate": 0.0,
+        "octave_jumps": 0,
+        "octave_jumps_per_8bars": 0.0,
+        "note_count_deviation": 0.0,
+        "boundary_pitch_ratio": 0.0,
+        "pred_below_220hz_count": 0,
+        "gt_below_220hz_count": 0,
+        "pred_bpm": 103.4,
+        "pred_key": [
+          "C",
+          "major"
+        ],
+        "pred_time_signature": "4/4",
+        "expected_bpm": 100.0,
+        "expected_key": "C major",
+        "expected_time_signature": "4/4",
+        "analysis_available": true
+      },
+      "checks": [
+        {
+          "name": "recall",
+          "value": 1.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "precision",
+          "value": 1.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "f1",
+          "value": 1.0,
+          "limit": 0.7,
+          "mode": "min",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bass_leakage_rate",
+          "value": 0.0,
+          "limit": 0.25,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_error_rate",
+          "value": 0.0,
+          "limit": 0.2,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "octave_jumps_per_8bars",
+          "value": 0.0,
+          "limit": 2.0,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "note_count_deviation",
+          "value": 0.0,
+          "limit": 0.3,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "boundary_pitch_ratio",
+          "value": 0.0,
+          "limit": 0.1,
+          "mode": "max",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "bpm",
+          "value": 0.03400000000000006,
+          "limit": 0.02,
+          "mode": "max",
+          "passed": false,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "key",
+          "value": [
+            "C",
+            "major"
+          ],
+          "limit": [
+            "C",
+            "major"
+          ],
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        },
+        {
+          "name": "time_signature",
+          "value": "4/4",
+          "limit": "4/4",
+          "mode": "eq",
+          "passed": true,
+          "diagnostic": false,
+          "skipped": false,
+          "note": ""
+        }
+      ]
+    }
+  }
+}
