@@ -224,6 +224,10 @@ def run_pipeline(
         analysis = analyzer.analyze(transcribe_source)
         _update_progress(task_id, STAGE_ANALYZING, 70)
         logger.info(f"[{task_id}] 分析完成: BPM={analysis['bpm']}, Key={analysis['key']}")
+        for message in analysis.get("warnings") or []:
+            logger.warning(f"[{task_id}] {message}")
+            if dump is not None:
+                dump.warn(message)
         if dump is not None:
             dump.write("analysis", analysis)
 
@@ -259,17 +263,20 @@ def run_pipeline(
                     "bpm": analysis.get("bpm"),
                     "key": analysis.get("key"),
                     "time_signature": analysis.get("time_signature"),
+                    "warnings": list(analysis.get("warnings") or []),
                     "abc_lines": len(export_result.get("abc", "").splitlines()),
                 }
             )
 
         # 构建结果
+        analysis_warnings = list(analysis.get("warnings") or [])
         result = {
             "abc": export_result["abc"],
             "key": analysis["key"],
             "bpm": analysis["bpm"],
             "time_signature": analysis["time_signature"],
             "instrument_name": instrument_name,
+            "warnings": analysis_warnings,
             "downloads": {
                 "abc": f"/api/tasks/{task_id}/download/abc",
                 "musicxml": f"/api/tasks/{task_id}/download/musicxml",

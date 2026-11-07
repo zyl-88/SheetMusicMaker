@@ -44,12 +44,14 @@ class AudioAnalyzer:
                 "key": {"tonic": "C", "mode": "major"},
                 "key_abc": "C",          # ABC 调性标记
                 "time_signature": "4/4",
+                "warnings": [str, ...],  # BPM 置信度低等风险提示
             }
         """
         path = str(vocals_wav_path)
         beats, bpm = self._detect_beats_and_tempo(path)
         key_info = self._detect_key(path)
         time_sig = self._infer_time_signature(beats, bpm)
+        warnings = self._bpm_warnings(beats, bpm)
 
         result = {
             "beats": beats,
@@ -57,6 +59,7 @@ class AudioAnalyzer:
             "key": key_info,
             "key_abc": self._key_to_abc(key_info),
             "time_signature": time_sig,
+            "warnings": warnings,
         }
         logger.info(
             f"音频分析完成: BPM={bpm:.1f}, "
@@ -64,7 +67,40 @@ class AudioAnalyzer:
             f"Time={time_sig}, "
             f"Beats={len(beats)}"
         )
+        for message in warnings:
+            logger.warning(message)
         return result
+
+    @staticmethod
+    def _bpm_warnings(beats: list[float], bpm: float) -> list[str]:
+        """BPM 置信度检查：把倍速/半速、节拍不稳等风险显式报出来。
+
+        导出使用每小节 tempo 图后，乐谱内部会与上报 BPM 完全自洽；如果 BPM 本身
+        检测错误（倍速/半速），从谱面上反而更难察觉，因此这里必须留一条明示。
+        """
+        if len(beats) < 4:
+            return ["bpm 置信度低：节拍序列过短，无法用节拍间隔校验速度"]
+        intervals = np.diff(np.asarray(beats, dtype=float))
+        intervals = intervals[intervals > 0]
+        if intervals.size == 0:
+            return ["bpm 置信度低：节拍序列无有效间隔"]
+        median_interval = float(np.median(intervals))
+        bpm_beats = 60.0 / median_interval
+        ratio = bpm / bpm_beats if bpm_beats > 0 else 1.0
+
+        warnings: list[str] = []
+        if ratio > 1.25 or ratio < 0.8:
+            warnings.append(
+                f"bpm 置信度低：上报 {bpm:.1f} 与节拍间隔估计 {bpm_beats:.1f} "
+                f"相差 {ratio:.2f}x，疑似倍速/半速"
+            )
+        elif ratio > 1.1 or ratio < 0.9:
+            warnings.append(
+                f"bpm 置信度低：上报 {bpm:.1f} 与节拍间隔估计 {bpm_beats:.1f} 不一致"
+            )
+        if float(np.std(intervals / median_interval)) > 0.25:
+            warnings.append("bpm 置信度低：节拍间隔波动大（节奏不稳或检测抖动）")
+        return warnings
 
     def _detect_beats_and_tempo(self, path: str) -> tuple[list[float], float]:
         """检测节拍和速度。优先用 madmom，不可用时降级到 librosa。"""
