@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from 'vue'
 import abcjs from 'abcjs'
+import { restoreTempoDecimals } from '../utils/abcTempo'
 
 const props = defineProps<{ abc: string }>()
 const emit = defineEmits<{ rendered: [v: abcjs.TuneObject] }>()
@@ -21,6 +22,11 @@ watch(
       paddingtop: 16,
       paddingbottom: 24,
       foregroundColor: '#2a241d',
+      // abcjs 用 parseInt 解析 Q:，回填原文小数，避免播放按整数 BPM 累积漂移
+      afterParsing: (tune: abcjs.TuneObject) => {
+        restoreTempoDecimals(tune, v)
+        return tune
+      },
     })
     emit('rendered', objs[0])
   },

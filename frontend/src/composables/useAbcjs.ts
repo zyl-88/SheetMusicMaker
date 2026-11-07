@@ -1,6 +1,7 @@
 /** abcjs 渲染 + 播放封装。 */
 import abcjs from 'abcjs'
 import { INSTRUMENT_PROGRAM } from '../types'
+import { restoreTempoDecimals } from '../utils/abcTempo'
 
 export function useAbcjs() {
   let synthControl: abcjs.SynthObjectController | null = null
@@ -17,6 +18,10 @@ export function useAbcjs() {
       paddingtop: 16,
       paddingbottom: 24,
       foregroundColor: '#2a241d',
+      afterParsing: (tune: abcjs.TuneObject) => {
+        restoreTempoDecimals(tune, abc)
+        return tune
+      },
     })
     return visualObjs[0] ?? null
   }
