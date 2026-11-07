@@ -35,6 +35,8 @@ const keyDisplay = computed(() => {
   return `${k.tonic}${k.mode === 'minor' ? 'm' : ''}`
 })
 
+const warnings = computed(() => transcription.result.value?.warnings ?? [])
+
 onMounted(async () => {
   // 拉取健康状态
   try {
@@ -165,6 +167,17 @@ function onRendered(v: any) {
 
       <!-- 结果态 -->
       <section v-else-if="isCompleted && transcription.result.value" class="result-section">
+        <!-- 置信度提示（仅提示，不影响谱面内容） -->
+        <div v-if="warnings.length" class="card notice-card">
+          <div class="notice-title">速度检测提示</div>
+          <ul class="notice-list">
+            <li v-for="(w, i) in warnings" :key="i">{{ w }}</li>
+          </ul>
+          <p class="notice-note">
+            乐谱内容（音符、节奏、小节）不受影响，仅速度标记可能有偏差；如需准确速度，可对照原曲手动调整。
+          </p>
+        </div>
+
         <!-- 元数据条 -->
         <div class="card metadata-bar">
           <div class="meta-item">
@@ -338,6 +351,48 @@ function onRendered(v: any) {
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   padding: 20px 24px;
+}
+
+/* 提示态用黄铜色，不用红色：这不是失败，只是速度标记存疑 */
+.notice-card {
+  padding: 18px 24px;
+  border-top-color: var(--gold-soft);
+  background: var(--paper-card);
+}
+
+.notice-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.notice-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notice-list li {
+  font-size: 0.88rem;
+  color: var(--ink);
+  padding-left: 14px;
+  position: relative;
+}
+
+.notice-list li::before {
+  content: '·';
+  position: absolute;
+  left: 2px;
+  color: var(--gold-soft);
+}
+
+.notice-note {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
 }
 
 .meta-item {

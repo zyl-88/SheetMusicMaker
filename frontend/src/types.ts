@@ -20,6 +20,8 @@ export interface TaskResult {
   time_signature: string
   instrument_name: string
   downloads: Record<string, string>
+  /** 后端分析阶段的置信度提示（如 BPM 疑似倍速/半速）；仅提示，不影响谱面内容。 */
+  warnings?: string[]
 }
 
 /** 任务状态响应（GET /api/tasks/{id}）。 */

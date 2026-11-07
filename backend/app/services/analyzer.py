@@ -75,31 +75,34 @@ class AudioAnalyzer:
     def _bpm_warnings(beats: list[float], bpm: float) -> list[str]:
         """BPM 置信度检查：把倍速/半速、节拍不稳等风险显式报出来。
 
-        导出使用每小节 tempo 图后，乐谱内部会与上报 BPM 完全自洽；如果 BPM 本身
+        导出使用每小节 tempo 图后，乐谱内部会与当前 BPM 完全自洽；如果 BPM 本身
         检测错误（倍速/半速），从谱面上反而更难察觉，因此这里必须留一条明示。
+        文案面向最终用户：说明差多少、两边各是多少，不暴露内部术语。
         """
         if len(beats) < 4:
-            return ["bpm 置信度低：节拍序列过短，无法用节拍间隔校验速度"]
+            return ["节拍序列过短，无法校验速度，速度标记仅供参考"]
         intervals = np.diff(np.asarray(beats, dtype=float))
         intervals = intervals[intervals > 0]
         if intervals.size == 0:
-            return ["bpm 置信度低：节拍序列无有效间隔"]
+            return ["节拍序列没有有效间隔，无法校验速度，速度标记仅供参考"]
         median_interval = float(np.median(intervals))
         bpm_beats = 60.0 / median_interval
         ratio = bpm / bpm_beats if bpm_beats > 0 else 1.0
 
         warnings: list[str] = []
         if ratio > 1.25 or ratio < 0.8:
+            factor = ratio if ratio >= 1.0 else 1.0 / ratio
             warnings.append(
-                f"bpm 置信度低：上报 {bpm:.1f} 与节拍间隔估计 {bpm_beats:.1f} "
-                f"相差 {ratio:.2f}x，疑似倍速/半速"
+                f"检测到的速度可能与实际相差约 {factor:.1f} 倍："
+                f"当前记谱 {bpm:.1f} BPM，节拍间隔更接近 {bpm_beats:.1f} BPM"
             )
         elif ratio > 1.1 or ratio < 0.9:
             warnings.append(
-                f"bpm 置信度低：上报 {bpm:.1f} 与节拍间隔估计 {bpm_beats:.1f} 不一致"
+                f"检测到的速度与节拍间隔略有出入："
+                f"当前记谱 {bpm:.1f} BPM，节拍间隔约 {bpm_beats:.1f} BPM"
             )
         if float(np.std(intervals / median_interval)) > 0.25:
-            warnings.append("bpm 置信度低：节拍间隔波动大（节奏不稳或检测抖动）")
+            warnings.append("节拍间隔波动较大，速度检测可能不稳定")
         return warnings
 
     def _detect_beats_and_tempo(self, path: str) -> tuple[list[float], float]:
