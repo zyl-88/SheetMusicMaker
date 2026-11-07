@@ -282,6 +282,10 @@ class NoteTranscriber:
         基于 PYIN 音高追踪 + 旋律轮廓选择，专为器乐独奏/合奏设计，
         每帧只追踪一个最强音高，天然滤除和声/伴奏。
 
+        dp_register 策略下改用 basic-pitch 多音高候选 + DP 选线：
+        实测有伴奏时 PYIN 只会跟随更响的低音/和弦（F5/F11 的旋律音
+        在轮廓中完全不存在），需多音高候选才能检出后再选线。
+
         Args:
             audio_path: WAV/MP3 文件路径
             instrument_config: 乐器配置
@@ -289,6 +293,13 @@ class NoteTranscriber:
         Returns:
             note_events: 已含后处理
         """
+        if current_strategy() == "dp_register":
+            try:
+                logger.info("dp_register: 使用 basic-pitch 多音高候选替代 PYIN 单声道路径")
+                return self.transcribe(audio_path, instrument_config)
+            except Exception as e:
+                logger.warning(f"basic-pitch 候选提取失败，回退 Melodia: {e}")
+
         from app.services.melody import MelodyExtractor
 
         extractor = MelodyExtractor()
