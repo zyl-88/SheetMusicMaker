@@ -16,7 +16,6 @@ from typing import Any
 import numpy as np
 
 from app.config import (
-    MELODY_MIN_FREQ,
     MERGE_GAP_THRESHOLD,
     MIN_MIDI_PITCH,
     MIN_NOTE_AMPLITUDE,
@@ -62,15 +61,6 @@ class MelodyExtractor:
 
         min_freq = instrument_config.get("min_freq", 65)
         max_freq = instrument_config.get("max_freq", 2093)
-
-        # 如果乐器配置的频率下限过低（通用模式 A0=27.5Hz），
-        # 用 MELODY_MIN_FREQ 覆盖，排除左手低音伴奏
-        if min_freq < MELODY_MIN_FREQ:
-            logger.info(
-                f"min_freq 从 {min_freq:.0f}Hz 提高到 {MELODY_MIN_FREQ:.0f}Hz "
-                f"(过滤低音伴奏)"
-            )
-            min_freq = MELODY_MIN_FREQ
 
         # === 第1步：PYIN 音高追踪 ===
         logger.info("PYIN 音高追踪中...")
