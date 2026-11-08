@@ -129,6 +129,7 @@ async def get_task_result(task_id: str):
         "bpm": result["bpm"],
         "time_signature": result["time_signature"],
         "instrument_name": result["instrument_name"],
+        "warnings": list(result.get("warnings") or []),
         "downloads": result["downloads"],
     }
 
