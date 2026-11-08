@@ -21,6 +21,7 @@ from app.config import (
     MIN_MIDI_PITCH,
     MIN_NOTE_AMPLITUDE,
     melody_continuity_gate_enabled,
+    melody_continuity_gate_mode,
 )
 from app.services.debug_dump import DebugRecorder, notes_payload
 
@@ -35,13 +36,15 @@ SELECT_AMP_FLOOR = 0.35
 
 # 旋律连续性门控：低音起音缺少局部高音证据时判为伴奏渗漏（详见
 # _suppress_low_interjections_by_continuity）。这些阈值来自 dump 回放取证：
-# - 低音与音区基准相差 ≥16 半音才算「低音候选」（12 会误删 34 个中音区旋律音，
-#   覆盖率掉 3.1pp；16 是覆盖率 ≥78.7% 档位里跳变下降最多的一档）
+# - 低音与音区基准相差 ≥12 半音才算「低音候选」。默认 covering 档只在
+#   「高音确实覆盖该时刻」时剔除，GAP=12 复现验收过的 cover 档（415 音、覆盖
+#   80.2%）；12/16 两档均保留，可用 MELODY_CONTINUITY_REGISTER_GAP 切换
+#   （strict 档下 GAP=16 是覆盖率 ≥78.7% 档位里跳变下降最多的一档）
 # - 高音候选必须在 ±0.2s 内起音，或仍跨过起音点发声 ≥0.02s（一帧）
 # - 高音候选跨过起音点并继续发声 ≥0.08s 才算「覆盖」，属伴奏插在旋律持续期内
 # - 音区基准取对称 ±6s 时间窗的 75 分位，避免连续低音拉低自己的判定基准
 # - 低音若处于稀疏上下文（±0.5s 内没有其他旋律音），视为独奏旋律而保留
-CONTINUITY_REGISTER_GAP = 16
+CONTINUITY_REGISTER_GAP = int(os.environ.get("MELODY_CONTINUITY_REGISTER_GAP", "12"))
 CONTINUITY_LOCAL_WINDOW_S = 0.2
 CONTINUITY_SOUNDING_S = 0.02
 CONTINUITY_COVER_S = 0.08
@@ -409,8 +412,11 @@ class NoteTranscriber:
         （dump 回放里 57 个存活低音有 52 个败在这一条），因此改用候选池里的
         局部证据，不再依赖被切短的相邻音：
         - 高音候选跨过该起音点并继续发声 ≥0.08s → 伴奏插在旋律持续期内，丢弃
-        - ±0.2s 内既无高音候选起音、也无高音候选仍在发声 → 丢弃
+        - （仅 strict 档）±0.2s 内既无高音候选起音、也无高音候选仍在发声 → 丢弃
         - 低音处于稀疏上下文（±0.5s 内没有其他旋律音）→ 独奏旋律，保留
+
+        默认 covering 档只在「高音确实覆盖该时刻」时剔除，因此对「该时刻
+        完全没有高音」的跳变成因不处理——这是与验收方共同接受的取舍。
 
         音区基准取对称 ±6s 时间窗的 75 分位，连续低音不会把自己的判定基准
         拉低后「自己给自己作证」。
@@ -418,6 +424,7 @@ class NoteTranscriber:
         if not selected:
             return selected
 
+        mode = melody_continuity_gate_mode()
         starts = [float(event[0]) for event in selected]
         registers = self._register_baselines(selected, starts)
         kept: list[tuple] = []
@@ -445,7 +452,11 @@ class NoteTranscriber:
                 for c in high
             )
             sparse = self._is_sparse_context(starts, start_s)
-            if covering or (not local_onset and not local_sounding and not sparse):
+            if mode == "covering":
+                drop = covering
+            else:
+                drop = covering or (not local_onset and not local_sounding and not sparse)
+            if drop:
                 if dump is not None:
                     dump.decide(
                         {

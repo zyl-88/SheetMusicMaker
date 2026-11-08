@@ -112,6 +112,24 @@ def melody_continuity_gate_enabled() -> bool:
     value = os.environ.get("MELODY_CONTINUITY_GATE", "on").strip().lower()
     return value != "off"
 
+
+def melody_continuity_gate_mode() -> str:
+    """旋律连续性门控的剔除条件。
+
+    - ``covering``（默认）：只有「高音确实跨过该低音起音点、并继续发声 ≥0.08s」
+      才剔除；低音在被高音覆盖时才判伴奏，因此「该时刻完全没有高音」的低音
+      （独奏低音/前奏低音）会被保留。
+    - ``strict``：在 ``covering`` 之外，再加「±0.2s 内既无高音起音、也无高音仍在
+      发声」也剔除（``MELODY_CONTINUITY_GATE_MODE=strict``），用于 A/B 对照。
+
+    验收护栏语义：A3 以下音符数本身不是目标，护栏针对的是「A3 以下 **且
+    cls=accompaniment/inner** ≤ 40」——防的是伴奏占领低音区，而不是让低音
+    音符越少越好；低音区真旋律（top/melody、near-top）即使让 A3 以下总数
+    超过 40 也应保留。
+    """
+    value = os.environ.get("MELODY_CONTINUITY_GATE_MODE", "covering").strip().lower()
+    return value if value in ("covering", "strict") else "covering"
+
 # 任务配置
 MAX_CONCURRENT_TASKS = 1  # CPU 限制，同时只跑一个
 POLL_INTERVAL_MS = 2000  # 前端轮询间隔（毫秒，用于文档参考）
