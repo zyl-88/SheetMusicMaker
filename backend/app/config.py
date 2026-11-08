@@ -130,6 +130,22 @@ def melody_continuity_gate_mode() -> str:
     value = os.environ.get("MELODY_CONTINUITY_GATE_MODE", "covering").strip().lower()
     return value if value in ("covering", "strict") else "covering"
 
+
+def low_bass_filter_enabled() -> bool:
+    """R1–R4 低音伴奏过滤的独立开关（``LOW_BASS_FILTER``，默认 on）。
+
+    只作用于 A3 以下、且相对音区基准低 ≥16 半音的音：
+    - R1 ostinato：±0.5s 内无旋律音的同音反复/连续低音段
+    - R2 间隙单音：前后都是旋律音且两侧跨度 ≥12 半音的孤立低音（装饰性回环除外）
+    - R3 曲尾低音：最后一个音且前一个是旋律音
+    - R4 低音段：两侧有旋律音、长度 ≥2 的连续低音段（两侧跨度 ≥5 半音）
+
+    ``off`` 时逐音复现切换前的输出，用于回退与 A/B 对照。
+    """
+    value = os.environ.get("LOW_BASS_FILTER", "on").strip().lower()
+    return value != "off"
+
+
 # 任务配置
 MAX_CONCURRENT_TASKS = 1  # CPU 限制，同时只跑一个
 POLL_INTERVAL_MS = 2000  # 前端轮询间隔（毫秒，用于文档参考）

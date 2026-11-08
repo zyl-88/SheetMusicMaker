@@ -4,7 +4,7 @@
   "sample_rate": 22050,
   "audio_dir": "test_audio/fixtures",
   "gt_dir": "backend/tests/fixtures",
-  "total": 20,
+  "total": 21,
   "fixtures": [
     {
       "id": "F1",
@@ -368,6 +368,27 @@
         "150_bpm",
         "tactus_halving_reverse",
         "accent_period_4"
+      ]
+    },
+    {
+      "id": "F17",
+      "group": null,
+      "kind": "low_register_melody_big_jumps",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F17.wav",
+      "gt": "backend/tests/fixtures/F17.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 32,
+      "measures": 4,
+      "tags": [
+        "low_register",
+        "a2_c3",
+        "octave_jump",
+        "same_pitch_repeats",
+        "adversarial",
+        "low_bass_filter"
       ]
     }
   ]

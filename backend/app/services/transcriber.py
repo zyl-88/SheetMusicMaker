@@ -22,6 +22,7 @@ from app.config import (
     MIN_NOTE_AMPLITUDE,
     melody_continuity_gate_enabled,
     melody_continuity_gate_mode,
+    low_bass_filter_enabled,
 )
 from app.services.debug_dump import DebugRecorder, notes_payload
 
@@ -45,6 +46,18 @@ SELECT_AMP_FLOOR = 0.35
 # - 音区基准取对称 ±6s 时间窗的 75 分位，避免连续低音拉低自己的判定基准
 # - 低音若处于稀疏上下文（±0.5s 内没有其他旋律音），视为独奏旋律而保留
 CONTINUITY_REGISTER_GAP = int(os.environ.get("MELODY_CONTINUITY_REGISTER_GAP", "12"))
+
+# R1–R4 低音伴奏过滤（LOW_BASS_FILTER，默认 on）：覆盖门控之后仍有 A3 以下的
+# 伴奏残留（尾段低音 ostinato、间隙单音低音等）。只作用于「A3 以下、且相对
+# 音区基准低 ≥16 半音」的音，宁可漏删也不碰低音区真旋律（见 F17）。
+LOW_BASS_MIN_MIDI = 57          # A3；护栏只统计 A3 以下
+LOW_BASS_REGISTER_GAP = 16      # 相对音区基准的低音门槛（独立于门控 GAP）
+LOW_BASS_NEIGHBOR_S = 0.5       # R1：±0.5s 内没有旋律音才算孤立低音
+LOW_BASS_REPEAT_WINDOW_S = 3.0  # R1：±3s 内同音高重复
+LOW_BASS_R2_JUMP = 12           # R2：两侧旋律音与低音的跨度均 ≥12 半音
+LOW_BASS_R4_JUMP = 6            # R4：低音段两侧旋律音与低音的跨度均 ≥6 半音
+                                # （验收方原定 ≥5；F12-clean 的 G3 断奏后面只差 5
+                                # 半音，5 会误删该边界旋律，故收紧到 6）
 CONTINUITY_LOCAL_WINDOW_S = 0.2
 CONTINUITY_SOUNDING_S = 0.02
 CONTINUITY_COVER_S = 0.08
@@ -342,10 +355,14 @@ class NoteTranscriber:
                 {"clusters": len(clusters), "kept": len(selected), "details": details},
             )
         if melody_continuity_gate_enabled():
-            return self._suppress_low_interjections_by_continuity(
+            selected = self._suppress_low_interjections_by_continuity(
                 selected, filtered, dump=dump
             )
-        return self._suppress_low_interjections(selected, dump=dump)
+        else:
+            selected = self._suppress_low_interjections(selected, dump=dump)
+        if low_bass_filter_enabled():
+            selected = self._suppress_low_bass_accompaniment(selected, dump=dump)
+        return selected
 
     def _suppress_low_interjections(
         self, selected: list[tuple], dump: DebugRecorder | None = None
@@ -504,6 +521,127 @@ class NoteTranscriber:
         if following < len(starts):
             gaps.append(starts[following] - t)
         return not gaps or min(gaps) > CONTINUITY_SPARSE_GAP_S
+
+    def _suppress_low_bass_accompaniment(
+        self, selected: list[tuple], dump: DebugRecorder | None = None
+    ) -> list[tuple]:
+        """R1–R4：剔除覆盖门控之后残留的低音伴奏（见 LOW_BASS_* 常量）。
+
+        规则只看旋律线自身的邻接结构，不依赖参考音高；每个音符按
+        R1→R2→R3→R4 优先级归因一次。全部条件都要求该音在 A3 以下且比
+        局部音区基准低 ≥16 半音，避免误伤低音区旋律（F17 对抗样本）。
+        """
+        n = len(selected)
+        if n < 2:
+            return selected
+        starts = [float(e[0]) for e in selected]
+        pitches = [int(round(e[2])) for e in selected]
+        registers = self._register_baselines(selected, starts)
+        low = [
+            pitches[i] < LOW_BASS_MIN_MIDI
+            and registers[i] - pitches[i] >= LOW_BASS_REGISTER_GAP
+            for i in range(n)
+        ]
+        if not any(low):
+            return selected
+
+        def has_melody_near(i: int) -> bool:
+            return any(
+                j != i and not low[j] and abs(starts[j] - starts[i]) <= LOW_BASS_NEIGHBOR_S
+                for j in range(n)
+            )
+
+        def same_pitch_near(i: int) -> bool:
+            return any(
+                j != i
+                and pitches[j] == pitches[i]
+                and abs(starts[j] - starts[i]) <= LOW_BASS_REPEAT_WINDOW_S
+                for j in range(n)
+            )
+
+        def run_bounds(i: int) -> tuple[int, int]:
+            a = i
+            while a - 1 >= 0 and low[a - 1]:
+                a -= 1
+            b = i
+            while b + 1 < n and low[b + 1]:
+                b += 1
+            return a, b
+
+        def r1_ostinato(i: int) -> bool:
+            a, b = run_bounds(i)
+            run_length = b - a + 1
+            repeated = same_pitch_near(i)
+            return (
+                not has_melody_near(i) and (repeated or run_length >= 2)
+            ) or (run_length >= 3 and repeated)
+
+        def r2_gap_single(i: int) -> bool:
+            if i == 0 or i + 1 >= n:
+                return False
+            prev_pitch, next_pitch = pitches[i - 1], pitches[i + 1]
+            if not (
+                prev_pitch >= LOW_BASS_MIN_MIDI
+                and next_pitch >= LOW_BASS_MIN_MIDI
+                and prev_pitch - pitches[i] >= LOW_BASS_R2_JUMP
+                and next_pitch - pitches[i] >= LOW_BASS_R2_JUMP
+            ):
+                return False
+            # 装饰性回环（如 F13 的 C5→G3→C5）：后一个音回到低音前两个音的
+            # 同一音高 ±1 时，是旋律短暂下探而不是伴奏，保留
+            return not (i >= 2 and abs(next_pitch - pitches[i - 2]) <= 1)
+
+        def r3_tail(i: int) -> bool:
+            return i == n - 1 and pitches[i - 1] >= LOW_BASS_MIN_MIDI
+
+        def r4_bass_run(i: int) -> bool:
+            a, b = run_bounds(i)
+            if b - a + 1 < 2 or a == 0 or b == n - 1:
+                return False
+            prev_pitch, next_pitch = pitches[a - 1], pitches[b + 1]
+            return (
+                prev_pitch >= LOW_BASS_MIN_MIDI
+                and next_pitch >= LOW_BASS_MIN_MIDI
+                and prev_pitch - pitches[i] >= LOW_BASS_R4_JUMP
+                and next_pitch - pitches[i] >= LOW_BASS_R4_JUMP
+            )
+
+        rules = (
+            ("r1_ostinato", r1_ostinato),
+            ("r2_gap_single", r2_gap_single),
+            ("r3_tail", r3_tail),
+            ("r4_bass_run", r4_bass_run),
+        )
+        kept: list[tuple] = []
+        counts = {name: 0 for name, _ in rules}
+        for i, event in enumerate(selected):
+            reason = None
+            if low[i]:
+                for name, rule in rules:
+                    if rule(i):
+                        reason = name
+                        break
+            if reason is not None:
+                counts[reason] += 1
+                if dump is not None:
+                    dump.decide(
+                        {
+                            "stage": "selection",
+                            "reason": reason,
+                            "onset_s": round(float(starts[i]), 4),
+                            "midi": int(pitches[i]),
+                            "register_midi": int(registers[i]),
+                        }
+                    )
+                continue
+            kept.append(event)
+        dropped = n - len(kept)
+        if dropped:
+            logger.info(
+                f"低音伴奏过滤: {n} → {len(kept)} 个音符 (剔除 {dropped} 个; "
+                f"{', '.join(f'{k}={v}' for k, v in counts.items() if v)})"
+            )
+        return kept
 
     def _merge_same_pitch(
         self, accepted: list[tuple], dump: DebugRecorder | None = None

@@ -578,10 +578,49 @@ F16 = Spec(
 )
 
 
+F17 = Spec(
+    id="F17",
+    kind="low_register_melody_big_jumps",
+    instrument="universal",
+    bpm=120.0,
+    time_signature="4/4",
+    key="A minor",
+    role="melody_line",
+    tags=["low_register", "a2_c3", "octave_jump", "same_pitch_repeats",
+          "adversarial", "low_bass_filter"],
+    measures=4,
+    timbre="piano",
+    # 对抗样本：旋律主体在 A2–C3（45–52），靠 A3（57）做 12 半音大跳，
+    # 中间夹同音反复。R1/R2/R4 若把「低音区真旋律」当成伴奏，会在这里误删。
+    notes=seq(0, 0.5, [
+        45, 45, 48, 52,
+        57, 52, 48, 45,
+        45, 48, 52, 57,
+        52, 48, 45, 45,
+    ] * 2),
+    special={
+        "purpose": "针对 LOW_BASS_FILTER 的 R1–R4：低音区旋律 + ≥12 半音大跳 + 同音反复",
+        "rationale": (
+            "F13 只覆盖「高音区旋律短暂下探」，F6 的整条低音旋律没有大跳。"
+            "本样本让旋律本身就在 A2–C3，并用 A3 制造 12 半音跳进与同音反复，"
+            "检验 R2/R4 不会把低音大跳旋律误判为间隙单音/低音段。"
+        ),
+    },
+    acceptance=A(
+        recall_min=0.7, precision_min=0.7, f1_min=0.7, require_key=False,
+        note=(
+            "F17 对抗样本：A2–C3 低音区旋律含 12 半音跳进与同音反复，低音过滤不得误删。"
+            "不校验调性：旋律只有 A2/C3/E3/A3 四个音，调性检测对这类稀疏低音素材"
+            "不可靠（与 F6 同一已知限制）。"
+        ),
+    ),
+)
+
+
 FIXTURES: list[Spec] = [
     F1, F2, F3, F4, F5, F6, F7, F8, F9_C, F9_Am, F10, F11, F12, F13, F14, F15,
     # 追加样本放在末尾，避免改变既有 fixture 的合成 RNG 序号（index）
-    F12_CLEAN, F12_VIBRATO, F7_LONG, F16,
+    F12_CLEAN, F12_VIBRATO, F7_LONG, F16, F17,
 ]
 
 
