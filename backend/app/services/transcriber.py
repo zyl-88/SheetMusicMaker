@@ -52,7 +52,9 @@ CONTINUITY_REGISTER_GAP = int(os.environ.get("MELODY_CONTINUITY_REGISTER_GAP", "
 # 音区基准低 ≥16 半音」的音，宁可漏删也不碰低音区真旋律（见 F17）。
 LOW_BASS_MIN_MIDI = 57          # A3；护栏只统计 A3 以下
 LOW_BASS_REGISTER_GAP = 16      # 相对音区基准的低音门槛（独立于门控 GAP）
-LOW_BASS_NEIGHBOR_S = 0.5       # R1：±0.5s 内没有旋律音才算孤立低音
+LOW_BASS_NEIGHBOR_S = 1.5       # R1：±1.5s 内没有同一条旋律线上的音才算孤立低音
+                                # （原 0.5s 在高低混合音区会误删真正的低音旋律；
+                                # 验收方反事实：基准抬到高音区时 R1 会删 28/32）
 LOW_BASS_REPEAT_WINDOW_S = 3.0  # R1：±3s 内同音高重复
 LOW_BASS_R2_JUMP = 12           # R2：两侧旋律音与低音的跨度均 ≥12 半音
 LOW_BASS_R4_JUMP = 6            # R4：低音段两侧旋律音与低音的跨度均 ≥6 半音
@@ -545,9 +547,15 @@ class NoteTranscriber:
         if not any(low):
             return selected
 
-        def has_melody_near(i: int) -> bool:
+        def has_melody_near(i: int, same_line: bool = True) -> bool:
+            # same_line：邻近的 ≥A3 音还必须与低音相差 ≤一个音区门限，才算
+            # 同一条旋律线；否则那是高低两个声部（前奏 ostinato 距旋律
+            # 17–29 半音，窗口拉长到 1.5s 后会误把 7.28–8.23s 的低音保下来）
             return any(
-                j != i and not low[j] and abs(starts[j] - starts[i]) <= LOW_BASS_NEIGHBOR_S
+                j != i
+                and not low[j]
+                and abs(starts[j] - starts[i]) <= LOW_BASS_NEIGHBOR_S
+                and (not same_line or abs(pitches[j] - pitches[i]) <= LOW_BASS_REGISTER_GAP)
                 for j in range(n)
             )
 
@@ -572,9 +580,14 @@ class NoteTranscriber:
             a, b = run_bounds(i)
             run_length = b - a + 1
             repeated = same_pitch_near(i)
-            return (
-                not has_melody_near(i) and (repeated or run_length >= 2)
-            ) or (run_length >= 3 and repeated)
+            # 短促下探（≤2 音）用普通邻近窗口保护（F12-clean 的 G3、F18 的双音下探）；
+            # 连续 ≥3 音的低音段才要求邻近音与自己相差 ≤16 半音，否则那是高低
+            # 两个声部（见 has_melody_near 注释）
+            near = has_melody_near(i, same_line=run_length >= 3)
+            # 「无旋律」必须对所有删除路径成立：此前另有
+            # (run_length >= 3 and repeated) 兜底，会在低音旋律附近误删整段
+            # （F17：±1.5s 内有 A3，仍被 run 条件删除 18/18）
+            return not near and (repeated or run_length >= 2)
 
         def r2_gap_single(i: int) -> bool:
             if i == 0 or i + 1 >= n:
@@ -599,6 +612,14 @@ class NoteTranscriber:
             if b - a + 1 < 2 or a == 0 or b == n - 1:
                 return False
             prev_pitch, next_pitch = pitches[a - 1], pitches[b + 1]
+            if (
+                prev_pitch >= LOW_BASS_MIN_MIDI
+                and next_pitch >= LOW_BASS_MIN_MIDI
+                and abs(next_pitch - prev_pitch) <= 1
+            ):
+                # 装饰性回环（如 C5→G3→F3→C5）：低音段结束后回到进入低音段
+                # 之前的同一旋律音高 ±1，是旋律短暂下探而不是伴奏，保留
+                return False
             return (
                 prev_pitch >= LOW_BASS_MIN_MIDI
                 and next_pitch >= LOW_BASS_MIN_MIDI
