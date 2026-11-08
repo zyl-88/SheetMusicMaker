@@ -323,3 +323,59 @@ python storage/acceptance/attribute_octave_fix.py
 - 本机无 `madmom`：analyzer 走 librosa 降级，BPM/调性判定沿用既有 FAIL，不计入本轮产品回归。
 - 本机无 `ffmpeg`：F10 M4A 通路维持“未验证”。
 - 工作区“不干净”仅因评测资产（`backend/tests/fixtures/*`、`generate_fixtures.py`、`eval_fixtures.py`、`fixture-baseline-ab3dcf9.json`、新增报告）。**未改动产品代码，也未把评测资产与全曲复测混提交。**
+
+> 后续：评测资产已于 `05fbc9f` 单独提交（`test(acceptance): 评测资产更新…`）；`f32d757` 已把 `melody_selection` 的候选音高/振幅补进 dump。导出基准 D 目前仍是**未提交的工作区改动**（`config.py` / `exporter.py` / `quantizer.py`），等开发方提交后再跑全曲复测。
+
+---
+
+## 10. 待验证：导出时间基准 D 的验收预案与 BPM 风险
+
+### 10.1 已准备好的常驻检查
+
+新增 `storage/acceptance/check_export_consistency.py`，并已接入 `retest_song.py`：每次全曲复测自动生成 `export_consistency.json`，并把结果写进 `comparison.md` 顶部提示与文末章节。
+
+它做两件事：
+
+1. **每小节速度三方核对**：ABC `Q:` ↔ MusicXML `<sound tempo>` / tempo direction ↔ MIDI `set_tempo`，逐小节给出三者数值与是否一致（阈值 0.5%）。
+2. **音符起始时间差**：把三种格式的连音线拆分裂开元素合并回逻辑音符（当前均为 431 个），按序配对，输出中位 / P90 / 最大 |Δonset| 与 >120ms 的个数。其中 `ABC vs MIDI` 就是“页面谱 vs 下载文件”。
+
+**在当前 `d79bc3b` 产物上预跑，已经暴露一个“D 之外”的既有问题**：
+
+| 对比 | 配对数 | 中位 \|Δonset\| | 最大 | >120ms |
+|---|---|---|---|---|
+| ABC vs MIDI（页面 vs 下载） | 431 | **0.465s** | **0.852s** | **391/431** |
+| ABC vs MusicXML（页面 vs 下载） | 431 | 0.464s | 0.851s | 391/431 |
+| MusicXML vs MIDI（下载内部） | 431 | 0.0001s | 0.0002s | 0 |
+
+原因：ABC 头写 `Q:1/4=162`（`int(round(161.5))`），MusicXML/MIDI 写 `161`（`int(161.5)`），0.6% 的速度差在 138s 谱面上累积成最大 0.85s。**这不是 D 引入的，是现有导出就存在的“页面看着对、下载文件不对”。** D 修复后该表应降到 0.12s 以内。
+
+### 10.2 交付时必须同时满足的判定
+
+1. 覆盖率：实测值贴近开发方模拟的 **79.7%** 才算 D 生效；若明显低于，判定“模拟高估”，不替开发方圆场。
+2. 门禁三项：谱长 ≤ 音频+1 小节、越界 0、覆盖率 ≥75%。
+3. 八度跳变、伴奏残留**理论上不应被 D 改变**（D 只改导出时间基准）。若明显变化，说明 tempo 图反向影响了量化/选线，需要单独定位。
+4. **ABC / MusicXML / MIDI 每小节速度一致**。这一条是 D 的硬要求：ABC 支持在正文内插入 `Q:` 变更行，不能只写头部一个 Q。
+
+### 10.3 风险提示：错误的 BPM 会被 tempo 图“写得更精确”
+
+- 现状：上报 BPM `161.5` 本身可能是检测错误的（P2 才修）。D 之后，每个小节都会按检测到的 beats 写一条 tempo（约 161.x），谱面的**每个音符时值、每小节时长都与这套错误速度自洽**。
+- 后果：用户用节拍器核对时，看到的是一份“速度稳定、内部一致”的谱子；没有旧版那种整谱漂移或速度突变可供察觉。**错误从“看得见的漂移”变成“看不出的自洽”，更难被发现。**
+- 同时，覆盖率从 70.1% 升到 79.7% 是**评测时间基准对齐**带来的，不等于旋律提取质量提升；谱面上的音高/选线内容并未改变。报告与验收结论中必须把这两件事分开表述。
+- 建议（P2 之前）：
+  1. 保留一个独立的“绝对 BPM 正确性”检查（与人工标注/参考 BPM 对照），不要让 tempo 图的自洽性替代它；
+  2. `Q:` 只允许写成每小节实际 tempo 的整数/两位小数，不得为了“好看”四舍五入回 161/162；
+  3. D 的覆盖率提升在报表里标注为“导出基准修正”，不作为产品质量 KPI；
+  4. P2 修 BPM 后必须重跑本报告 §10.2 的四项，确认 tempo 图随新 BPM 重建。
+
+### 10.4 交付后的执行命令
+
+```powershell
+$env:PYTHONPATH = "d:\project\SheetMusicMaker\.venv\Lib\site-packages"
+$env:DEBUG_DUMP = "0"
+python storage/acceptance/retest_song.py --label export-tempo-map
+# 若需与 d79bc3b 并列，保留两份 run 目录并对比 summary：
+#   docs/acceptance/retests/song/d79bc3b_20261107-213004_octave-fix/
+#   docs/acceptance/retests/song/<新HEAD>_<时间>_export-tempo-map/
+```
+
+`retest_song.py` 会自动产出 `export_consistency.json` 与 `comparison.md` 的三方一致性章节，无需额外手工步骤。
