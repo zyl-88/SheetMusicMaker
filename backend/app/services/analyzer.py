@@ -192,6 +192,11 @@ class AudioAnalyzer:
            说明这一层网格是细分，而不是真正的拍。
         只有数值没有证据时不降速（避免把 150 BPM 的 4/4 快歌减成 75）；
         如需整体回退，可用 ``TACTUS_HALVING=off`` 关闭这条校正。
+
+        证据口径：``note_events`` 是**主旋律选线后**的音符（真实管线传入的是
+        ``transcribe_melody`` 的返回值），不是 basic-pitch 的全量转录音符。
+        两者数值不可混用（复测曲目实测：全量 raw_notes 比值 2.38、选线后
+        2.78），换口径会让「证据强弱」看起来凭空变化。
         """
         if bpm <= TACTUS_MAX_BPM or bpm / 2.0 < TACTUS_MIN_BPM:
             return beats, bpm, False, None
