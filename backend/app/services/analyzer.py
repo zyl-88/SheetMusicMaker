@@ -40,6 +40,10 @@ TACTUS_MAX_BPM = 140.0
 TACTUS_ACCENT_MIN = 0.05
 TACTUS_ACCENT_RATIO = 1.5
 
+# 减半证据的「余量」门槛：刚过 1.5 倍只能算勉强成立，超过 2.5 倍才算明确。
+# 余量不足时不能悄悄减半，要给用户一条可自行判断的告警。
+TACTUS_EVIDENCE_STRONG = 2.5
+
 # 自然音阶音级（相对主音的半音数），用于比较同一主音下大/小调各需多少临时记号
 MAJOR_SCALE_STEPS = frozenset({0, 2, 4, 5, 7, 9, 11})
 MINOR_SCALE_STEPS = frozenset({0, 2, 3, 5, 7, 8, 10})
@@ -71,8 +75,10 @@ class AudioAnalyzer:
             }
         """
         path = str(vocals_wav_path)
-        raw_beats, bpm = self._detect_beats_and_tempo(path)
-        beats, bpm, halved = self._halve_tactus(raw_beats, bpm, note_events)
+        raw_beats, raw_bpm = self._detect_beats_and_tempo(path)
+        beats, bpm, halved, evidence_ratio = self._halve_tactus(
+            raw_beats, raw_bpm, note_events
+        )
         if halved:
             logger.info(
                 f"节拍脉冲按 1/2 降速校正: BPM={bpm:.1f}, 拍数={len(beats)}"
@@ -81,6 +87,9 @@ class AudioAnalyzer:
         key_info = self._prefer_notation_friendly_mode(key_info, note_events)
         time_sig = self._infer_time_signature(beats, raw_beats, halved, note_events)
         warnings = self._bpm_warnings(beats, bpm)
+        warnings.extend(
+            self._tactus_warnings(raw_bpm, bpm, halved, evidence_ratio, time_sig)
+        )
 
         result = {
             "beats": beats,
@@ -134,10 +143,43 @@ class AudioAnalyzer:
             warnings.append("节拍间隔波动较大，速度检测可能不稳定")
         return warnings
 
+    @staticmethod
+    def _tactus_warnings(
+        raw_bpm: float,
+        bpm: float,
+        halved: bool,
+        evidence_ratio: float | None,
+        time_sig: str,
+    ) -> list[str]:
+        """1/2 降速被触发后，把「这可能是错的」直接告诉用户。
+
+        触发条件（任一成立）：
+        - 第二证据余量不足：p3/p4 只是刚过 1.5 倍门槛，没到 2.5 倍；
+        - 谱面落在三拍子侧（3/4、6/8）且原速度已超过触拍上限——
+          真实的 160 BPM 3/4/6/8 快歌本来就会被误减半。
+
+        真实的 160 BPM 三拍子快歌和 80 BPM 的三拍子慢歌在脉冲层面长得一样，
+        只看音频无法 100% 区分，所以这里不假装确定，而是让用户用「听感」判断。
+        ``TACTUS_HALVING=off`` 时不降速（halved=False），也就不会出这条告警。
+        """
+        if not halved:
+            return []
+        weak_evidence = (
+            evidence_ratio is not None and evidence_ratio < TACTUS_EVIDENCE_STRONG
+        )
+        triple_meter = time_sig in ("3/4", "6/8") and raw_bpm > TACTUS_MAX_BPM
+        if not (weak_evidence or triple_meter):
+            return []
+        return [
+            f"检测到的速度可能是 {bpm:.1f} BPM，也可能正是其两倍的 {raw_bpm:.1f} BPM："
+            f"同一个节奏可以按这两种速度记谱。谱面按 {bpm:.1f} BPM 生成，"
+            f"如果播放时觉得偏慢（节奏被拉长了一倍），请告知。"
+        ]
+
     @classmethod
     def _halve_tactus(
         cls, beats: list[float], bpm: float, note_events: list | None = None
-    ) -> tuple[list[float], float, bool]:
+    ) -> tuple[list[float], float, bool, float | None]:
         """把「八分音符脉冲」还原成真实触拍。
 
         检测器（madmom/librosa 都如此）经常把每个八分音符脉冲当作一拍上报，
@@ -152,10 +194,10 @@ class AudioAnalyzer:
         如需整体回退，可用 ``TACTUS_HALVING=off`` 关闭这条校正。
         """
         if bpm <= TACTUS_MAX_BPM or bpm / 2.0 < TACTUS_MIN_BPM:
-            return beats, bpm, False
+            return beats, bpm, False, None
         if not tactus_halving_enabled():
             logger.info(f"触拍降速已关闭（TACTUS_HALVING=off），保留 BPM={bpm:.1f}")
-            return beats, bpm, False
+            return beats, bpm, False, None
         accents = cls._beat_accents(beats, note_events)
         p3 = cls._periodicity(accents, 3)
         p6 = cls._periodicity(accents, 6)
@@ -166,11 +208,14 @@ class AudioAnalyzer:
                 f"BPM={bpm:.1f} 超出触拍区间，但重音分组不支持八分脉冲"
                 f"（p3={p3:.2f} p6={p6:.2f} p4={p4:.2f}），不做 1/2 校正"
             )
-            return beats, bpm, False
+            return beats, bpm, False, None
         halved = beats[::2]
         if len(halved) < 4:
-            return beats, bpm, False
-        return halved, round(bpm / 2.0, 1), True
+            return beats, bpm, False, None
+        # 证据余量 = 三/六脉冲循环的自相关 / 四脉冲循环的自相关。
+        # 门槛刚过（1.5 倍）时只能算勉强成立，要交给 _tactus_warnings 提醒用户。
+        evidence_ratio = best / p4 if p4 > 0 else float("inf")
+        return halved, round(bpm / 2.0, 1), True, evidence_ratio
 
     def _detect_beats_and_tempo(self, path: str) -> tuple[list[float], float]:
         """检测节拍和速度。优先用 madmom，不可用时降级到 librosa。"""
