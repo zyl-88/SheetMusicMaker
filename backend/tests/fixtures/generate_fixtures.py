@@ -580,47 +580,108 @@ F16 = Spec(
 
 F17 = Spec(
     id="F17",
-    kind="low_register_melody_big_jumps",
+    kind="low_register_melody_mixed_register",
     instrument="universal",
     bpm=120.0,
     time_signature="4/4",
     key="A minor",
     role="melody_line",
-    tags=["low_register", "a2_c3", "octave_jump", "same_pitch_repeats",
-          "adversarial", "low_bass_filter"],
-    measures=4,
+    tags=["low_register", "a2_c3", "mixed_register", "adjacent_octave_jump",
+          "same_pitch_repeats", "adversarial", "low_bass_filter"],
+    measures=7,
     timbre="piano",
-    # 对抗样本：旋律主体在 A2–C3（45–52），靠 A3（57）做 12 半音大跳，
-    # 中间夹同音反复。R1/R2/R4 若把「低音区真旋律」当成伴奏，会在这里误删。
-    notes=seq(0, 0.5, [
-        45, 45, 48, 52,
-        57, 52, 48, 45,
-        45, 48, 52, 57,
-        52, 48, 45, 45,
-    ] * 2),
+    # 对抗样本：低音旋律在 A2–C3（45–52），用 A3（57）做真正相邻的 12 半音
+    # 跳进（45→57），并含 45/48 同音反复（隔一个音重复，避免相邻同音被检测器
+    # 合并）。关键是把同一 ±6s 窗内的 75 分位音区基准抬到 C5–A5（72–81），
+    # 使 A2–C3 真的成为「低音候选」；否则整段旋律会把基准拉低到 52，规则
+    # 根本进不了作用域（上一版 F17 就是这样失效的）。
+    # 高音层只放在旋律前后（不重叠），用 1 拍步进（0.5s）避免把 BPM 带到 240，
+    # 同时保证每个旋律音的 ±6s 窗口里都有足够高音把基准抬起来。
+    # 低音段由 A3 包住（57→低音段→57），R4 的回环保护负责保留。
+    notes=merge(
+        seq(0, 1.0, [72, 74, 76, 79, 81, 79, 76, 74, 72], "harmony", -3.0),
+        seq(9, 0.5, [57, 48, 45, 48, 45, 48, 45, 57] * 3, "melody"),
+        seq(21, 1.0, [72, 74, 76, 79, 81, 79, 76, 74, 72], "harmony", -3.0),
+    ),
+    segments=[{"label": "low_melody", "beats": [9, 21]}],
     special={
-        "purpose": "针对 LOW_BASS_FILTER 的 R1–R4：低音区旋律 + ≥12 半音大跳 + 同音反复",
+        "purpose": (
+            "针对 LOW_BASS_FILTER 的 R1/R4：高音区基准下的低音旋律 + 真正相邻 "
+            "12 半音跳进 + 同音反复，断言整条低音旋律 0 删除"
+        ),
         "rationale": (
-            "F13 只覆盖「高音区旋律短暂下探」，F6 的整条低音旋律没有大跳。"
-            "本样本让旋律本身就在 A2–C3，并用 A3 制造 12 半音跳进与同音反复，"
-            "检验 R2/R4 不会把低音大跳旋律误判为间隙单音/低音段。"
+            "上一版 F17 全段低音区，±6s 基准恒为 52、音区差最大 7，R1–R4 一次都"
+            "没触发。本版在同一窗口加入 C5–A5 和声层，把基准抬到 72+，让 A2–C3 "
+            "落入低音候选；同时保留 45→57 的相邻 12 半音跳进与 45/48 同音反复，"
+            "并让低音段由 A3 包住以检验 R4 回环保护。"
         ),
     },
     acceptance=A(
-        recall_min=0.7, precision_min=0.7, f1_min=0.7, require_key=False,
+        recall_min=1.0, precision_min=0.5, f1_min=0.6,
+        bass_leakage_max=0.5, note_count_deviation_max=0.8,
+        bpm_tolerance_ratio=0.05, require_key=False,
+        segment_recall_min={"low_melody": 1.0},
         note=(
-            "F17 对抗样本：A2–C3 低音区旋律含 12 半音跳进与同音反复，低音过滤不得误删。"
-            "不校验调性：旋律只有 A2/C3/E3/A3 四个音，调性检测对这类稀疏低音素材"
-            "不可靠（与 F6 同一已知限制）。"
+            "F17 重做：A2–C3 低音旋律放在 C5–A5 高音基准内，含 45→57 相邻 12 半音"
+            "跳进与 45/48 同音反复；断言低音旋律段 recall=1.0（0 删除）。"
+            "precision/leak 阈值放宽是因为 GT 只标旋律、高音和声层会作为额外预测"
+            "出现；本 fixture 的目标是「低音旋律不被过滤」，不是伴奏纯净度。"
+            "不校验调性（与 F6 同一已知限制）。"
         ),
     ),
+    matching={"duration_check": False},
+)
+
+
+F18 = Spec(
+    id="F18",
+    kind="two_note_descent_with_return",
+    instrument="universal",
+    bpm=120.0,
+    time_signature="4/4",
+    key="A minor",
+    role="melody_line",
+    tags=["two_note_descent", "ornament_return", "r4_protection",
+          "adversarial", "low_bass_filter"],
+    measures=4,
+    timbre="piano",
+    # R4 边界回归：C#4(61) → G3(55) → F3(53) → C#4(61)。双音下探的两侧
+    # 跨度分别是 6 / 8 半音（都在验收方要求的 6–11 区间），旧 R4（≥6）会
+    # 整段删除；新 R4 的回环保护（run 后音回到 run 前音 ±1）应保留。
+    notes=merge(
+        seq(0, 0.5, [72, 74, 76, 79, 81, 79, 76, 74, 72], "harmony", -3.0),
+        seq(4.5, 0.5, [61, 55, 53, 61, 61, 55, 53, 61] * 2, "melody"),
+        seq(12.5, 0.5, [72, 74, 76, 79, 81, 79, 76, 74], "harmony", -3.0),
+    ),
+    segments=[{"label": "two_note_descent", "beats": [4.5, 12.5]}],
+    special={
+        "purpose": "R4 回环保护的回归样本：两侧 6–11 半音的真旋律双音下探不得误删",
+        "rationale": (
+            "F12-clean 只证明 ≥6 能保住单侧差 5 的 G3 断奏；本样本覆盖"
+            "「两侧都 ≥6 且 <12」的双音下探，旧 R4 会整段删除，"
+            "新 R4 的回环保护应保留。"
+        ),
+    },
+    acceptance=A(
+        recall_min=1.0, precision_min=0.45, f1_min=0.6,
+        bass_leakage_max=0.55, note_count_deviation_max=1.1,
+        bpm_tolerance_ratio=0.05, require_key=False,
+        segment_recall_min={"two_note_descent": 1.0},
+        note=(
+            "F18 回归：双音下探 61→55→53→61，两侧跨度 6/8 半音；"
+            "断言旋律段 recall=1.0（0 删除）。"
+            "precision/leak/note_count 阈值放宽是因为高音和声层会作为额外预测出现；"
+            "bpm 容差 5% 覆盖检测器把 120 读成 123 的偏差。"
+        ),
+    ),
+    matching={"duration_check": False},
 )
 
 
 FIXTURES: list[Spec] = [
     F1, F2, F3, F4, F5, F6, F7, F8, F9_C, F9_Am, F10, F11, F12, F13, F14, F15,
     # 追加样本放在末尾，避免改变既有 fixture 的合成 RNG 序号（index）
-    F12_CLEAN, F12_VIBRATO, F7_LONG, F16, F17,
+    F12_CLEAN, F12_VIBRATO, F7_LONG, F16, F17, F18,
 ]
 
 

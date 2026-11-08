@@ -4,7 +4,7 @@
   "sample_rate": 22050,
   "audio_dir": "test_audio/fixtures",
   "gt_dir": "backend/tests/fixtures",
-  "total": 21,
+  "total": 22,
   "fixtures": [
     {
       "id": "F1",
@@ -373,20 +373,41 @@
     {
       "id": "F17",
       "group": null,
-      "kind": "low_register_melody_big_jumps",
+      "kind": "low_register_melody_mixed_register",
       "instrument": "universal",
       "engine": "melody",
       "audio": "test_audio/fixtures/F17.wav",
       "gt": "backend/tests/fixtures/F17.json",
       "priority": "normal",
       "diagnostic": false,
-      "notes": 32,
-      "measures": 4,
+      "notes": 42,
+      "measures": 7,
       "tags": [
         "low_register",
         "a2_c3",
-        "octave_jump",
+        "mixed_register",
+        "adjacent_octave_jump",
         "same_pitch_repeats",
+        "adversarial",
+        "low_bass_filter"
+      ]
+    },
+    {
+      "id": "F18",
+      "group": null,
+      "kind": "two_note_descent_with_return",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F18.wav",
+      "gt": "backend/tests/fixtures/F18.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 33,
+      "measures": 4,
+      "tags": [
+        "two_note_descent",
+        "ornament_return",
+        "r4_protection",
         "adversarial",
         "low_bass_filter"
       ]

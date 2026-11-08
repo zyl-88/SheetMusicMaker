@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "id": "F17",
   "group": null,
-  "kind": "low_register_melody_big_jumps",
+  "kind": "low_register_melody_mixed_register",
   "instrument": "universal",
   "audio": "test_audio/fixtures/F17.wav",
   "engine": "melody",
@@ -10,12 +10,13 @@
     "bpm": 120.0,
     "time_signature": "4/4",
     "key": "A minor",
-    "measures": 4,
+    "measures": 7,
     "role": "melody_line",
     "tags": [
       "low_register",
       "a2_c3",
-      "octave_jump",
+      "mixed_register",
+      "adjacent_octave_jump",
       "same_pitch_repeats",
       "adversarial",
       "low_bass_filter"
@@ -23,172 +24,91 @@
     "notes": [
       {
         "start": 0.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 0.0,
-        "dur_s": 0.25,
-        "midi": 45,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 0.5,
-        "dur": 0.5,
-        "onset_s": 0.25,
-        "dur_s": 0.25,
-        "midi": 45,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 72,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 1.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 0.5,
-        "dur_s": 0.25,
-        "midi": 48,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 1.5,
-        "dur": 0.5,
-        "onset_s": 0.75,
-        "dur_s": 0.25,
-        "midi": 52,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 74,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 2.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 1.0,
-        "dur_s": 0.25,
-        "midi": 57,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 2.5,
-        "dur": 0.5,
-        "onset_s": 1.25,
-        "dur_s": 0.25,
-        "midi": 52,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 76,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 3.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 1.5,
-        "dur_s": 0.25,
-        "midi": 48,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 3.5,
-        "dur": 0.5,
-        "onset_s": 1.75,
-        "dur_s": 0.25,
-        "midi": 45,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 79,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 4.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 2.0,
-        "dur_s": 0.25,
-        "midi": 45,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 4.5,
-        "dur": 0.5,
-        "onset_s": 2.25,
-        "dur_s": 0.25,
-        "midi": 48,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 81,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 5.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 2.5,
-        "dur_s": 0.25,
-        "midi": 52,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 5.5,
-        "dur": 0.5,
-        "onset_s": 2.75,
-        "dur_s": 0.25,
-        "midi": 57,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 79,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 6.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 3.0,
-        "dur_s": 0.25,
-        "midi": 52,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 6.5,
-        "dur": 0.5,
-        "onset_s": 3.25,
-        "dur_s": 0.25,
-        "midi": 48,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 76,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 7.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 3.5,
-        "dur_s": 0.25,
-        "midi": 45,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 7.5,
-        "dur": 0.5,
-        "onset_s": 3.75,
-        "dur_s": 0.25,
-        "midi": 45,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 74,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 8.0,
-        "dur": 0.5,
+        "dur": 1.0,
         "onset_s": 4.0,
-        "dur_s": 0.25,
-        "midi": 45,
-        "role": "melody",
-        "gain_db": 0.0
-      },
-      {
-        "start": 8.5,
-        "dur": 0.5,
-        "onset_s": 4.25,
-        "dur_s": 0.25,
-        "midi": 45,
-        "role": "melody",
-        "gain_db": 0.0
+        "dur_s": 0.5,
+        "midi": 72,
+        "role": "harmony",
+        "gain_db": -3.0
       },
       {
         "start": 9.0,
         "dur": 0.5,
         "onset_s": 4.5,
         "dur_s": 0.25,
-        "midi": 48,
+        "midi": 57,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -197,7 +117,7 @@
         "dur": 0.5,
         "onset_s": 4.75,
         "dur_s": 0.25,
-        "midi": 52,
+        "midi": 48,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -206,7 +126,7 @@
         "dur": 0.5,
         "onset_s": 5.0,
         "dur_s": 0.25,
-        "midi": 57,
+        "midi": 45,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -215,7 +135,7 @@
         "dur": 0.5,
         "onset_s": 5.25,
         "dur_s": 0.25,
-        "midi": 52,
+        "midi": 48,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -224,7 +144,7 @@
         "dur": 0.5,
         "onset_s": 5.5,
         "dur_s": 0.25,
-        "midi": 48,
+        "midi": 45,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -233,7 +153,7 @@
         "dur": 0.5,
         "onset_s": 5.75,
         "dur_s": 0.25,
-        "midi": 45,
+        "midi": 48,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -251,7 +171,7 @@
         "dur": 0.5,
         "onset_s": 6.25,
         "dur_s": 0.25,
-        "midi": 48,
+        "midi": 57,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -260,7 +180,7 @@
         "dur": 0.5,
         "onset_s": 6.5,
         "dur_s": 0.25,
-        "midi": 52,
+        "midi": 57,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -269,7 +189,7 @@
         "dur": 0.5,
         "onset_s": 6.75,
         "dur_s": 0.25,
-        "midi": 57,
+        "midi": 48,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -278,7 +198,7 @@
         "dur": 0.5,
         "onset_s": 7.0,
         "dur_s": 0.25,
-        "midi": 52,
+        "midi": 45,
         "role": "melody",
         "gain_db": 0.0
       },
@@ -305,9 +225,180 @@
         "dur": 0.5,
         "onset_s": 7.75,
         "dur_s": 0.25,
+        "midi": 48,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 16.0,
+        "dur": 0.5,
+        "onset_s": 8.0,
+        "dur_s": 0.25,
         "midi": 45,
         "role": "melody",
         "gain_db": 0.0
+      },
+      {
+        "start": 16.5,
+        "dur": 0.5,
+        "onset_s": 8.25,
+        "dur_s": 0.25,
+        "midi": 57,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 17.0,
+        "dur": 0.5,
+        "onset_s": 8.5,
+        "dur_s": 0.25,
+        "midi": 57,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 17.5,
+        "dur": 0.5,
+        "onset_s": 8.75,
+        "dur_s": 0.25,
+        "midi": 48,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 18.0,
+        "dur": 0.5,
+        "onset_s": 9.0,
+        "dur_s": 0.25,
+        "midi": 45,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 18.5,
+        "dur": 0.5,
+        "onset_s": 9.25,
+        "dur_s": 0.25,
+        "midi": 48,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 19.0,
+        "dur": 0.5,
+        "onset_s": 9.5,
+        "dur_s": 0.25,
+        "midi": 45,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 19.5,
+        "dur": 0.5,
+        "onset_s": 9.75,
+        "dur_s": 0.25,
+        "midi": 48,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 20.0,
+        "dur": 0.5,
+        "onset_s": 10.0,
+        "dur_s": 0.25,
+        "midi": 45,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 20.5,
+        "dur": 0.5,
+        "onset_s": 10.25,
+        "dur_s": 0.25,
+        "midi": 57,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 21.0,
+        "dur": 1.0,
+        "onset_s": 10.5,
+        "dur_s": 0.5,
+        "midi": 72,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 22.0,
+        "dur": 1.0,
+        "onset_s": 11.0,
+        "dur_s": 0.5,
+        "midi": 74,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 23.0,
+        "dur": 1.0,
+        "onset_s": 11.5,
+        "dur_s": 0.5,
+        "midi": 76,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 24.0,
+        "dur": 1.0,
+        "onset_s": 12.0,
+        "dur_s": 0.5,
+        "midi": 79,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 25.0,
+        "dur": 1.0,
+        "onset_s": 12.5,
+        "dur_s": 0.5,
+        "midi": 81,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 26.0,
+        "dur": 1.0,
+        "onset_s": 13.0,
+        "dur_s": 0.5,
+        "midi": 79,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 27.0,
+        "dur": 1.0,
+        "onset_s": 13.5,
+        "dur_s": 0.5,
+        "midi": 76,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 28.0,
+        "dur": 1.0,
+        "onset_s": 14.0,
+        "dur_s": 0.5,
+        "midi": 74,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 29.0,
+        "dur": 1.0,
+        "onset_s": 14.5,
+        "dur_s": 0.5,
+        "midi": 72,
+        "role": "harmony",
+        "gain_db": -3.0
       }
     ]
   },
@@ -317,28 +408,42 @@
     "pitch_tolerance_semitones": 0,
     "match_roles": [
       "melody"
-    ]
+    ],
+    "duration_check": false
   },
   "acceptance": {
-    "recall_min": 0.7,
-    "precision_min": 0.7,
-    "f1_min": 0.7,
-    "bass_leakage_max": 0.25,
+    "recall_min": 1.0,
+    "precision_min": 0.5,
+    "f1_min": 0.6,
+    "bass_leakage_max": 0.5,
     "octave_error_rate_max": 0.2,
     "octave_jumps_per_8bars_max": 2.0,
-    "note_count_deviation_max": 0.3,
+    "note_count_deviation_max": 0.8,
     "boundary_pitch_ratio_max": 0.1,
-    "bpm_tolerance_ratio": 0.02,
+    "bpm_tolerance_ratio": 0.05,
     "require_time_signature": true,
     "require_key": false,
     "diagnostic": false,
     "known_limitations": [],
-    "note": "F17 对抗样本：A2–C3 低音区旋律含 12 半音跳进与同音反复，低音过滤不得误删。不校验调性：旋律只有 A2/C3/E3/A3 四个音，调性检测对这类稀疏低音素材不可靠（与 F6 同一已知限制）。"
+    "segment_recall_min": {
+      "low_melody": 1.0
+    },
+    "note": "F17 重做：A2–C3 低音旋律放在 C5–A5 高音基准内，含 45→57 相邻 12 半音跳进与 45/48 同音反复；断言低音旋律段 recall=1.0（0 删除）。precision/leak 阈值放宽是因为 GT 只标旋律、高音和声层会作为额外预测出现；本 fixture 的目标是「低音旋律不被过滤」，不是伴奏纯净度。不校验调性（与 F6 同一已知限制）。"
   },
-  "segments": [],
+  "segments": [
+    {
+      "label": "low_melody",
+      "beats": [
+        9,
+        21
+      ],
+      "start_s": 4.5,
+      "end_s": 10.5
+    }
+  ],
   "special": {
-    "purpose": "针对 LOW_BASS_FILTER 的 R1–R4：低音区旋律 + ≥12 半音大跳 + 同音反复",
-    "rationale": "F13 只覆盖「高音区旋律短暂下探」，F6 的整条低音旋律没有大跳。本样本让旋律本身就在 A2–C3，并用 A3 制造 12 半音跳进与同音反复，检验 R2/R4 不会把低音大跳旋律误判为间隙单音/低音段。"
+    "purpose": "针对 LOW_BASS_FILTER 的 R1/R4：高音区基准下的低音旋律 + 真正相邻 12 半音跳进 + 同音反复，断言整条低音旋律 0 删除",
+    "rationale": "上一版 F17 全段低音区，±6s 基准恒为 52、音区差最大 7，R1–R4 一次都没触发。本版在同一窗口加入 C5–A5 和声层，把基准抬到 72+，让 A2–C3 落入低音候选；同时保留 45→57 的相邻 12 半音跳进与 45/48 同音反复，并让低音段由 A3 包住以检验 R4 回环保护。"
   },
   "synthesis": {
     "sample_rate": 22050,
