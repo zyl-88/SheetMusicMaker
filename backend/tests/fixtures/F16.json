@@ -1,0 +1,345 @@
+{
+  "schema_version": "1.0",
+  "id": "F16",
+  "group": null,
+  "kind": "fast_tempo_4_4",
+  "instrument": "universal",
+  "audio": "test_audio/fixtures/F16.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 150.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 8,
+    "role": "melody_line",
+    "tags": [
+      "fast_tempo",
+      "150_bpm",
+      "tactus_halving_reverse",
+      "accent_period_4"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 0.9,
+        "onset_s": 0.0,
+        "dur_s": 0.36,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 8.0
+      },
+      {
+        "start": 1.0,
+        "dur": 0.9,
+        "onset_s": 0.4,
+        "dur_s": 0.36,
+        "midi": 73,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 0.9,
+        "onset_s": 0.8,
+        "dur_s": 0.36,
+        "midi": 74,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.0,
+        "dur": 0.9,
+        "onset_s": 1.2,
+        "dur_s": 0.36,
+        "midi": 76,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 0.9,
+        "onset_s": 1.6,
+        "dur_s": 0.36,
+        "midi": 77,
+        "role": "melody",
+        "gain_db": 8.0
+      },
+      {
+        "start": 5.0,
+        "dur": 0.9,
+        "onset_s": 2.0,
+        "dur_s": 0.36,
+        "midi": 79,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 6.0,
+        "dur": 0.9,
+        "onset_s": 2.4,
+        "dur_s": 0.36,
+        "midi": 81,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 7.0,
+        "dur": 0.9,
+        "onset_s": 2.8,
+        "dur_s": 0.36,
+        "midi": 84,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 8.0,
+        "dur": 0.9,
+        "onset_s": 3.2,
+        "dur_s": 0.36,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 8.0
+      },
+      {
+        "start": 9.0,
+        "dur": 0.9,
+        "onset_s": 3.6,
+        "dur_s": 0.36,
+        "midi": 73,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 10.0,
+        "dur": 0.9,
+        "onset_s": 4.0,
+        "dur_s": 0.36,
+        "midi": 74,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 11.0,
+        "dur": 0.9,
+        "onset_s": 4.4,
+        "dur_s": 0.36,
+        "midi": 76,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 12.0,
+        "dur": 0.9,
+        "onset_s": 4.8,
+        "dur_s": 0.36,
+        "midi": 77,
+        "role": "melody",
+        "gain_db": 8.0
+      },
+      {
+        "start": 13.0,
+        "dur": 0.9,
+        "onset_s": 5.2,
+        "dur_s": 0.36,
+        "midi": 79,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 14.0,
+        "dur": 0.9,
+        "onset_s": 5.6,
+        "dur_s": 0.36,
+        "midi": 81,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 15.0,
+        "dur": 0.9,
+        "onset_s": 6.0,
+        "dur_s": 0.36,
+        "midi": 84,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 16.0,
+        "dur": 0.9,
+        "onset_s": 6.4,
+        "dur_s": 0.36,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 8.0
+      },
+      {
+        "start": 17.0,
+        "dur": 0.9,
+        "onset_s": 6.8,
+        "dur_s": 0.36,
+        "midi": 73,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 18.0,
+        "dur": 0.9,
+        "onset_s": 7.2,
+        "dur_s": 0.36,
+        "midi": 74,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 19.0,
+        "dur": 0.9,
+        "onset_s": 7.6,
+        "dur_s": 0.36,
+        "midi": 76,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 20.0,
+        "dur": 0.9,
+        "onset_s": 8.0,
+        "dur_s": 0.36,
+        "midi": 77,
+        "role": "melody",
+        "gain_db": 8.0
+      },
+      {
+        "start": 21.0,
+        "dur": 0.9,
+        "onset_s": 8.4,
+        "dur_s": 0.36,
+        "midi": 79,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 22.0,
+        "dur": 0.9,
+        "onset_s": 8.8,
+        "dur_s": 0.36,
+        "midi": 81,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 23.0,
+        "dur": 0.9,
+        "onset_s": 9.2,
+        "dur_s": 0.36,
+        "midi": 84,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 24.0,
+        "dur": 0.9,
+        "onset_s": 9.6,
+        "dur_s": 0.36,
+        "midi": 72,
+        "role": "melody",
+        "gain_db": 8.0
+      },
+      {
+        "start": 25.0,
+        "dur": 0.9,
+        "onset_s": 10.0,
+        "dur_s": 0.36,
+        "midi": 73,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 26.0,
+        "dur": 0.9,
+        "onset_s": 10.4,
+        "dur_s": 0.36,
+        "midi": 74,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 27.0,
+        "dur": 0.9,
+        "onset_s": 10.8,
+        "dur_s": 0.36,
+        "midi": 76,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 28.0,
+        "dur": 0.9,
+        "onset_s": 11.2,
+        "dur_s": 0.36,
+        "midi": 77,
+        "role": "melody",
+        "gain_db": 8.0
+      },
+      {
+        "start": 29.0,
+        "dur": 0.9,
+        "onset_s": 11.6,
+        "dur_s": 0.36,
+        "midi": 79,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 30.0,
+        "dur": 0.9,
+        "onset_s": 12.0,
+        "dur_s": 0.36,
+        "midi": 81,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 31.0,
+        "dur": 0.9,
+        "onset_s": 12.4,
+        "dur_s": 0.36,
+        "midi": 84,
+        "role": "melody",
+        "gain_db": 0.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ]
+  },
+  "acceptance": {
+    "recall_min": 0.7,
+    "precision_min": 0.7,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.0,
+    "note_count_deviation_max": 0.3,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.05,
+    "require_time_signature": true,
+    "require_key": true,
+    "diagnostic": false,
+    "known_limitations": [],
+    "note": "F16 反向样本：150 BPM 4/4，重音周期 4；证据门控应阻止 1/2 降速"
+  },
+  "segments": [],
+  "special": {},
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "piano",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

@@ -4,7 +4,7 @@
   "sample_rate": 22050,
   "audio_dir": "test_audio/fixtures",
   "gt_dir": "backend/tests/fixtures",
-  "total": 19,
+  "total": 20,
   "fixtures": [
     {
       "id": "F1",
@@ -349,6 +349,25 @@
         "band_masking",
         "long_form",
         "split_of_F7"
+      ]
+    },
+    {
+      "id": "F16",
+      "group": null,
+      "kind": "fast_tempo_4_4",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F16.wav",
+      "gt": "backend/tests/fixtures/F16.json",
+      "priority": "normal",
+      "diagnostic": false,
+      "notes": 32,
+      "measures": 8,
+      "tags": [
+        "fast_tempo",
+        "150_bpm",
+        "tactus_halving_reverse",
+        "accent_period_4"
       ]
     }
   ]

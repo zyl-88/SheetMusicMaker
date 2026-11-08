@@ -553,10 +553,35 @@ F15 = Spec(
 )
 
 
+F16 = Spec(
+    id="F16",
+    kind="fast_tempo_4_4",
+    instrument="universal",
+    bpm=150.0,
+    time_signature="4/4",
+    key="C major",
+    role="melody_line",
+    tags=["fast_tempo", "150_bpm", "tactus_halving_reverse", "accent_period_4"],
+    measures=8,
+    timbre="piano",
+    # 每拍一个音、每 4 拍一个重音：脉冲层面的重音周期是 4（不是 3/6），
+    # 专门用来反向检验「150 BPM 4/4 快歌不应被 1/2 降速成 75」。
+    notes=[
+        n(i, 0.9, [72, 73, 74, 76, 77, 79, 81, 84][i % 8],
+          gain=(8.0 if i % 4 == 0 else 0.0))
+        for i in range(32)
+    ],
+    acceptance=A(
+        recall_min=0.7, precision_min=0.7, bpm_tolerance_ratio=0.05,
+        note="F16 反向样本：150 BPM 4/4，重音周期 4；证据门控应阻止 1/2 降速",
+    ),
+)
+
+
 FIXTURES: list[Spec] = [
     F1, F2, F3, F4, F5, F6, F7, F8, F9_C, F9_Am, F10, F11, F12, F13, F14, F15,
     # 追加样本放在末尾，避免改变既有 fixture 的合成 RNG 序号（index）
-    F12_CLEAN, F12_VIBRATO, F7_LONG,
+    F12_CLEAN, F12_VIBRATO, F7_LONG, F16,
 ]
 
 
