@@ -167,6 +167,11 @@ def compute_metrics(
 
     count_deviation = (len(pred) - len(gt_melody)) / len(gt_melody) if gt_melody else 0.0
 
+    # A3 以下旋律的保留率：用于「整段低音旋律 0 删除」门禁
+    gt_below = [gi for gi, g in enumerate(gt_melody) if g["midi"] < A3_MIDI]
+    below_hit = sum(1 for gi in gt_below if gi in used_gt)
+    below_a3_recall = below_hit / len(gt_below) if gt_below else 1.0
+
     low, high = INSTRUMENT_BOUNDS.get(fixture.get("instrument"), (21, 108))
     boundary_hits = sum(1 for p in pred if p["midi"] in (low, high))
     boundary_pitch_ratio = boundary_hits / len(pred) if pred else 0.0
@@ -191,6 +196,7 @@ def compute_metrics(
         "boundary_pitch_ratio": boundary_pitch_ratio,
         "pred_below_220hz_count": sum(1 for p in pred if p["midi"] < A3_MIDI),
         "gt_below_220hz_count": sum(1 for g in gt_melody if g["midi"] < A3_MIDI),
+        "below_a3_recall": below_a3_recall,
         "pred_bpm": pred_bpm,
         "pred_key": list(pred_key) if pred_key else None,
         "pred_time_signature": pred_time_sig,
@@ -278,23 +284,31 @@ def evaluate_fixture(
     metrics = compute_metrics(fixture, entry, onset_tolerance)
     matching = fixture.get("matching") or {}
     checks: list[dict[str, Any]] = []
+    # 单项诊断：acceptance.diagnostic_checks 里的指标只报告、不参与 PASS/FAIL
+    diag_checks = set(acc.get("diagnostic_checks") or [])
 
-    add_check(checks, "recall", metrics["recall"], acc.get("recall_min", 0.7), "min", fixture_diagnostic)
-    add_check(checks, "precision", metrics["precision"], acc.get("precision_min", 0.7), "min", fixture_diagnostic)
-    add_check(checks, "f1", metrics["f1"], acc.get("f1_min", 0.7), "min", fixture_diagnostic)
-    add_check(checks, "bass_leakage_rate", metrics["bass_leakage_rate"], acc.get("bass_leakage_max", 0.25), "max", fixture_diagnostic)
-    add_check(checks, "octave_error_rate", metrics["octave_error_rate"], acc.get("octave_error_rate_max", 0.2), "max", fixture_diagnostic)
-    add_check(checks, "octave_jumps_per_8bars", metrics["octave_jumps_per_8bars"], acc.get("octave_jumps_per_8bars_max", 2.0), "max", fixture_diagnostic)
-    add_check(checks, "note_count_deviation", abs(metrics["note_count_deviation"]), acc.get("note_count_deviation_max", 0.3), "max", fixture_diagnostic)
-    add_check(checks, "boundary_pitch_ratio", metrics["boundary_pitch_ratio"], acc.get("boundary_pitch_ratio_max", 0.1), "max", fixture_diagnostic)
+    def diag(name: str) -> bool:
+        return fixture_diagnostic or name in diag_checks
+
+    add_check(checks, "recall", metrics["recall"], acc.get("recall_min", 0.7), "min", diag("recall"))
+    add_check(checks, "precision", metrics["precision"], acc.get("precision_min", 0.7), "min", diag("precision"))
+    add_check(checks, "f1", metrics["f1"], acc.get("f1_min", 0.7), "min", diag("f1"))
+    add_check(checks, "bass_leakage_rate", metrics["bass_leakage_rate"], acc.get("bass_leakage_max", 0.25), "max", diag("bass_leakage_rate"))
+    add_check(checks, "octave_error_rate", metrics["octave_error_rate"], acc.get("octave_error_rate_max", 0.2), "max", diag("octave_error_rate"))
+    add_check(checks, "octave_jumps_per_8bars", metrics["octave_jumps_per_8bars"], acc.get("octave_jumps_per_8bars_max", 2.0), "max", diag("octave_jumps_per_8bars"))
+    add_check(checks, "note_count_deviation", abs(metrics["note_count_deviation"]), acc.get("note_count_deviation_max", 0.3), "max", diag("note_count_deviation"))
+    add_check(checks, "boundary_pitch_ratio", metrics["boundary_pitch_ratio"], acc.get("boundary_pitch_ratio_max", 0.1), "max", diag("boundary_pitch_ratio"))
+    if acc.get("below_a3_recall_min") is not None:
+        add_check(checks, "below_a3_recall", metrics["below_a3_recall"], acc["below_a3_recall_min"], "min",
+                  diag("below_a3_recall"))
 
     # bpm / key / time signature：缺 analysis 时记 skipped，而不是判失败
     ratio = float(acc.get("bpm_tolerance_ratio", 0.02))
     if metrics["pred_bpm"] is None:
-        add_check(checks, "bpm", None, ratio, "max", fixture_diagnostic, skipped=True, note="pred analysis 无 bpm")
+        add_check(checks, "bpm", None, ratio, "max", diag("bpm"), skipped=True, note="pred analysis 无 bpm")
     else:
         bpm_dev = abs(float(metrics["pred_bpm"]) - float(metrics["expected_bpm"])) / float(metrics["expected_bpm"])
-        add_check(checks, "bpm", bpm_dev, ratio, "max", fixture_diagnostic)
+        add_check(checks, "bpm", bpm_dev, ratio, "max", diag("bpm"))
 
     if acc.get("require_key", True):
         expected_key = normalize_key(metrics["expected_key"])
