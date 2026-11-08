@@ -91,6 +91,16 @@ def tempo_map_enabled() -> bool:
     value = os.environ.get("EXPORT_TEMPO_MAP", "per_bar").strip().lower()
     return value != "single"
 
+
+def tactus_halving_enabled() -> bool:
+    """BPM 1/2 触拍校正总开关。
+
+    - ``on``（默认）：检测速度超出触拍区间且重音分组证据成立时，按 1/2 降速
+    - ``off``：完全不做 1/2 校正（``TACTUS_HALVING=off``），用于 A/B 对照与回退
+    """
+    value = os.environ.get("TACTUS_HALVING", "on").strip().lower()
+    return value != "off"
+
 # 任务配置
 MAX_CONCURRENT_TASKS = 1  # CPU 限制，同时只跑一个
 POLL_INTERVAL_MS = 2000  # 前端轮询间隔（毫秒，用于文档参考）

@@ -10,6 +10,8 @@ from typing import Any
 
 import numpy as np
 
+from app.config import tactus_halving_enabled
+
 logger = logging.getLogger("sheet_music_maker.analyzer")
 
 # Krumhansl-Schmuckler 调性轮廓（12 半音）
@@ -29,9 +31,14 @@ ABC_MINOR_NAMES = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "
 
 # 触拍（tactus）区间：人实际"数拍子"的速度一般落在这里。
 # 检测器常把每个八分音符脉冲当成一拍上报，速度就翻倍；超出上限且减半后
-# 仍在区间内时，按 2 个脉冲 = 1 拍降速。
+# 仍在区间内时，还要有第二证据才降速，避免把真正 140 BPM 以上的快歌误减半。
 TACTUS_MIN_BPM = 70.0
 TACTUS_MAX_BPM = 140.0
+
+# 第二证据：脉冲层面的重音必须按 3（或 6）个脉冲循环，且明显强于 4 脉冲循环。
+# 八分音符细分网格会留下这种"三拍/六拍"循环；真 4/4 快歌的重音周期是 4。
+TACTUS_ACCENT_MIN = 0.05
+TACTUS_ACCENT_RATIO = 1.5
 
 # 自然音阶音级（相对主音的半音数），用于比较同一主音下大/小调各需多少临时记号
 MAJOR_SCALE_STEPS = frozenset({0, 2, 4, 5, 7, 9, 11})
@@ -65,7 +72,7 @@ class AudioAnalyzer:
         """
         path = str(vocals_wav_path)
         raw_beats, bpm = self._detect_beats_and_tempo(path)
-        beats, bpm, halved = self._halve_tactus(raw_beats, bpm)
+        beats, bpm, halved = self._halve_tactus(raw_beats, bpm, note_events)
         if halved:
             logger.info(
                 f"节拍脉冲按 1/2 降速校正: BPM={bpm:.1f}, 拍数={len(beats)}"
@@ -127,18 +134,38 @@ class AudioAnalyzer:
             warnings.append("节拍间隔波动较大，速度检测可能不稳定")
         return warnings
 
-    @staticmethod
-    def _halve_tactus(beats: list[float], bpm: float) -> tuple[list[float], float, bool]:
+    @classmethod
+    def _halve_tactus(
+        cls, beats: list[float], bpm: float, note_events: list | None = None
+    ) -> tuple[list[float], float, bool]:
         """把「八分音符脉冲」还原成真实触拍。
 
         检测器（madmom/librosa 都如此）经常把每个八分音符脉冲当作一拍上报，
         得到的速度是真实触拍的 2 倍。真实曲实测 161.5 BPM 对应 0.372s 的脉冲，
         而人实际数的是 2 个脉冲一拍（约 80.8 BPM）。
 
-        只在「速度超过上限、减半后仍落在触拍区间」时降速，避免误伤正常速度；
-        网格同步隔点采样，保证量化时的「秒 → 拍」映射与新的拍长一致。
+        降速需要两个条件同时成立：
+        1. 数值：速度超过触拍上限，且减半后仍落在区间内；
+        2. 证据：脉冲层面的重音按 3/6 个脉冲循环，且明显强于 4 脉冲循环——
+           说明这一层网格是细分，而不是真正的拍。
+        只有数值没有证据时不降速（避免把 150 BPM 的 4/4 快歌减成 75）；
+        如需整体回退，可用 ``TACTUS_HALVING=off`` 关闭这条校正。
         """
         if bpm <= TACTUS_MAX_BPM or bpm / 2.0 < TACTUS_MIN_BPM:
+            return beats, bpm, False
+        if not tactus_halving_enabled():
+            logger.info(f"触拍降速已关闭（TACTUS_HALVING=off），保留 BPM={bpm:.1f}")
+            return beats, bpm, False
+        accents = cls._beat_accents(beats, note_events)
+        p3 = cls._periodicity(accents, 3)
+        p6 = cls._periodicity(accents, 6)
+        p4 = cls._periodicity(accents, 4)
+        best = max(p3, p6)
+        if best < TACTUS_ACCENT_MIN or best < p4 * TACTUS_ACCENT_RATIO:
+            logger.info(
+                f"BPM={bpm:.1f} 超出触拍区间，但重音分组不支持八分脉冲"
+                f"（p3={p3:.2f} p6={p6:.2f} p4={p4:.2f}），不做 1/2 校正"
+            )
             return beats, bpm, False
         halved = beats[::2]
         if len(halved) < 4:
