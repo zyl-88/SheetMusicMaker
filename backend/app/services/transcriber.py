@@ -8,6 +8,7 @@
 """
 import logging
 import os
+from bisect import bisect_left, bisect_right
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,7 @@ from app.config import (
     MERGE_GAP_THRESHOLD,
     MIN_MIDI_PITCH,
     MIN_NOTE_AMPLITUDE,
+    melody_continuity_gate_enabled,
 )
 from app.services.debug_dump import DebugRecorder, notes_payload
 
@@ -30,6 +32,22 @@ AMP_KEEP_RATIO = 0.6
 HARMONIC_AMP_RATIO = 0.6
 # 孤立弱峰（无同起步竞争者）仍低于此振幅时视为噪声残留
 SELECT_AMP_FLOOR = 0.35
+
+# 旋律连续性门控：低音起音缺少局部高音证据时判为伴奏渗漏（详见
+# _suppress_low_interjections_by_continuity）。这些阈值来自 dump 回放取证：
+# - 低音与音区基准相差 ≥12 半音才算「低音候选」
+# - 高音候选必须在 ±0.2s 内起音，或仍跨过起音点发声 ≥0.02s（一帧）
+# - 高音候选跨过起音点并继续发声 ≥0.08s 才算「覆盖」，属伴奏插在旋律持续期内
+# - 音区基准取对称 ±6s 时间窗的 75 分位，避免连续低音拉低自己的判定基准
+# - 低音若处于稀疏上下文（±0.5s 内没有其他旋律音），视为独奏旋律而保留
+CONTINUITY_REGISTER_GAP = 12
+CONTINUITY_LOCAL_WINDOW_S = 0.2
+CONTINUITY_SOUNDING_S = 0.02
+CONTINUITY_COVER_S = 0.08
+CONTINUITY_COVER_START_GUARD_S = 0.02
+CONTINUITY_REGISTER_WINDOW_S = 6.0
+CONTINUITY_REGISTER_QUANTILE = 0.75
+CONTINUITY_SPARSE_GAP_S = 0.5
 
 
 def current_strategy() -> str:
@@ -319,6 +337,10 @@ class NoteTranscriber:
                 "melody_selection",
                 {"clusters": len(clusters), "kept": len(selected), "details": details},
             )
+        if melody_continuity_gate_enabled():
+            return self._suppress_low_interjections_by_continuity(
+                selected, filtered, dump=dump
+            )
         return self._suppress_low_interjections(selected, dump=dump)
 
     def _suppress_low_interjections(
@@ -373,6 +395,103 @@ class NoteTranscriber:
                 f"(剔除 {len(selected) - len(kept)} 个旋律持续期内的低音伴奏)"
             )
         return kept
+
+    def _suppress_low_interjections_by_continuity(
+        self,
+        selected: list[tuple],
+        candidates: list[tuple],
+        dump: DebugRecorder | None = None,
+    ) -> list[tuple]:
+        """旋律连续性门控：低音起音缺少局部高音证据时判为伴奏渗漏。
+
+        旧规则要求「上一个旋律音仍在响」，但 basic-pitch 常把前音切短
+        （dump 回放里 57 个存活低音有 52 个败在这一条），因此改用候选池里的
+        局部证据，不再依赖被切短的相邻音：
+        - 高音候选跨过该起音点并继续发声 ≥0.08s → 伴奏插在旋律持续期内，丢弃
+        - ±0.2s 内既无高音候选起音、也无高音候选仍在发声 → 丢弃
+        - 低音处于稀疏上下文（±0.5s 内没有其他旋律音）→ 独奏旋律，保留
+
+        音区基准取对称 ±6s 时间窗的 75 分位，连续低音不会把自己的判定基准
+        拉低后「自己给自己作证」。
+        """
+        if not selected:
+            return selected
+
+        starts = [float(event[0]) for event in selected]
+        registers = self._register_baselines(selected, starts)
+        kept: list[tuple] = []
+        for event, start_s, register in zip(selected, starts, registers):
+            pitch_int = int(round(event[2]))
+            if pitch_int > register - CONTINUITY_REGISTER_GAP:
+                kept.append(event)
+                continue
+
+            high = [
+                c for c in candidates
+                if int(round(c[2])) >= pitch_int + CONTINUITY_REGISTER_GAP
+            ]
+            covering = any(
+                float(c[0]) <= start_s - CONTINUITY_COVER_START_GUARD_S
+                and float(c[1]) - start_s >= CONTINUITY_COVER_S
+                for c in high
+            )
+            local_onset = any(
+                abs(float(c[0]) - start_s) <= CONTINUITY_LOCAL_WINDOW_S for c in high
+            )
+            local_sounding = any(
+                float(c[0]) <= start_s
+                and float(c[1]) - start_s >= CONTINUITY_SOUNDING_S
+                for c in high
+            )
+            sparse = self._is_sparse_context(starts, start_s)
+            if covering or (not local_onset and not local_sounding and not sparse):
+                if dump is not None:
+                    dump.decide(
+                        {
+                            "stage": "selection",
+                            "reason": "low_interjection_continuity",
+                            "onset_s": round(float(start_s), 4),
+                            "midi": pitch_int,
+                            "register_midi": int(register),
+                            "covering": covering,
+                            "local_onset": local_onset,
+                            "local_sounding": local_sounding,
+                            "sparse_context": sparse,
+                        }
+                    )
+                continue
+            kept.append(event)
+
+        if len(kept) != len(selected):
+            logger.info(
+                f"旋律连续性门控: {len(selected)} → {len(kept)} 个音符 "
+                f"(剔除 {len(selected) - len(kept)} 个缺乏局部高音证据的低音)"
+            )
+        return kept
+
+    @staticmethod
+    def _register_baselines(selected: list[tuple], starts: list[float]) -> list[int]:
+        """逐音计算音区基准：对称 ±6s 时间窗内的 75 分位音高。"""
+        registers: list[int] = []
+        for t in starts:
+            left = bisect_left(starts, t - CONTINUITY_REGISTER_WINDOW_S)
+            right = bisect_right(starts, t + CONTINUITY_REGISTER_WINDOW_S)
+            values = sorted(int(round(selected[i][2])) for i in range(left, right))
+            index = int(round(CONTINUITY_REGISTER_QUANTILE * (len(values) - 1)))
+            registers.append(values[index])
+        return registers
+
+    @staticmethod
+    def _is_sparse_context(starts: list[float], t: float) -> bool:
+        """该起音 ±0.5s 内是否没有任何其他旋律音（独奏上下文）。"""
+        previous = bisect_left(starts, t - 1e-9) - 1
+        following = bisect_right(starts, t + 1e-9)
+        gaps = []
+        if previous >= 0:
+            gaps.append(t - starts[previous])
+        if following < len(starts):
+            gaps.append(starts[following] - t)
+        return not gaps or min(gaps) > CONTINUITY_SPARSE_GAP_S
 
     def _merge_same_pitch(
         self, accepted: list[tuple], dump: DebugRecorder | None = None

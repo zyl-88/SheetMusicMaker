@@ -101,6 +101,17 @@ def tactus_halving_enabled() -> bool:
     value = os.environ.get("TACTUS_HALVING", "on").strip().lower()
     return value != "off"
 
+
+def melody_continuity_gate_enabled() -> bool:
+    """旋律连续性门控开关。
+
+    - ``on``（默认）：低音起音若缺少局部高音证据，判为伴奏渗漏并剔除
+    - ``off``：回退到旧的「上一音仍在持续」规则（``MELODY_CONTINUITY_GATE=off``），
+      逐音复现改动前的输出，用于 A/B 对照与回退
+    """
+    value = os.environ.get("MELODY_CONTINUITY_GATE", "on").strip().lower()
+    return value != "off"
+
 # 任务配置
 MAX_CONCURRENT_TASKS = 1  # CPU 限制，同时只跑一个
 POLL_INTERVAL_MS = 2000  # 前端轮询间隔（毫秒，用于文档参考）
