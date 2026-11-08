@@ -1,0 +1,828 @@
+{
+  "schema_version": "1.0",
+  "id": "F19",
+  "group": null,
+  "kind": "simultaneous_harmony_masking",
+  "instrument": "universal",
+  "audio": "test_audio/fixtures/F19.wav",
+  "engine": "melody",
+  "expected": {
+    "bpm": 120.0,
+    "time_signature": "4/4",
+    "key": "C major",
+    "measures": 8,
+    "role": "melody_line",
+    "tags": [
+      "simultaneous_harmony",
+      "masking",
+      "amplitude_ab",
+      "leak",
+      "core"
+    ],
+    "notes": [
+      {
+        "start": 0.0,
+        "dur": 2.0,
+        "onset_s": 0.0,
+        "dur_s": 1.0,
+        "midi": 64,
+        "role": "harmony",
+        "gain_db": 3.0
+      },
+      {
+        "start": 0.0,
+        "dur": 0.5,
+        "onset_s": 0.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 0.5,
+        "dur": 0.5,
+        "onset_s": 0.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.0,
+        "dur": 0.5,
+        "onset_s": 0.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 1.5,
+        "dur": 0.5,
+        "onset_s": 0.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.0,
+        "dur": 1.0,
+        "onset_s": 1.0,
+        "dur_s": 0.5,
+        "midi": 62,
+        "role": "harmony",
+        "gain_db": 3.0
+      },
+      {
+        "start": 2.0,
+        "dur": 0.5,
+        "onset_s": 1.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 2.5,
+        "dur": 0.5,
+        "onset_s": 1.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.0,
+        "dur": 0.5,
+        "onset_s": 1.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 3.5,
+        "dur": 0.5,
+        "onset_s": 1.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.0,
+        "dur": 1.0,
+        "onset_s": 2.0,
+        "dur_s": 0.5,
+        "midi": 60,
+        "role": "harmony",
+        "gain_db": 3.0
+      },
+      {
+        "start": 4.0,
+        "dur": 0.5,
+        "onset_s": 2.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 4.5,
+        "dur": 0.5,
+        "onset_s": 2.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 5.0,
+        "dur": 0.5,
+        "onset_s": 2.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 5.5,
+        "dur": 0.5,
+        "onset_s": 2.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 6.0,
+        "dur": 1.0,
+        "onset_s": 3.0,
+        "dur_s": 0.5,
+        "midi": 64,
+        "role": "harmony",
+        "gain_db": 3.0
+      },
+      {
+        "start": 6.0,
+        "dur": 0.5,
+        "onset_s": 3.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 6.5,
+        "dur": 0.5,
+        "onset_s": 3.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 7.0,
+        "dur": 0.5,
+        "onset_s": 3.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 7.5,
+        "dur": 0.5,
+        "onset_s": 3.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 8.0,
+        "dur": 2.0,
+        "onset_s": 4.0,
+        "dur_s": 1.0,
+        "midi": 64,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 8.0,
+        "dur": 0.5,
+        "onset_s": 4.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 8.5,
+        "dur": 0.5,
+        "onset_s": 4.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 9.0,
+        "dur": 0.5,
+        "onset_s": 4.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 9.5,
+        "dur": 0.5,
+        "onset_s": 4.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 10.0,
+        "dur": 1.0,
+        "onset_s": 5.0,
+        "dur_s": 0.5,
+        "midi": 62,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 10.0,
+        "dur": 0.5,
+        "onset_s": 5.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 10.5,
+        "dur": 0.5,
+        "onset_s": 5.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 11.0,
+        "dur": 0.5,
+        "onset_s": 5.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 11.5,
+        "dur": 0.5,
+        "onset_s": 5.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 12.0,
+        "dur": 1.0,
+        "onset_s": 6.0,
+        "dur_s": 0.5,
+        "midi": 60,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 12.0,
+        "dur": 0.5,
+        "onset_s": 6.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 12.5,
+        "dur": 0.5,
+        "onset_s": 6.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 13.0,
+        "dur": 0.5,
+        "onset_s": 6.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 13.5,
+        "dur": 0.5,
+        "onset_s": 6.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 14.0,
+        "dur": 1.0,
+        "onset_s": 7.0,
+        "dur_s": 0.5,
+        "midi": 64,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 14.0,
+        "dur": 0.5,
+        "onset_s": 7.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 14.5,
+        "dur": 0.5,
+        "onset_s": 7.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 15.0,
+        "dur": 0.5,
+        "onset_s": 7.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 15.5,
+        "dur": 0.5,
+        "onset_s": 7.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 16.0,
+        "dur": 2.0,
+        "onset_s": 8.0,
+        "dur_s": 1.0,
+        "midi": 64,
+        "role": "harmony",
+        "gain_db": 3.0
+      },
+      {
+        "start": 16.0,
+        "dur": 0.5,
+        "onset_s": 8.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 16.5,
+        "dur": 0.5,
+        "onset_s": 8.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 17.0,
+        "dur": 0.5,
+        "onset_s": 8.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 17.5,
+        "dur": 0.5,
+        "onset_s": 8.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 18.0,
+        "dur": 1.0,
+        "onset_s": 9.0,
+        "dur_s": 0.5,
+        "midi": 62,
+        "role": "harmony",
+        "gain_db": 3.0
+      },
+      {
+        "start": 18.0,
+        "dur": 0.5,
+        "onset_s": 9.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 18.5,
+        "dur": 0.5,
+        "onset_s": 9.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 19.0,
+        "dur": 0.5,
+        "onset_s": 9.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 19.5,
+        "dur": 0.5,
+        "onset_s": 9.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 20.0,
+        "dur": 1.0,
+        "onset_s": 10.0,
+        "dur_s": 0.5,
+        "midi": 60,
+        "role": "harmony",
+        "gain_db": 3.0
+      },
+      {
+        "start": 20.0,
+        "dur": 0.5,
+        "onset_s": 10.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 20.5,
+        "dur": 0.5,
+        "onset_s": 10.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 21.0,
+        "dur": 0.5,
+        "onset_s": 10.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 21.5,
+        "dur": 0.5,
+        "onset_s": 10.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 22.0,
+        "dur": 1.0,
+        "onset_s": 11.0,
+        "dur_s": 0.5,
+        "midi": 64,
+        "role": "harmony",
+        "gain_db": 3.0
+      },
+      {
+        "start": 22.0,
+        "dur": 0.5,
+        "onset_s": 11.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 22.5,
+        "dur": 0.5,
+        "onset_s": 11.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 23.0,
+        "dur": 0.5,
+        "onset_s": 11.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 23.5,
+        "dur": 0.5,
+        "onset_s": 11.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 0.0
+      },
+      {
+        "start": 24.0,
+        "dur": 2.0,
+        "onset_s": 12.0,
+        "dur_s": 1.0,
+        "midi": 64,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 24.0,
+        "dur": 0.5,
+        "onset_s": 12.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 24.5,
+        "dur": 0.5,
+        "onset_s": 12.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 25.0,
+        "dur": 0.5,
+        "onset_s": 12.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 25.5,
+        "dur": 0.5,
+        "onset_s": 12.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 26.0,
+        "dur": 1.0,
+        "onset_s": 13.0,
+        "dur_s": 0.5,
+        "midi": 62,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 26.0,
+        "dur": 0.5,
+        "onset_s": 13.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 26.5,
+        "dur": 0.5,
+        "onset_s": 13.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 27.0,
+        "dur": 0.5,
+        "onset_s": 13.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 27.5,
+        "dur": 0.5,
+        "onset_s": 13.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 28.0,
+        "dur": 1.0,
+        "onset_s": 14.0,
+        "dur_s": 0.5,
+        "midi": 60,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 28.0,
+        "dur": 0.5,
+        "onset_s": 14.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 28.5,
+        "dur": 0.5,
+        "onset_s": 14.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 29.0,
+        "dur": 0.5,
+        "onset_s": 14.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 29.5,
+        "dur": 0.5,
+        "onset_s": 14.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 30.0,
+        "dur": 1.0,
+        "onset_s": 15.0,
+        "dur_s": 0.5,
+        "midi": 64,
+        "role": "harmony",
+        "gain_db": -3.0
+      },
+      {
+        "start": 30.0,
+        "dur": 0.5,
+        "onset_s": 15.0,
+        "dur_s": 0.25,
+        "midi": 67,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 30.5,
+        "dur": 0.5,
+        "onset_s": 15.25,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 31.0,
+        "dur": 0.5,
+        "onset_s": 15.5,
+        "dur_s": 0.25,
+        "midi": 71,
+        "role": "melody",
+        "gain_db": 3.0
+      },
+      {
+        "start": 31.5,
+        "dur": 0.5,
+        "onset_s": 15.75,
+        "dur_s": 0.25,
+        "midi": 69,
+        "role": "melody",
+        "gain_db": 3.0
+      }
+    ]
+  },
+  "matching": {
+    "onset_tolerance_s": 0.05,
+    "duration_tolerance_ratio": 0.25,
+    "pitch_tolerance_semitones": 0,
+    "match_roles": [
+      "melody"
+    ],
+    "duration_check": false
+  },
+  "acceptance": {
+    "recall_min": 1.0,
+    "precision_min": 0.7,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.0,
+    "octave_error_rate_max": 0.2,
+    "octave_jumps_per_8bars_max": 2.0,
+    "note_count_deviation_max": 0.3,
+    "boundary_pitch_ratio_max": 0.1,
+    "bpm_tolerance_ratio": 0.05,
+    "require_time_signature": true,
+    "require_key": false,
+    "diagnostic": false,
+    "known_limitations": [],
+    "segment_recall_min": {
+      "harmony_louder": 1.0,
+      "melody_louder": 1.0,
+      "harmony_louder_b": 1.0,
+      "melody_louder_b": 1.0
+    },
+    "diagnostic_checks": [
+      "bpm"
+    ],
+    "note": "F19 重叠和声：旋律/和声同一 onset 同时发声，和声比旋律响 3dB 与旋律比和声响 3dB 各一版；门禁为 melody recall=1.0 且 leak=0（不设放宽阈值）。bpm 标为 diagnostic（librosa 半速误判 60.1）。"
+  },
+  "segments": [
+    {
+      "label": "harmony_louder",
+      "beats": [
+        0,
+        8
+      ],
+      "start_s": 0.0,
+      "end_s": 4.0
+    },
+    {
+      "label": "melody_louder",
+      "beats": [
+        8,
+        16
+      ],
+      "start_s": 4.0,
+      "end_s": 8.0
+    },
+    {
+      "label": "harmony_louder_b",
+      "beats": [
+        16,
+        24
+      ],
+      "start_s": 8.0,
+      "end_s": 12.0
+    },
+    {
+      "label": "melody_louder_b",
+      "beats": [
+        24,
+        32
+      ],
+      "start_s": 12.0,
+      "end_s": 16.0
+    }
+  ],
+  "special": {
+    "purpose": "同时发声的和声污染：验证 dp_register 在同一 onset 上始终选旋律，且和声响度更高时也不会翻转；leak 是门禁而非放宽阈值",
+    "rationale": "F17/F18 的高低层在时间上不重叠，每个时段只有一条线，选线器必然全收，precision/leak 只能拦粗差。本样本让两条线在同一时刻同时响，才能测到「同一 onset 选谁」以及响度变化是否影响取舍。"
+  },
+  "synthesis": {
+    "sample_rate": 22050,
+    "seed": 20260106,
+    "timbre": "piano",
+    "timbre_by_role": {},
+    "reverb_wet": 0.0
+  }
+}

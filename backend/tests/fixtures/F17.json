@@ -413,12 +413,12 @@
   },
   "acceptance": {
     "recall_min": 1.0,
-    "precision_min": 0.5,
-    "f1_min": 0.6,
-    "bass_leakage_max": 0.5,
+    "precision_min": 0.7,
+    "f1_min": 0.7,
+    "bass_leakage_max": 0.25,
     "octave_error_rate_max": 0.2,
     "octave_jumps_per_8bars_max": 2.0,
-    "note_count_deviation_max": 0.8,
+    "note_count_deviation_max": 0.3,
     "boundary_pitch_ratio_max": 0.1,
     "bpm_tolerance_ratio": 0.05,
     "require_time_signature": true,
@@ -428,7 +428,14 @@
     "segment_recall_min": {
       "low_melody": 1.0
     },
-    "note": "F17 重做：A2–C3 低音旋律放在 C5–A5 高音基准内，含 45→57 相邻 12 半音跳进与 45/48 同音反复；断言低音旋律段 recall=1.0（0 删除）。precision/leak 阈值放宽是因为 GT 只标旋律、高音和声层会作为额外预测出现；本 fixture 的目标是「低音旋律不被过滤」，不是伴奏纯净度。不校验调性（与 F6 同一已知限制）。"
+    "below_a3_recall_min": 1.0,
+    "diagnostic_checks": [
+      "precision",
+      "f1",
+      "bass_leakage_rate",
+      "note_count_deviation"
+    ],
+    "note": "F17 重做：A2–C3 低音旋律放在 C5–A5 高音基准内，含 45→57 相邻 12 半音跳进与 45/48 同音反复；门禁只保留 recall、segment recall（low_melody=1.0）与 A3 以下 0 删除。precision/leak/count_dev 标为 diagnostic：GT 只标旋律，高音和声层会作为额外预测出现，这三项不构成门禁。"
   },
   "segments": [
     {

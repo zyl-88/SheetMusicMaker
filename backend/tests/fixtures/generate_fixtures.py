@@ -617,16 +617,16 @@ F17 = Spec(
         ),
     },
     acceptance=A(
-        recall_min=1.0, precision_min=0.5, f1_min=0.6,
-        bass_leakage_max=0.5, note_count_deviation_max=0.8,
+        recall_min=1.0,
         bpm_tolerance_ratio=0.05, require_key=False,
         segment_recall_min={"low_melody": 1.0},
+        below_a3_recall_min=1.0,
+        diagnostic_checks=["precision", "f1", "bass_leakage_rate", "note_count_deviation"],
         note=(
             "F17 重做：A2–C3 低音旋律放在 C5–A5 高音基准内，含 45→57 相邻 12 半音"
-            "跳进与 45/48 同音反复；断言低音旋律段 recall=1.0（0 删除）。"
-            "precision/leak 阈值放宽是因为 GT 只标旋律、高音和声层会作为额外预测"
-            "出现；本 fixture 的目标是「低音旋律不被过滤」，不是伴奏纯净度。"
-            "不校验调性（与 F6 同一已知限制）。"
+            "跳进与 45/48 同音反复；门禁只保留 recall、segment recall（low_melody=1.0）"
+            "与 A3 以下 0 删除。precision/leak/count_dev 标为 diagnostic：GT 只标旋律，"
+            "高音和声层会作为额外预测出现，这三项不构成门禁。"
         ),
     ),
     matching={"duration_check": False},
@@ -663,15 +663,84 @@ F18 = Spec(
         ),
     },
     acceptance=A(
-        recall_min=1.0, precision_min=0.45, f1_min=0.6,
-        bass_leakage_max=0.55, note_count_deviation_max=1.1,
+        recall_min=1.0,
         bpm_tolerance_ratio=0.05, require_key=False,
         segment_recall_min={"two_note_descent": 1.0},
+        below_a3_recall_min=1.0,
+        diagnostic_checks=["precision", "f1", "bass_leakage_rate", "note_count_deviation"],
         note=(
             "F18 回归：双音下探 61→55→53→61，两侧跨度 6/8 半音；"
-            "断言旋律段 recall=1.0（0 删除）。"
-            "precision/leak/note_count 阈值放宽是因为高音和声层会作为额外预测出现；"
-            "bpm 容差 5% 覆盖检测器把 120 读成 123 的偏差。"
+            "门禁只保留 recall、segment recall（two_note_descent=1.0）与 A3 以下 0 删除。"
+            "precision/leak/count_dev 标为 diagnostic（高音和声层会作为额外预测出现）。"
+        ),
+    ),
+    matching={"duration_check": False},
+)
+
+
+F19 = Spec(
+    id="F19",
+    kind="simultaneous_harmony_masking",
+    instrument="universal",
+    bpm=120.0,
+    time_signature="4/4",
+    key="C major",
+    role="melody_line",
+    tags=["simultaneous_harmony", "masking", "amplitude_ab", "leak", "core"],
+    measures=8,
+    timbre="piano",
+    # 时间重叠的和声污染样本：旋律 G4–B4 与内声部和声 C4–E4 在**同一 onsets**
+    # 同时发声（不是 F17/F18 那种前后不重叠的分段）。前半「和声更响」（+3dB），
+    # 后半「旋律更响」（旋律 +3dB、和声 -3dB），用来验证选线在同一时刻的取舍
+    # 不随响度翻转。和声与旋律相差 3–11 半音，高于 A3 且不到一个音区门限，
+    # LOW_BASS_FILTER/连续性门控都不会介入——本 fixture 的门禁是选线层：
+    # melody recall 必须 1.0，同时 bass_leakage_rate 必须 0（和声不得被选中）。
+    notes=merge(
+        seq(0, 0.5, [67, 69, 71, 69, 67, 69, 71, 69] * 2, "melody"),
+        seq(8, 0.5, [67, 69, 71, 69, 67, 69, 71, 69] * 2, "melody", 3.0),
+        seq(16, 0.5, [67, 69, 71, 69, 67, 69, 71, 69] * 2, "melody"),
+        seq(24, 0.5, [67, 69, 71, 69, 67, 69, 71, 69] * 2, "melody", 3.0),
+        [n(0, 2.0, 64, "harmony", 3.0), n(2, 1.0, 62, "harmony", 3.0),
+         n(4, 1.0, 60, "harmony", 3.0), n(6, 1.0, 64, "harmony", 3.0)],
+        [n(8, 2.0, 64, "harmony", -3.0), n(10, 1.0, 62, "harmony", -3.0),
+         n(12, 1.0, 60, "harmony", -3.0), n(14, 1.0, 64, "harmony", -3.0)],
+        [n(16, 2.0, 64, "harmony", 3.0), n(18, 1.0, 62, "harmony", 3.0),
+         n(20, 1.0, 60, "harmony", 3.0), n(22, 1.0, 64, "harmony", 3.0)],
+        [n(24, 2.0, 64, "harmony", -3.0), n(26, 1.0, 62, "harmony", -3.0),
+         n(28, 1.0, 60, "harmony", -3.0), n(30, 1.0, 64, "harmony", -3.0)],
+    ),
+    segments=[
+        {"label": "harmony_louder", "beats": [0, 8]},
+        {"label": "melody_louder", "beats": [8, 16]},
+        {"label": "harmony_louder_b", "beats": [16, 24]},
+        {"label": "melody_louder_b", "beats": [24, 32]},
+    ],
+    special={
+        "purpose": (
+            "同时发声的和声污染：验证 dp_register 在同一 onset 上始终选旋律，"
+            "且和声响度更高时也不会翻转；leak 是门禁而非放宽阈值"
+        ),
+        "rationale": (
+            "F17/F18 的高低层在时间上不重叠，每个时段只有一条线，选线器必然全收，"
+            "precision/leak 只能拦粗差。本样本让两条线在同一时刻同时响，"
+            "才能测到「同一 onset 选谁」以及响度变化是否影响取舍。"
+        ),
+    },
+    acceptance=A(
+        recall_min=1.0,
+        bass_leakage_max=0.0,
+        bpm_tolerance_ratio=0.05, require_key=False,
+        segment_recall_min={
+            "harmony_louder": 1.0, "melody_louder": 1.0,
+            "harmony_louder_b": 1.0, "melody_louder_b": 1.0,
+        },
+        # bpm 不是本 fixture 的观测对象：librosa 在持续和声纹理上读到半速
+        # 60.1（madmom 缺失时的已知降级），与 F19 要验证的选线/leak 无关
+        diagnostic_checks=["bpm"],
+        note=(
+            "F19 重叠和声：旋律/和声同一 onset 同时发声，和声比旋律响 3dB 与"
+            "旋律比和声响 3dB 各一版；门禁为 melody recall=1.0 且 leak=0"
+            "（不设放宽阈值）。bpm 标为 diagnostic（librosa 半速误判 60.1）。"
         ),
     ),
     matching={"duration_check": False},
@@ -681,7 +750,7 @@ F18 = Spec(
 FIXTURES: list[Spec] = [
     F1, F2, F3, F4, F5, F6, F7, F8, F9_C, F9_Am, F10, F11, F12, F13, F14, F15,
     # 追加样本放在末尾，避免改变既有 fixture 的合成 RNG 序号（index）
-    F12_CLEAN, F12_VIBRATO, F7_LONG, F16, F17, F18,
+    F12_CLEAN, F12_VIBRATO, F7_LONG, F16, F17, F18, F19,
 ]
 
 

@@ -4,7 +4,7 @@
   "sample_rate": 22050,
   "audio_dir": "test_audio/fixtures",
   "gt_dir": "backend/tests/fixtures",
-  "total": 22,
+  "total": 23,
   "fixtures": [
     {
       "id": "F1",
@@ -410,6 +410,26 @@
         "r4_protection",
         "adversarial",
         "low_bass_filter"
+      ]
+    },
+    {
+      "id": "F19",
+      "group": null,
+      "kind": "simultaneous_harmony_masking",
+      "instrument": "universal",
+      "engine": "melody",
+      "audio": "test_audio/fixtures/F19.wav",
+      "gt": "backend/tests/fixtures/F19.json",
+      "priority": "core",
+      "diagnostic": false,
+      "notes": 80,
+      "measures": 8,
+      "tags": [
+        "simultaneous_harmony",
+        "masking",
+        "amplitude_ab",
+        "leak",
+        "core"
       ]
     }
   ]
