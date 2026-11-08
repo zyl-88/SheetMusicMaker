@@ -146,17 +146,45 @@ class NoteQuantizer:
             events = [(min(st, limit), d, p, a) for st, d, p, a in events]
 
         # 消除重叠：保留每个音符的起点（onset），重叠时截短前一个音；
-        # 同一量化格内的重复起点只保留振幅更大的一条。绝不后推任何音符起点，
-        # 否则重叠会沿时间轴累积（原实现实测累计 +31.8s，后段音符全部越界）。
+        # 同一量化格内只合并「同音高」的重复，异音高必须分开保留（顺延一个
+        # 最小量化单位），否则落选音的 pitch 会静默消失。绝不后推任何音符
+        # 起点，否则重叠会沿时间轴累积（原实现实测累计 +31.8s）。
         min_duration = 1.0 / div
         normalized: list[tuple[float, float, int, float]] = []
         for start_q, duration_q, pitch_int, amp in events:
+            shifted_from = None
             if normalized:
                 prev_start, prev_dur, prev_pitch, prev_amp = normalized[-1]
                 prev_end = prev_start + prev_dur
+                same_slot = start_q - prev_start < min_duration - 1e-9
+                if same_slot and pitch_int == prev_pitch:
+                    # 同音高同格：真正的重复，保留振幅更大的那条
+                    if amp > prev_amp:
+                        normalized[-1] = (
+                            prev_start,
+                            max(prev_dur, duration_q),
+                            pitch_int,
+                            amp,
+                        )
+                    continue
+                if same_slot:
+                    # 异音高同格：不能说谁响就留谁，顺延到下一个最小量化单位
+                    shifted_from = start_q
+                    start_q = prev_start + min_duration
+                    if dump is not None:
+                        dump.decide(
+                            {
+                                "stage": "quantize",
+                                "action": "shift_same_slot",
+                                "from_q": round(float(shifted_from), 6),
+                                "to_q": round(float(start_q), 6),
+                                "midi": int(pitch_int),
+                                "kept_midi": int(prev_pitch),
+                            }
+                        )
                 if start_q < prev_end - 1e-6:
                     if start_q - prev_start < min_duration - 1e-9:
-                        # 落在同一量化格内：视为同一起点，保留振幅更大的那条
+                        # 同格且同音高的情况已在上面处理；这里只剩浮点边界
                         if amp > prev_amp:
                             normalized[-1] = (
                                 prev_start,
