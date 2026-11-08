@@ -126,6 +126,10 @@ class ScoreExporter:
         current_bar_pos = 0.0  # 当前小节内位置（四分音符单位）
         bars_in_line = 0
         bar_index = 0
+        # 小节内临时记号状态：(字母, 八度) → 当前生效的升降值（相对自然音级）。
+        # ABC/五线谱的临时记号在本小节内一直有效，跨小节线重置；不跟踪这一
+        # 状态就会出现「先 ^d 后 d」被 abcjs 继承成 D# 的问题。
+        measure_accidentals: dict[tuple[str, int], int] = {}
 
         for element in m21_stream.flat.notesAndRests:
             try:
@@ -136,18 +140,22 @@ class ScoreExporter:
                 continue
 
             if isinstance(element, m21note.Rest):
-                symbol, is_rest = "z", True
+                is_rest = True
+                midi_num = None
             elif isinstance(element, m21note.Note):
-                symbol = self._midi_to_abc_note(
-                    element.pitch.midi, key_sharps, key_flats, use_flats
-                )
                 is_rest = False
+                midi_num = int(element.pitch.midi)
             else:
                 continue
 
             remaining = ql
             while remaining > EPS:
                 space = bar_length - current_bar_pos
+                symbol = (
+                    "z" if is_rest else self._midi_to_abc_note(
+                        midi_num, key_sharps, key_flats, use_flats, measure_accidentals
+                    )
+                )
                 if remaining >= space - EPS:
                     # 填满当前小节；若音符还有剩余，用连音线连到下一小节
                     remaining -= space
@@ -158,6 +166,7 @@ class ScoreExporter:
                     current_bar_pos = 0.0
                     bars_in_line += 1
                     bar_index += 1
+                    measure_accidentals.clear()
                     if bars_in_line % 4 == 0:
                         parts.append("\n")
                     if tempo_map:
@@ -252,8 +261,13 @@ class ScoreExporter:
         key_sharps: set,
         key_flats: set,
         use_flats: bool,
+        measure_accidentals: dict[tuple[str, int], int] | None = None,
     ) -> str:
-        """将 MIDI 音符号转为 ABC 音名（含八度标记和临时记号）。"""
+        """将 MIDI 音符号转为 ABC 音名（含八度标记和临时记号）。
+
+        ``measure_accidentals`` 记录本小节内已生效的临时记号；传入时会把
+        刚写入的记号登记进去，从而对后续同字母同八度的音给出 ``=``/还原记号。
+        """
         pitch_class = midi_num % 12
         octave = midi_num // 12 - 1  # MIDI 60 = C4
 
@@ -265,7 +279,9 @@ class ScoreExporter:
         else:
             letter = SHARP_LETTER[pitch_class]
 
-        accidental = self._accidental_for(pitch_class, letter, key_sharps, key_flats)
+        accidental = self._accidental_for(
+            pitch_class, letter, key_sharps, key_flats, octave, measure_accidentals
+        )
 
         # 八度标记
         # 八度 4 (MIDI 60-71): 大写无标记 → C, D, E, F, G, A, B
@@ -285,13 +301,19 @@ class ScoreExporter:
 
     @staticmethod
     def _accidental_for(
-        pitch_class: int, letter: str, key_sharps: set, key_flats: set
+        pitch_class: int,
+        letter: str,
+        key_sharps: set,
+        key_flats: set,
+        octave: int = 0,
+        measure_accidentals: dict[tuple[str, int], int] | None = None,
     ) -> str:
-        """计算某音名在给定调号下所需的临时记号（含还原号 ``=``）。
+        """计算某音名在给定调号与小节内状态下所需的临时记号（含还原号 ``=``）。
 
-        ABC 的调号会作用到对应字母上，因此：
-        - 调号已经把该字母升高/降低到目标音级 → 不需要记号；
-        - 目标音级正是该字母的自然音，但调号改变了它 → 需要还原号 ``=``；
+        ABC 的调号会作用到对应字母上，且临时记号在小节内持续生效。因此：
+        - 目标音级与「本小节当前生效值」相同 → 不需要记号；
+        - 目标音级相对自然音级为 0（但调号改变过它，或本小节先前写过升降）
+          → 还原号 ``=``；
         - 否则按半音差给 ``^`` / ``_``（必要时双升/双降）。
         """
         base = LETTER_BASE[letter]
@@ -302,14 +324,23 @@ class ScoreExporter:
         else:
             key_alter = 0
 
-        effective = (base + key_alter) % 12
-        if effective == pitch_class:
-            return ""
-        if base == pitch_class:
-            return "="
+        # 目标相对「自然音级」的总升降量（-2..2 以外说明拼写选错了）
+        desired = (pitch_class - base + 6) % 12 - 6
+        if desired not in (-2, -1, 0, 1, 2):
+            desired = 0
 
-        delta = (pitch_class - effective + 6) % 12 - 6
-        return {1: "^", -1: "_", 2: "^^", -2: "__"}.get(delta, "=")
+        key = (letter, octave)
+        current = key_alter
+        if measure_accidentals is not None:
+            current = measure_accidentals.get(key, key_alter)
+
+        if desired == current:
+            return ""
+
+        symbol = {0: "=", 1: "^", -1: "_", 2: "^^", -2: "__"}[desired]
+        if measure_accidentals is not None:
+            measure_accidentals[key] = desired
+        return symbol
 
     def _quarter_length_to_abc_duration(self, ql: float) -> str:
         """将 quarterLength 转为 ABC 时值符号（L:1/8 时默认为八分音符=0.5）。"""
