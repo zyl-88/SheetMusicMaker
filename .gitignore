@@ -13,6 +13,8 @@ venv/
 
 # PyInstaller
 build/
+# 发布构建依赖这份 spec，不能被 *.spec 忽略（否则每次都要 git add -f）
+!backend/sheet_music_maker.spec
 
 # 前端
 frontend/node_modules/
