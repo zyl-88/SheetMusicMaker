@@ -1,0 +1,51 @@
+﻿python : WARNING:root:Coremltools is not installed. If you plan to use a CoreML Saved Model, reinstall basic-pitch with
+ `pip install 'basic-pitch[coreml]'`
+所在位置 行:15 字符: 735
++ ... M = 'dumb'; python storage\acceptance\audit_f17f18_ffa1b14.py *> docs ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING:root:Co...pitch[coreml]'`:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+WARNING:root:tflite-runtime is not installed. If you plan to use a TFLite Model, reinstall basic-pitch with `pip instal
+l 'basic-pitch tflite-runtime'` or `pip install 'basic-pitch[tf]'
+WARNING:root:Tensorflow is not installed. If you plan to use a TF Saved Model, reinstall basic-pitch with `pip install 
+'basic-pitch[tf]'`
+Predicting MIDI for D:\project\SheetMusicMaker\test_audio\fixtures\F17.wav...
+Predicting MIDI for D:\project\SheetMusicMaker\test_audio\fixtures\F17.wav...
+
+==== F17 ====
+GT: melody 24 / harmony 18
+引擎 off 42 音 / on 42 音
+低音候选: 18；逐音基准 min=72 max=76 median=74 唯一值=[72, 74, 76]
+低音候选明细（前 20）: [{"start": 4.751, "midi": 48, "reg": 72, "gap": 24, "gt_role": "melody"}, {"start": 5.006, "midi": 45, "reg": 72, "gap": 27, "gt_role": "melody"}, {"start": 5.25, "midi": 48, "reg": 72, "gap": 24, "gt_role": "melody"}, {"start": 5.506, "midi": 45, "reg": 72, "gap": 27, "gt_role": "melody"}, {"start": 5.761, "midi": 48, "reg": 72, "gap": 24, "gt_role": "melody"}, {"start": 5.995, "midi": 45, "reg": 74, "gap": 29, "gt_role": "melody"}, {"start": 6.749, "midi": 48, "reg": 74, "gap": 26, "gt_role": "melody"}, {"start": 7.005, "midi": 45, "reg": 74, "gap": 29, "gt_role": "melody"}, {"start": 7.248, "midi": 48, "reg": 74, "gap": 26, "gt_role": "melody"}, {"start": 7.504, "midi": 45, "reg": 74, "gap": 29, "gt_role": "melody"}, {"start": 7.759, "midi": 48, "reg": 74, "gap": 26, "gt_role": "melody"}, {"start": 7.993, "midi": 45, "reg": 74, "gap": 29, "gt_role": "melody"}, {"start": 8.747, "midi": 48, "reg": 72, "gap": 24, "gt_role": "melody"}, {"start": 9.003, "midi": 45, "reg": 72, "gap": 27, "gt_role": "melody"}, {"start": 9.247, "midi": 48, "reg": 72, "gap": 24, "gt_role": "melody"}, {"start": 9.502, "midi": 45, "reg": 72, "gap": 27, "gt_role": "melody"}, {"start": 9.746, "midi": 48, "reg": 72, "gap": 24, "gt_role": "melody"}, {"start": 10.003, "midi": 45, "reg": 72, "gap": 27, "gt_role": "melody"}]
+  旧R1+旧R4: 删除 18；规则分布 {'r1': 18, 'r2': 0, 'r3': 0, 'r4': 0}
+    删除明细: [{"start": 4.751, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 5.006, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}, {"start": 5.25, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 5.506, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}, {"start": 5.761, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 5.995, "midi": 45, "rule": "r1", "reg": 74, "gap": 29}, {"start": 6.749, "midi": 48, "rule": "r1", "reg": 74, "gap": 26}, {"start": 7.005, "midi": 45, "rule": "r1", "reg": 74, "gap": 29}, {"start": 7.248, "midi": 48, "rule": "r1", "reg": 74, "gap": 26}, {"start": 7.504, "midi": 45, "rule": "r1", "reg": 74, "gap": 29}, {"start": 7.759, "midi": 48, "rule": "r1", "reg": 74, "gap": 26}, {"start": 7.993, "midi": 45, "rule": "r1", "reg": 74, "gap": 29}, {"start": 8.747, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 9.003, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}, {"start": 9.247, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 9.502, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}, {"start": 9.746, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 10.003, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}]
+  新R1+旧R4: 删除 18；规则分布 {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 18}
+    删除明细: [{"start": 4.751, "midi": 48, "rule": "r4", "reg": 72, "gap": 24}, {"start": 5.006, "midi": 45, "rule": "r4", "reg": 72, "gap": 27}, {"start": 5.25, "midi": 48, "rule": "r4", "reg": 72, "gap": 24}, {"start": 5.506, "midi": 45, "rule": "r4", "reg": 72, "gap": 27}, {"start": 5.761, "midi": 48, "rule": "r4", "reg": 72, "gap": 24}, {"start": 5.995, "midi": 45, "rule": "r4", "reg": 74, "gap": 29}, {"start": 6.749, "midi": 48, "rule": "r4", "reg": 74, "gap": 26}, {"start": 7.005, "midi": 45, "rule": "r4", "reg": 74, "gap": 29}, {"start": 7.248, "midi": 48, "rule": "r4", "reg": 74, "gap": 26}, {"start": 7.504, "midi": 45, "rule": "r4", "reg": 74, "gap": 29}, {"start": 7.759, "midi": 48, "rule": "r4", "reg": 74, "gap": 26}, {"start": 7.993, "midi": 45, "rule": "r4", "reg": 74, "gap": 29}, {"start": 8.747, "midi": 48, "rule": "r4", "reg": 72, "gap": 24}, {"start": 9.003, "midi": 45, "rule": "r4", "reg": 72, "gap": 27}, {"start": 9.247, "midi": 48, "rule": "r4", "reg": 72, "gap": 24}, {"start": 9.502, "midi": 45, "rule": "r4", "reg": 72, "gap": 27}, {"start": 9.746, "midi": 48, "rule": "r4", "reg": 72, "gap": 24}, {"start": 10.003, "midi": 45, "rule": "r4", "reg": 72, "gap": 27}]
+  旧R1+新R4: 删除 18；规则分布 {'r1': 18, 'r2': 0, 'r3': 0, 'r4': 0}
+    删除明细: [{"start": 4.751, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 5.006, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}, {"start": 5.25, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 5.506, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}, {"start": 5.761, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 5.995, "midi": 45, "rule": "r1", "reg": 74, "gap": 29}, {"start": 6.749, "midi": 48, "rule": "r1", "reg": 74, "gap": 26}, {"start": 7.005, "midi": 45, "rule": "r1", "reg": 74, "gap": 29}, {"start": 7.248, "midi": 48, "rule": "r1", "reg": 74, "gap": 26}, {"start": 7.504, "midi": 45, "rule": "r1", "reg": 74, "gap": 29}, {"start": 7.759, "midi": 48, "rule": "r1", "reg": 74, "gap": 26}, {"start": 7.993, "midi": 45, "rule": "r1", "reg": 74, "gap": 29}, {"start": 8.747, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 9.003, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}, {"start": 9.247, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 9.502, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}, {"start": 9.746, "midi": 48, "rule": "r1", "reg": 72, "gap": 24}, {"start": 10.003, "midi": 45, "rule": "r1", "reg": 72, "gap": 27}]
+  新R1+新R4: 删除 0；规则分布 {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0}
+  on 产物与复刻(新R1+新R4)逐音相同: True
+  melody 命中 24/24；FP=和声 18 / 其他 0
+  未命中的 melody: []
+  额外音（前 25）: [(0.01, 72, 'harmony'), (0.5, 74, 'harmony'), (1.0, 76, 'harmony'), (1.5, 79, 'harmony'), (2.0, 81, 'harmony'), (2.5, 79, 'harmony'), (3.0, 76, 'harmony'), (3.51, 74, 'harmony'), (4.0, 72, 'harmony'), (10.5, 72, 'harmony'), (11.0, 74, 'harmony'), (11.5, 76, 'harmony'), (11.99, 79, 'harmony'), (12.48, 81, 'harmony'), (13.0, 79, 'harmony'), (13.5, 76, 'harmony'), (13.99, 74, 'harmony'), (14.5, 72, 'harmony')]
+  off/on 共有音振幅差异数: 0 []
+Predicting MIDI for D:\project\SheetMusicMaker\test_audio\fixtures\F18.wav...
+Predicting MIDI for D:\project\SheetMusicMaker\test_audio\fixtures\F18.wav...
+
+==== F18 ====
+GT: melody 16 / harmony 17
+引擎 off 33 音 / on 33 音
+低音候选: 8；逐音基准 min=74 max=76 median=76 唯一值=[74, 76]
+低音候选明细（前 20）: [{"start": 2.497, "midi": 55, "reg": 76, "gap": 21, "gt_role": "melody"}, {"start": 2.741, "midi": 53, "reg": 76, "gap": 23, "gt_role": "melody"}, {"start": 3.507, "midi": 55, "reg": 76, "gap": 21, "gt_role": "melody"}, {"start": 3.751, "midi": 53, "reg": 76, "gap": 23, "gt_role": "melody"}, {"start": 4.496, "midi": 55, "reg": 76, "gap": 21, "gt_role": "melody"}, {"start": 4.739, "midi": 53, "reg": 76, "gap": 23, "gt_role": "melody"}, {"start": 5.506, "midi": 55, "reg": 76, "gap": 21, "gt_role": "melody"}, {"start": 5.75, "midi": 53, "reg": 76, "gap": 23, "gt_role": "melody"}]
+  旧R1+旧R4: 删除 8；规则分布 {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 8}
+    删除明细: [{"start": 2.497, "midi": 55, "rule": "r4", "reg": 76, "gap": 21}, {"start": 2.741, "midi": 53, "rule": "r4", "reg": 76, "gap": 23}, {"start": 3.507, "midi": 55, "rule": "r4", "reg": 76, "gap": 21}, {"start": 3.751, "midi": 53, "rule": "r4", "reg": 76, "gap": 23}, {"start": 4.496, "midi": 55, "rule": "r4", "reg": 76, "gap": 21}, {"start": 4.739, "midi": 53, "rule": "r4", "reg": 76, "gap": 23}, {"start": 5.506, "midi": 55, "rule": "r4", "reg": 76, "gap": 21}, {"start": 5.75, "midi": 53, "rule": "r4", "reg": 76, "gap": 23}]
+  新R1+旧R4: 删除 8；规则分布 {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 8}
+    删除明细: [{"start": 2.497, "midi": 55, "rule": "r4", "reg": 76, "gap": 21}, {"start": 2.741, "midi": 53, "rule": "r4", "reg": 76, "gap": 23}, {"start": 3.507, "midi": 55, "rule": "r4", "reg": 76, "gap": 21}, {"start": 3.751, "midi": 53, "rule": "r4", "reg": 76, "gap": 23}, {"start": 4.496, "midi": 55, "rule": "r4", "reg": 76, "gap": 21}, {"start": 4.739, "midi": 53, "rule": "r4", "reg": 76, "gap": 23}, {"start": 5.506, "midi": 55, "rule": "r4", "reg": 76, "gap": 21}, {"start": 5.75, "midi": 53, "rule": "r4", "reg": 76, "gap": 23}]
+  旧R1+新R4: 删除 0；规则分布 {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0}
+  新R1+新R4: 删除 0；规则分布 {'r1': 0, 'r2': 0, 'r3': 0, 'r4': 0}
+  on 产物与复刻(新R1+新R4)逐音相同: True
+  melody 命中 16/16；FP=和声 17 / 其他 0
+  未命中的 melody: []
+  额外音（前 25）: [(0.01, 72, 'harmony'), (0.24, 74, 'harmony'), (0.5, 76, 'harmony'), (0.74, 79, 'harmony'), (1.0, 81, 'harmony'), (1.24, 79, 'harmony'), (1.5, 76, 'harmony'), (1.75, 74, 'harmony'), (2.0, 72, 'harmony'), (6.24, 72, 'harmony'), (6.49, 74, 'harmony'), (6.75, 76, 'harmony'), (7.0, 79, 'harmony'), (7.25, 81, 'harmony'), (7.5, 79, 'harmony'), (7.75, 76, 'harmony'), (7.99, 74, 'harmony')]
+  off/on 共有音振幅差异数: 0 []
